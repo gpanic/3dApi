@@ -40,26 +40,20 @@ int App3D::Run()
 	return MsgLoop();
 }
 
-int App3D::MsgLoop()
+LRESULT App3D::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	MSG msg;
-	ZeroMemory(&msg, sizeof(MSG));
-
-	while (WM_QUIT != msg.message)
+	switch (msg)
 	{
-		if (PeekMessage(&msg, NULL, NULL, NULL, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		else
-		{
-			Update(0.0f);
-			Render(0.0f);
-			SwapBuffer();
-		}
+	case WM_KEYDOWN:
+		if (wParam == VK_ESCAPE)
+			DestroyWindow(hWnd);
+		return 0;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	default:
+		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
-	return static_cast<int>(msg.wParam);
 }
 
 bool App3D::InitWindow()
@@ -116,18 +110,57 @@ bool App3D::InitWindow()
 	return true;
 }
 
-LRESULT App3D::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+int App3D::MsgLoop()
 {
-	switch (msg)
+	StartTime();
+
+	MSG msg;
+	ZeroMemory(&msg, sizeof(MSG));
+
+	while (WM_QUIT != msg.message)
 	{
-	case WM_KEYDOWN:
-		if (wParam == VK_ESCAPE)
-			DestroyWindow(hWnd);
-		return 0;
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
-	default:
-		return DefWindowProc(hWnd, msg, wParam, lParam);
+		if (PeekMessage(&msg, NULL, NULL, NULL, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		else
+		{
+			UpdateDeltaTime();
+
+			Update();
+			Render();
+			UpdateWindowTitle();
+			SwapBuffer();
+
+			UpdateTime();
+		}
 	}
+	return static_cast<int>(msg.wParam);
+}
+
+void App3D::StartTime()
+{
+	QueryPerformanceCounter((LARGE_INTEGER*)&mPreviousCount);
+	QueryPerformanceFrequency((LARGE_INTEGER*)&mFrequency);
+}
+
+void App3D::UpdateDeltaTime()
+{
+	QueryPerformanceCounter((LARGE_INTEGER*)&mCurrentCount);
+	mDeltaTime = (float)(mCurrentCount - mPreviousCount) / mFrequency;
+
+	mElapsedTime += mDeltaTime;
+	++mFrameCount;
+	if (mElapsedTime >= 1.0f)
+	{
+		mFPS = (float)mFrameCount;
+		mElapsedTime -= 1.0f;
+		mFrameCount = 0;
+	}
+}
+
+void App3D::UpdateTime()
+{
+	mPreviousCount = mCurrentCount;
 }

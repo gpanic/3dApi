@@ -6,18 +6,16 @@ DXApp::DXApp(HINSTANCE hInstance) : App3D(hInstance)
 	mWindowClass = "DXAPPWNDCLASS";
 
 	mDevice = nullptr;
-	mContext = nullptr;
+	mDeviceContext = nullptr;
 	mSwapChain = nullptr;
 	mRenderTargetView = nullptr;
 }
 
 DXApp::~DXApp()
 {
-	if (mContext)
-		mContext->Release();
+	mDeviceContext->Release();
 	mSwapChain->Release();
 	mDevice->Release();
-	mContext->Release();
 	mRenderTargetView->Release();
 }
 
@@ -65,7 +63,7 @@ bool DXApp::InitAPI()
 	for (unsigned int i = 0; i < numDriverTypes; ++i)
 	{
 		result = D3D11CreateDeviceAndSwapChain(NULL, driverTypes[i], NULL, NULL, featureLevels,
-			numFeatureLevels, D3D11_SDK_VERSION, &swapChainDesc, &mSwapChain, &mDevice, &mFeatureLevel, &mContext);
+			numFeatureLevels, D3D11_SDK_VERSION, &swapChainDesc, &mSwapChain, &mDevice, &mFeatureLevel, &mDeviceContext);
 
 		if (SUCCEEDED(result))
 		{
@@ -86,7 +84,7 @@ bool DXApp::InitAPI()
 	mDevice->CreateRenderTargetView(backBuffer, NULL, &mRenderTargetView);
 	backBuffer->Release();
 
-	mContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
+	mDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
 
 	mViewport.Width = (FLOAT)mWidth;
 	mViewport.Height = (FLOAT)mHeight;
@@ -94,24 +92,16 @@ bool DXApp::InitAPI()
 	mViewport.MaxDepth = 1.0f;
 	mViewport.TopLeftX = 0;
 	mViewport.TopLeftY = 0;
-	mContext->RSSetViewports(1, &mViewport);
+	mDeviceContext->RSSetViewports(1, &mViewport);
 
 	return true;
 }
 
-bool DXApp::InitScene()
+void DXApp::UpdateWindowTitle()
 {
-	return true;
-}
-
-void DXApp::Update(float dt)
-{
-}
-
-void DXApp::Render(float dt)
-{
-	float bg[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	mContext->ClearRenderTargetView(mRenderTargetView, bg);
+	stringstream ss;
+	ss << mAppTitle << " | FPS " << mFPS;
+	SetWindowText(mWindow, ss.str().c_str());
 }
 
 void DXApp::SwapBuffer()

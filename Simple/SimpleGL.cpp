@@ -6,6 +6,7 @@ GLuint vbo;
 
 SimpleGL::SimpleGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
+	mAppTitle = "OpenGL Simple";
 }
 
 SimpleGL::~SimpleGL()
@@ -21,8 +22,8 @@ bool SimpleGL::InitScene()
 	glBindVertexArray(vao);
 
 	vector<GLuint> shaders;
-	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "Simple.vert"));
-	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "Simple.frag"));
+	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "SimpleVert.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "SimpleFrag.glsl"));
 	shaderProgram = GLUtil::CreateProgram(shaders);
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 
@@ -45,11 +46,11 @@ bool SimpleGL::InitScene()
 }
 
 
-void SimpleGL::Update(float dt)
+void SimpleGL::Update()
 {
 }
 
-void SimpleGL::Render(float dt)
+void SimpleGL::Render()
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

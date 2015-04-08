@@ -13,14 +13,25 @@ public:
 	GLApp(HINSTANCE hInstance);
 	virtual ~GLApp();
 
+	bool vSync;
+
 protected:
-	HDC mDeviceContext;
-	HGLRC mGLRenderContext;
+	HDC		mDeviceContext;
+	HGLRC	mGLRenderContext;
+
+	virtual bool InitScene() = 0;
+	virtual void Update() = 0;
+	virtual void Render() = 0;
+
+private:
+	PFNWGLSWAPINTERVALEXTPROC       wglSwapIntervalEXT = nullptr;
+	PFNWGLGETSWAPINTERVALEXTPROC    wglGetSwapIntervalEXT = nullptr;
 
 	bool InitAPI() override;
-	virtual bool InitScene() = 0;
-	virtual void Update(float dt) = 0;
-	virtual void Render(float dt) = 0;
+	void UpdateWindowTitle() override;
 	void SwapBuffer() override;
+	
+	bool WGLExtSupported(string extName);
+	void SetVsync();
 };
 

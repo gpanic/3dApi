@@ -7,6 +7,8 @@ GLApp::GLApp(HINSTANCE hInstance) : App3D(hInstance)
 
 	mDeviceContext = nullptr;
 	mGLRenderContext = nullptr;
+
+	vSync = false;
 }
 
 GLApp::~GLApp()
@@ -50,10 +52,36 @@ bool GLApp::InitAPI()
 		return false;
 	}
 
+	SetVsync();
+
 	return true;
+}
+
+void GLApp::UpdateWindowTitle()
+{
+	stringstream ss;
+	ss << mAppTitle << " | FPS " << mFPS;
+	SetWindowText(mWindow, ss.str().c_str());
 }
 
 void GLApp::SwapBuffer()
 {
 	SwapBuffers(mDeviceContext);
+}
+
+bool GLApp::WGLExtSupported(string extName)
+{
+	PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsStringEXT = NULL;
+	_wglGetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC)wglGetProcAddress("wglGetExtensionsStringEXT");
+	return !(strstr(_wglGetExtensionsStringEXT(), extName.c_str()) == NULL);
+}
+
+void GLApp::SetVsync()
+{
+	if (WGLExtSupported("WGL_EXT_swap_control"))
+	{
+		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
+		wglGetSwapIntervalEXT = (PFNWGLGETSWAPINTERVALEXTPROC)wglGetProcAddress("wglGetSwapIntervalEXT");
+		wglSwapIntervalEXT(vSync);
+	}
 }

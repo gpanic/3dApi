@@ -24,18 +24,35 @@
     <ClCompile Include="SimpleGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleDX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SimpleGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleDX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Simple.frag">
+    <None Include="SimpleFrag.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Simple.vert">
+    <None Include="SimpleVert.glsl">
       <Filter>Shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="SimpleFrag.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="SimpleVert.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="SimpleInclude.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

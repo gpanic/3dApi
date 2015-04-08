@@ -1,11 +1,11 @@
 #pragma once
-#include "GLApp.h"
+#include "DXApp.h"
 
-class SimpleGL : public GLApp
+class SimpleDX : public DXApp
 {
 public:
-	SimpleGL(HINSTANCE hInstance);
-	virtual ~SimpleGL();
+	SimpleDX(HINSTANCE hInstance);;
+	virtual ~SimpleDX();
 private:
 	bool InitScene() override;
 	void Update() override;
