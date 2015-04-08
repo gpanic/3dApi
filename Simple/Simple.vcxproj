@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{4A811049-75AB-459E-A400-0728889E7D46}</ProjectGuid>
-    <RootNamespace>Direct3DSimple</RootNamespace>
+    <ProjectGuid>{E07B0FEF-2B66-4995-AFDF-76F68EA59981}</ProjectGuid>
+    <RootNamespace>Simple</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -48,8 +48,8 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>framework.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>framework.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -67,11 +67,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="SimpleGL.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SimpleGL.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SimpleGL.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Simple.frag" />

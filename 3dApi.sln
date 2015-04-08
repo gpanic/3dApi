@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Framework", "Framework\Framework.vcxproj", "{3BA13844-1F65-49BD-BF81-856C68FB1904}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Direct3D Simple", "Direct3D Simple\Direct3D Simple.vcxproj", "{4A811049-75AB-459E-A400-0728889E7D46}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Simple", "Simple\Simple.vcxproj", "{E07B0FEF-2B66-4995-AFDF-76F68EA59981}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{3BA13844-1F65-49BD-BF81-856C68FB1904}.Debug|Win32.Build.0 = Debug|Win32
 		{3BA13844-1F65-49BD-BF81-856C68FB1904}.Release|Win32.ActiveCfg = Release|Win32
 		{3BA13844-1F65-49BD-BF81-856C68FB1904}.Release|Win32.Build.0 = Release|Win32
-		{4A811049-75AB-459E-A400-0728889E7D46}.Debug|Win32.ActiveCfg = Debug|Win32
-		{4A811049-75AB-459E-A400-0728889E7D46}.Debug|Win32.Build.0 = Debug|Win32
-		{4A811049-75AB-459E-A400-0728889E7D46}.Release|Win32.ActiveCfg = Release|Win32
-		{4A811049-75AB-459E-A400-0728889E7D46}.Release|Win32.Build.0 = Release|Win32
+		{E07B0FEF-2B66-4995-AFDF-76F68EA59981}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E07B0FEF-2B66-4995-AFDF-76F68EA59981}.Debug|Win32.Build.0 = Debug|Win32
+		{E07B0FEF-2B66-4995-AFDF-76F68EA59981}.Release|Win32.ActiveCfg = Release|Win32
+		{E07B0FEF-2B66-4995-AFDF-76F68EA59981}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

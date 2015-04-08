@@ -14,13 +14,8 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Shaders">
-      <UniqueIdentifier>{641d9e57-5955-4d4e-bdad-2fdfec750efa}</UniqueIdentifier>
+      <UniqueIdentifier>{8af554af-3423-4079-a524-6664b2f446a1}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="SimpleGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -31,10 +26,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Simple.vert">
+    <ClInclude Include="SimpleGL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Simple.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Simple.frag">
+    <None Include="Simple.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
