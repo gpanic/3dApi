@@ -72,6 +72,7 @@
     <ClCompile Include="SimpleGL.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Data.h" />
     <ClInclude Include="SimpleDX.h" />
     <ClInclude Include="SimpleGL.h" />
   </ItemGroup>

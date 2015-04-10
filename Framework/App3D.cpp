@@ -15,6 +15,8 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 App3D::App3D(HINSTANCE hInstance)
 {
+	gApp = this;
+
 	mInstance = hInstance;
 	mWindow = NULL;
 	mWidth = 800;
@@ -22,11 +24,10 @@ App3D::App3D(HINSTANCE hInstance)
 	mAppTitle = "3D App";
 	mWindowClass = "3DAPPWNDCLASS";
 	mWindowStyle = WS_OVERLAPPEDWINDOW;
-	gApp = this;
+	mBenchmarkResultName = mAppTitle + "Result.txt";
 
 	benchmarking = true;
 	benchmarkFrameCount = 20000;
-	mBenchmarkResultName = mAppTitle + "Result.txt";
 }
 
 App3D::~App3D()

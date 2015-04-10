@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <iomanip>
+#include "Util.h"
 using namespace std;
 
 class App3D
@@ -15,6 +16,7 @@ public:
 
 	bool benchmarking;
 	int benchmarkFrameCount;
+	Color bgColor;
 
 	int Run();
 	virtual LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

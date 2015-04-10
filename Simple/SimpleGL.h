@@ -1,5 +1,6 @@
 #pragma once
 #include "GLApp.h"
+#include "Data.h"
 
 class SimpleGL : public GLApp
 {

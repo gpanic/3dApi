@@ -1,5 +1,6 @@
 #pragma once
 #include "DXApp.h"
+#include "Data.h"
 
 class SimpleDX : public DXApp
 {

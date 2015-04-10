@@ -1,11 +1,12 @@
 #include "SimpleDX.h"
 
-ID3DBlob* VS_Buffer;
-ID3DBlob* PS_Buffer;
-ID3D11VertexShader* VS;
-ID3D11PixelShader* PS;
+ID3DBlob* vertexShaderBuffer;
+ID3DBlob* pixelShaderBuffer;
+ID3D11VertexShader* vertexShader;
+ID3D11PixelShader* pixelShader;
 ID3D11Buffer* vertexBuffer;
 ID3D11InputLayout* inputLayout;
+float bg[4];
 
 SimpleDX::SimpleDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
@@ -14,35 +15,32 @@ SimpleDX::SimpleDX(HINSTANCE hInstance) : DXApp(hInstance)
 
 SimpleDX::~SimpleDX()
 {
+	vertexShaderBuffer->Release();
+	pixelShaderBuffer->Release();
+	vertexShader->Release();
+	pixelShader->Release();
+	vertexBuffer->Release();
+	inputLayout->Release();
 }
 
 bool SimpleDX::InitScene()
 {
-	float vertexData[] = {
-		-0.75f, -0.75f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-
-		0.0f, 0.75f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-
-		0.75f, -0.75f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f
-	};
-
 	D3D11_INPUT_ELEMENT_DESC vertexLayout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 4 * sizeof(float), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	D3DReadFileToBlob(L"SimpleVert.cso", &VS_Buffer);
-	D3DReadFileToBlob(L"SimpleFrag.cso", &PS_Buffer);
+	bg[0] = bgColor.r;
+	bg[1] = bgColor.g;
+	bg[2] = bgColor.b;
+	bg[3] = bgColor.a;
 
-	mDevice->CreateVertexShader(VS_Buffer->GetBufferPointer(), VS_Buffer->GetBufferSize(), NULL, &VS);
-	mDevice->CreatePixelShader(PS_Buffer->GetBufferPointer(), PS_Buffer->GetBufferSize(), NULL, &PS);
+	D3DReadFileToBlob(L"SimpleVert.cso", &vertexShaderBuffer);
+	D3DReadFileToBlob(L"SimpleFrag.cso", &pixelShaderBuffer);
 
-	mDeviceContext->VSSetShader(VS, 0, 0);
-	mDeviceContext->PSSetShader(PS, 0, 0);
+	mDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
+	mDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
@@ -54,22 +52,10 @@ bool SimpleDX::InitScene()
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData;
 	ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
-	vertexBufferData.pSysMem = vertexData;
+	vertexBufferData.pSysMem = Data::vertices;
 
 	mDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &vertexBuffer);
-
-	UINT stride = 8 * sizeof(float);
-	UINT offset = 0;
-	mDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-
-	mDevice->CreateInputLayout(vertexLayout, 2, VS_Buffer->GetBufferPointer(), VS_Buffer->GetBufferSize(), &inputLayout);
-
-	mDeviceContext->IASetInputLayout(inputLayout);
-
-	mDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	float bg[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
+	mDevice->CreateInputLayout(vertexLayout, 2, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &inputLayout);
 
 	return true;
 }
@@ -80,5 +66,16 @@ void SimpleDX::Update()
 
 void SimpleDX::Render()
 {
+	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
+
+	UINT stride = 8 * sizeof(float);
+	UINT offset = 0;
+	mDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	mDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	mDeviceContext->IASetInputLayout(inputLayout);
+
+	mDeviceContext->VSSetShader(vertexShader, 0, 0);
+	mDeviceContext->PSSetShader(pixelShader, 0, 0);
+
 	mDeviceContext->Draw(3, 0);
 }

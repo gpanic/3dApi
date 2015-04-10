@@ -18,8 +18,7 @@ SimpleGL::~SimpleGL()
 
 bool SimpleGL::InitScene()
 {
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+	glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 
 	vector<GLuint> shaders;
 	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "SimpleVert.glsl"));
@@ -27,31 +26,18 @@ bool SimpleGL::InitScene()
 	shaderProgram = GLUtil::CreateProgram(shaders);
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 
-	GLfloat vertexData[] = {
-		-0.75f, -0.75f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
+	glCreateVertexArrays(1, &vao);
+	glCreateBuffers(1, &vbo);
+	glNamedBufferData(vbo, sizeof(Data::vertices), Data::vertices, GL_STATIC_DRAW);
 
-		0.0f, 0.75f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
+	glVertexArrayAttribBinding(vao, 0, 0);
+	glVertexArrayAttribBinding(vao, 1, 0);
+	glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(Vertex));
 
-		0.75f, -0.75f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f
-	};
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glUseProgram(shaderProgram);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 2 * 4 * sizeof(GLfloat), 0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 2 * 4 * sizeof(GLfloat), (void*)(4 * sizeof(GLfloat)));
+	glEnableVertexArrayAttrib(vao, 0);
+	glEnableVertexArrayAttrib(vao, 1);
+	glVertexArrayAttribFormat(vao, 0, 4, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribFormat(vao, 1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex().position));
 
 	return true;
 }
@@ -63,5 +49,8 @@ void SimpleGL::Update()
 
 void SimpleGL::Render()
 {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBindVertexArray(vao);
+	glUseProgram(shaderProgram);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
