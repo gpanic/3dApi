@@ -39,8 +39,8 @@ bool SimpleDX::InitScene()
 	D3DReadFileToBlob(L"SimpleVert.cso", &vertexShaderBuffer);
 	D3DReadFileToBlob(L"SimpleFrag.cso", &pixelShaderBuffer);
 
-	mDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
-	mDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
+	mDevice1->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
+	mDevice1->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
@@ -54,8 +54,8 @@ bool SimpleDX::InitScene()
 	ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
 	vertexBufferData.pSysMem = Data::vertices;
 
-	mDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &vertexBuffer);
-	mDevice->CreateInputLayout(vertexLayout, 2, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &inputLayout);
+	mDevice1->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &vertexBuffer);
+	mDevice1->CreateInputLayout(vertexLayout, 2, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &inputLayout);
 
 	return true;
 }
@@ -66,16 +66,16 @@ void SimpleDX::Update()
 
 void SimpleDX::Render()
 {
-	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
+	mDeviceContext1->ClearRenderTargetView(mRenderTargetView, bg);
 
 	UINT stride = 8 * sizeof(float);
 	UINT offset = 0;
-	mDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-	mDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	mDeviceContext->IASetInputLayout(inputLayout);
+	mDeviceContext1->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	mDeviceContext1->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	mDeviceContext1->IASetInputLayout(inputLayout);
 
-	mDeviceContext->VSSetShader(vertexShader, 0, 0);
-	mDeviceContext->PSSetShader(pixelShader, 0, 0);
+	mDeviceContext1->VSSetShader(vertexShader, 0, 0);
+	mDeviceContext1->PSSetShader(pixelShader, 0, 0);
 
-	mDeviceContext->Draw(3, 0);
+	mDeviceContext1->Draw(3, 0);
 }
