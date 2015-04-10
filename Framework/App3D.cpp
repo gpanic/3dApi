@@ -23,6 +23,10 @@ App3D::App3D(HINSTANCE hInstance)
 	mWindowClass = "3DAPPWNDCLASS";
 	mWindowStyle = WS_OVERLAPPEDWINDOW;
 	gApp = this;
+
+	benchmarking = true;
+	benchmarkFrameCount = 20000;
+	mBenchmarkResultName = mAppTitle + "Result.txt";
 }
 
 App3D::~App3D()
@@ -110,6 +114,8 @@ bool App3D::InitWindow()
 	return true;
 }
 
+
+
 int App3D::MsgLoop()
 {
 	StartTime();
@@ -127,13 +133,13 @@ int App3D::MsgLoop()
 		else
 		{
 			UpdateDeltaTime();
-
 			Update();
 			Render();
 			UpdateWindowTitle();
 			SwapBuffer();
-
 			UpdateTime();
+			if (!Benchmark())
+				break;
 		}
 	}
 	return static_cast<int>(msg.wParam);
@@ -148,19 +154,48 @@ void App3D::StartTime()
 void App3D::UpdateDeltaTime()
 {
 	QueryPerformanceCounter((LARGE_INTEGER*)&mCurrentCount);
-	mDeltaTime = (float)(mCurrentCount - mPreviousCount) / mFrequency;
+	mDeltaTime = (float)(mCurrentCount - mPreviousCount) / (float)mFrequency;
 
 	mElapsedTime += mDeltaTime;
-	++mFrameCount;
+	++mDeltaFrameCount;
 	if (mElapsedTime >= 1.0f)
 	{
-		mFPS = (float)mFrameCount;
+		mFPS = (float)mDeltaFrameCount;
 		mElapsedTime -= 1.0f;
-		mFrameCount = 0;
+		mDeltaFrameCount = 0;
 	}
 }
 
 void App3D::UpdateTime()
 {
 	mPreviousCount = mCurrentCount;
+}
+
+bool App3D::Benchmark()
+{
+	if (benchmarking)
+	{
+		if (mFrameTimes.size() != benchmarkFrameCount)
+			mFrameTimes.resize(benchmarkFrameCount);
+
+		mFrameTimes[mFrameCount] = mDeltaTime;
+		++mFrameCount;
+		if (mFrameCount == benchmarkFrameCount)
+		{
+			ofstream file;
+			file.open(mBenchmarkResultName);
+			float timeSum = 0;
+			for (int j = 0; j < benchmarkFrameCount; ++j)
+			{
+				float time = mFrameTimes[j];
+				timeSum += time;
+				file << setfill('0') << setw(2) << j << " " << fixed << time << endl;
+			}
+			file << "TIME " << timeSum << endl;
+			file << "FPS " << (float)benchmarkFrameCount / timeSum << endl;
+			file.close();
+			return false;
+		}
+	}
+	return true;
 }

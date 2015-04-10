@@ -2,6 +2,9 @@
 #include <windows.h>
 #include <string>
 #include <sstream>
+#include <fstream>
+#include <vector>
+#include <iomanip>
 using namespace std;
 
 class App3D
@@ -10,12 +13,16 @@ public:
 	App3D(HINSTANCE hInstance);
 	virtual ~App3D();
 
+	bool benchmarking;
+	int benchmarkFrameCount;
+
 	int Run();
 	virtual LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 protected:
-	float			mDeltaTime = 0;
+	double			mDeltaTime = 0;
 	float			mFPS = 0;
+	string			mBenchmarkResultName;
 	HWND			mWindow;
 	HINSTANCE		mInstance;
 	unsigned int	mHeight;
@@ -32,15 +39,18 @@ protected:
 	virtual void SwapBuffer() = 0;
 
 private:
-	__int64		mPreviousCount = 0;
-	__int64		mCurrentCount = 0;
-	__int64		mFrequency = 0;
-	float		mElapsedTime = 0;
-	int			mFrameCount = 0;
+	__int64			mPreviousCount = 0;
+	__int64			mCurrentCount = 0;
+	__int64			mFrequency = 0;
+	float			mElapsedTime = 0;
+	unsigned int	mDeltaFrameCount = 0;
+	vector<float>	mFrameTimes;
+	unsigned int	mFrameCount = 0;
 
 	bool InitWindow();
 	int MsgLoop();
 	void StartTime();
 	void UpdateDeltaTime();
 	void UpdateTime();
+	bool Benchmark();
 };

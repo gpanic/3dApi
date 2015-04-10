@@ -70,7 +70,6 @@ bool SimpleDX::InitScene()
 
 	float bg[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
-
 	return true;
 }
 
@@ -80,5 +79,6 @@ void SimpleDX::Update()
 
 void SimpleDX::Render()
 {
+	
 	mDeviceContext->Draw(3, 0);
 }

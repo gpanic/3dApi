@@ -52,7 +52,6 @@ bool SimpleGL::InitScene()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 2 * 4 * sizeof(GLfloat), 0);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 2 * 4 * sizeof(GLfloat), (void*)(4 * sizeof(GLfloat)));
-
 	return true;
 }
 
