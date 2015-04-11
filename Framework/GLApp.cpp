@@ -52,6 +52,8 @@ bool GLApp::InitAPI()
 		return false;
 	}
 
+	glViewport(0, 0, (GLsizei) mWidth, (GLsizei) mHeight);
+
 	SetVsync();
 
 	return true;

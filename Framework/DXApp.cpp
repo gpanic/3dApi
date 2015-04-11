@@ -13,10 +13,10 @@ DXApp::DXApp(HINSTANCE hInstance) : App3D(hInstance)
 
 DXApp::~DXApp()
 {
-	//mDeviceContext->Release();
-	//mSwapChain->Release();
-	//mDevice->Release();
-	//mRenderTargetView->Release();
+	mDeviceContext->Release();
+	mSwapChain->Release();
+	mDevice->Release();
+	mRenderTargetView->Release();
 }
 
 bool DXApp::InitAPI()
@@ -39,31 +39,13 @@ bool DXApp::InitAPI()
 	};
 	UINT numFeatureLevels = ARRAYSIZE(featureLevels);
 
-	DXGI_MODE_DESC bufferDesc;
-	ZeroMemory(&bufferDesc, sizeof(DXGI_MODE_DESC));
-	bufferDesc.Width = mWidth;
-	bufferDesc.Height = mHeight;
-	bufferDesc.RefreshRate.Numerator = 60;
-	bufferDesc.RefreshRate.Denominator = 1;
-	bufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	bufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	bufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-
-	DXGI_SWAP_CHAIN_DESC swapChainDesc;
-	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
-	swapChainDesc.BufferDesc = bufferDesc;
-	swapChainDesc.SampleDesc.Count = 1;
-	swapChainDesc.SampleDesc.Quality = 0;
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.BufferCount = 1;
-	swapChainDesc.OutputWindow = mWindow;
-	swapChainDesc.Windowed = TRUE;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	ID3D11Device* mDeviceOld = nullptr;
+	ID3D11DeviceContext* mDeviceContextOld = nullptr;
 
 	HRESULT result;
 	for (unsigned int i = 0; i < numDriverTypes; ++i)
 	{
-		result = D3D11CreateDevice(NULL, driverTypes[i], NULL, NULL, featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &mDevice, &mFeatureLevel, &mDeviceContext);
+		result = D3D11CreateDevice(NULL, driverTypes[i], NULL, NULL, featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &mDeviceOld, &mFeatureLevel, &mDeviceContextOld);
 
 		if (result == E_INVALIDARG)
 		{
@@ -83,11 +65,11 @@ bool DXApp::InitAPI()
 		return false;
 	}
 
-	mDevice->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void**>(&mDevice1));
-	mDeviceContext->QueryInterface(__uuidof(ID3D11DeviceContext1), reinterpret_cast<void**>(&mDeviceContext1));
+	mDeviceOld->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void**>(&mDevice));
+	mDeviceContextOld->QueryInterface(__uuidof(ID3D11DeviceContext1), reinterpret_cast<void**>(&mDeviceContext));
 
 	IDXGIDevice1* dxgiDevice = nullptr;
-	mDevice1->QueryInterface(__uuidof(IDXGIDevice1), reinterpret_cast<void**>(&dxgiDevice));
+	mDevice->QueryInterface(__uuidof(IDXGIDevice1), reinterpret_cast<void**>(&dxgiDevice));
 
 	IDXGIAdapter* dxgiAdapter = nullptr;
 	dxgiDevice->GetAdapter(&dxgiAdapter);
@@ -105,14 +87,14 @@ bool DXApp::InitAPI()
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.BufferCount = 1;
 
-	dxgiFactory->CreateSwapChainForHwnd(mDevice1, mWindow, &sd, NULL, NULL, &mSwapChain1);
+	dxgiFactory->CreateSwapChainForHwnd(mDevice, mWindow, &sd, NULL, NULL, &mSwapChain);
 
 	ID3D11Texture2D* backBuffer;
-	mSwapChain1->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
+	mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
 
-	mDevice1->CreateRenderTargetView(backBuffer, NULL, &mRenderTargetView);
+	mDevice->CreateRenderTargetView(backBuffer, NULL, &mRenderTargetView);
 
-	mDeviceContext1->OMSetRenderTargets(1, &mRenderTargetView, NULL);
+	mDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
 
 	mViewport.Width = (FLOAT)mWidth;
 	mViewport.Height = (FLOAT)mHeight;
@@ -120,47 +102,13 @@ bool DXApp::InitAPI()
 	mViewport.MaxDepth = 1.0f;
 	mViewport.TopLeftX = 0;
 	mViewport.TopLeftY = 0;
-	mDeviceContext1->RSSetViewports(1, &mViewport);
+	mDeviceContext->RSSetViewports(1, &mViewport);
 
-	if (mDevice1->GetFeatureLevel() == D3D_FEATURE_LEVEL_11_1)
-	{
-		OutputDebugString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
-	}
-
-	//HRESULT result;
-	//for (unsigned int i = 0; i < numDriverTypes; ++i)
-	//{
-	//	result = D3D11CreateDeviceAndSwapChain(NULL, driverTypes[i], NULL, NULL, featureLevels,
-	//		numFeatureLevels, D3D11_SDK_VERSION, &swapChainDesc, &mSwapChain, &mDevice, &mFeatureLevel, &mDeviceContext);
-
-	//	if (SUCCEEDED(result))
-	//	{
-	//		mDriverType = driverTypes[i];
-	//		break;
-	//	}
-	//}
-
-	//if (FAILED(result))
-	//{
-	//	MessageBox(NULL, "Error creating device and swap chain", "Error", MB_OK | MB_ICONERROR);
-	//	return false;
-	//}
-
-	//ID3D11Texture2D* backBuffer;
-	//mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-
-	//mDevice->CreateRenderTargetView(backBuffer, NULL, &mRenderTargetView);
-	//backBuffer->Release();
-
-	//mDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
-
-	//mViewport.Width = (FLOAT)mWidth;
-	//mViewport.Height = (FLOAT)mHeight;
-	//mViewport.MinDepth = 0.0f;
-	//mViewport.MaxDepth = 1.0f;
-	//mViewport.TopLeftX = 0;
-	//mViewport.TopLeftY = 0;
-	//mDeviceContext->RSSetViewports(1, &mViewport);
+	mDeviceOld->Release();
+	mDeviceContextOld->Release();
+	dxgiDevice->Release();
+	dxgiAdapter->Release();
+	dxgiFactory->Release();
 
 	return true;
 }
@@ -174,5 +122,5 @@ void DXApp::UpdateWindowTitle()
 
 void DXApp::SwapBuffer()
 {
-	mSwapChain1->Present(0, 0);
+	mSwapChain->Present(0, 0);
 }

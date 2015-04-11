@@ -10,12 +10,10 @@ public:
 	virtual ~DXApp();
 
 protected:
-	ID3D11Device*				mDevice;
-	ID3D11Device1*				mDevice1;
-	ID3D11DeviceContext*		mDeviceContext;
-	ID3D11DeviceContext1*		mDeviceContext1;
-	IDXGISwapChain*				mSwapChain;
-	IDXGISwapChain1*			mSwapChain1;
+	
+	ID3D11Device1*				mDevice;
+	ID3D11DeviceContext1*		mDeviceContext;
+	IDXGISwapChain1*			mSwapChain;
 	ID3D11RenderTargetView*		mRenderTargetView;
 	D3D_DRIVER_TYPE				mDriverType;
 	D3D_FEATURE_LEVEL			mFeatureLevel;
