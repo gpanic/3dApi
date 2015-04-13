@@ -45,11 +45,13 @@ bool DXApp::InitAPI()
 	HRESULT result;
 	for (unsigned int i = 0; i < numDriverTypes; ++i)
 	{
-		result = D3D11CreateDevice(NULL, driverTypes[i], NULL, NULL, featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &mDeviceOld, &mFeatureLevel, &mDeviceContextOld);
+		result = D3D11CreateDevice(NULL, driverTypes[i], NULL, NULL, featureLevels, numFeatureLevels,
+			D3D11_SDK_VERSION, &mDeviceOld, &mFeatureLevel, &mDeviceContextOld);
 
 		if (result == E_INVALIDARG)
 		{
-			MessageBox(NULL, "NODX11", "Error", MB_OK | MB_ICONERROR);
+			result = D3D11CreateDevice(NULL, driverTypes[i], NULL, NULL, &featureLevels[1], numFeatureLevels - 1,
+				D3D11_SDK_VERSION, &mDeviceOld, &mFeatureLevel, &mDeviceContextOld);
 		}
 
 		if (SUCCEEDED(result))
@@ -61,11 +63,11 @@ bool DXApp::InitAPI()
 
 	if (FAILED(result))
 	{
-		MessageBox(NULL, "Error creating device and swap chain", "Error", MB_OK | MB_ICONERROR);
+		MessageBox(NULL, "Error creating D3D11 device", "Error", MB_OK | MB_ICONERROR);
 		return false;
 	}
 
-	mDeviceOld->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void**>(&mDevice));
+	result = mDeviceOld->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void**>(&mDevice));
 	mDeviceContextOld->QueryInterface(__uuidof(ID3D11DeviceContext1), reinterpret_cast<void**>(&mDeviceContext));
 
 	IDXGIDevice1* dxgiDevice = nullptr;
