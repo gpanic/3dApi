@@ -10,7 +10,7 @@ float bg[4];
 
 SimpleUniformDX::SimpleUniformDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
-	mAppTitle = "DirectX Simple";
+	mAppTitle = "DirectX Simple Uniform";
 }
 
 SimpleUniformDX::~SimpleUniformDX()
