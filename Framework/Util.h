@@ -1,14 +1,13 @@
 #pragma once
 #include <string>
 #include <fstream>
-using namespace std;
 
 struct Util
 {
-	inline static string ReadFile(const string &path)
+	inline static std::string ReadFile(const std::string &path)
 	{
-		ifstream file(path);
-		string fileStr((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+		std::ifstream file(path);
+		std::string fileStr((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 		file.close();
 		return fileStr;
 	}

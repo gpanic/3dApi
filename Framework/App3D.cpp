@@ -183,17 +183,17 @@ bool App3D::Benchmark()
 		++mFrameCount;
 		if (mFrameCount == benchmarkFrameCount)
 		{
-			ofstream file;
+			std::ofstream file;
 			file.open(mBenchmarkResultName);
 			float timeSum = 0;
 			for (int j = 0; j < benchmarkFrameCount; ++j)
 			{
 				float time = mFrameTimes[j];
 				timeSum += time;
-				file << setfill('0') << setw(2) << j << " " << fixed << time << endl;
+				file << std::setfill('0') << std::setw(2) << j << " " << std::fixed << time << std::endl;
 			}
-			file << "TIME " << timeSum << endl;
-			file << "FPS " << (float)benchmarkFrameCount / timeSum << endl;
+			file << "TIME " << timeSum << std::endl;
+			file << "FPS " << (float)benchmarkFrameCount / timeSum << std::endl;
 			file.close();
 			return false;
 		}

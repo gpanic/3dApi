@@ -1,4 +1,4 @@
-#include "SimpleDX.h"
+#include "SimpleUniformDX.h"
 
 ID3DBlob* vertexShaderBuffer;
 ID3DBlob* pixelShaderBuffer;
@@ -8,12 +8,12 @@ ID3D11Buffer* vertexBuffer;
 ID3D11InputLayout* inputLayout;
 float bg[4];
 
-SimpleDX::SimpleDX(HINSTANCE hInstance) : DXApp(hInstance)
+SimpleUniformDX::SimpleUniformDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
 	mAppTitle = "DirectX Simple";
 }
 
-SimpleDX::~SimpleDX()
+SimpleUniformDX::~SimpleUniformDX()
 {
 	vertexShaderBuffer->Release();
 	pixelShaderBuffer->Release();
@@ -23,7 +23,7 @@ SimpleDX::~SimpleDX()
 	inputLayout->Release();
 }
 
-bool SimpleDX::InitScene()
+bool SimpleUniformDX::InitScene()
 {
 	D3D11_INPUT_ELEMENT_DESC vertexLayout[] =
 	{
@@ -36,8 +36,8 @@ bool SimpleDX::InitScene()
 	bg[2] = bgColor.b;
 	bg[3] = bgColor.a;
 
-	D3DReadFileToBlob(L"SimpleVert.cso", &vertexShaderBuffer);
-	D3DReadFileToBlob(L"SimpleFrag.cso", &pixelShaderBuffer);
+	D3DReadFileToBlob(L"SimpleUniformVert.cso", &vertexShaderBuffer);
+	D3DReadFileToBlob(L"SimpleUniformFrag.cso", &pixelShaderBuffer);
 
 	mDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
 	mDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
@@ -55,7 +55,24 @@ bool SimpleDX::InitScene()
 	mDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &vertexBuffer);
 	mDevice->CreateInputLayout(vertexLayout, 2, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &inputLayout);
 
-	float colorsBlock[8] = { 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0, 1.0f };
+	float overrideColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+	D3D11_BUFFER_DESC overrideColorDesc;
+	ZeroMemory(&overrideColorDesc, sizeof(overrideColorDesc));
+	overrideColorDesc.ByteWidth = sizeof(overrideColor);
+	overrideColorDesc.Usage = D3D11_USAGE_DYNAMIC;
+	overrideColorDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	overrideColorDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	D3D11_SUBRESOURCE_DATA overrideColorData;
+	ZeroMemory(&overrideColorData, sizeof(overrideColorData));
+	overrideColorData.pSysMem = &overrideColor;
+
+	ID3D11Buffer* overrideColorBuffer;
+	mDevice->CreateBuffer(&overrideColorDesc, &overrideColorData, &overrideColorBuffer);
+	mDeviceContext->PSSetConstantBuffers(0, 1, &overrideColorBuffer);
+	
+	float colorsBlock[8] = { 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0, 1.0f };
 
 	D3D11_BUFFER_DESC colorsBlockDesc;
 	ZeroMemory(&colorsBlockDesc, sizeof(colorsBlockDesc));
@@ -70,16 +87,16 @@ bool SimpleDX::InitScene()
 
 	ID3D11Buffer* colorsBlockBuffer;
 	mDevice->CreateBuffer(&colorsBlockDesc, &colorsBlockData, &colorsBlockBuffer);
-	mDeviceContext->PSSetConstantBuffers(0, 1, &colorsBlockBuffer);
+	mDeviceContext->PSSetConstantBuffers(1, 1, &colorsBlockBuffer);
 
 	return true;
 }
 
-void SimpleDX::Update()
+void SimpleUniformDX::Update()
 {
 }
 
-void SimpleDX::Render()
+void SimpleUniformDX::Render()
 {
 	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
 

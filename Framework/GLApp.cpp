@@ -61,7 +61,7 @@ bool GLApp::InitAPI()
 
 void GLApp::UpdateWindowTitle()
 {
-	stringstream ss;
+	std::stringstream ss;
 	ss << mAppTitle << " | FPS " << mFPS;
 	SetWindowText(mWindow, ss.str().c_str());
 }
@@ -71,7 +71,7 @@ void GLApp::SwapBuffer()
 	SwapBuffers(mDeviceContext);
 }
 
-bool GLApp::WGLExtSupported(string extName)
+bool GLApp::WGLExtSupported(std::string extName)
 {
 	PFNWGLGETEXTENSIONSSTRINGEXTPROC _wglGetExtensionsStringEXT = NULL;
 	_wglGetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC)wglGetProcAddress("wglGetExtensionsStringEXT");

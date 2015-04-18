@@ -117,7 +117,7 @@ bool DXApp::InitAPI()
 
 void DXApp::UpdateWindowTitle()
 {
-	stringstream ss;
+	std::stringstream ss;
 	ss << mAppTitle << " | FPS " << mFPS;
 	SetWindowText(mWindow, ss.str().c_str());
 }

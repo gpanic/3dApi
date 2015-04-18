@@ -31,7 +31,7 @@ private:
 	void UpdateWindowTitle() override;
 	void SwapBuffer() override;
 	
-	bool WGLExtSupported(string extName);
+	bool WGLExtSupported(std::string extName);
 	void SetVsync();
 };
 

@@ -9,52 +9,52 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{8af554af-3423-4079-a524-6664b2f446a1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{dc1c6226-cdb2-496b-a154-c42b4e296dc5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleGL.cpp">
+    <ClCompile Include="SimpleUniformGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleDX.cpp">
+    <ClCompile Include="SimpleUniformDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SimpleGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleDX.h">
+    <ClInclude Include="SimpleUniformGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleUniformDX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SimpleFrag.glsl">
+    <None Include="SimpleUniformFrag.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="SimpleVert.glsl">
+    <None Include="SimpleUniformVert.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="SimpleFrag.hlsl">
+    <FxCompile Include="SimpleUniformFrag.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="SimpleVert.hlsl">
+    <FxCompile Include="SimpleUniformInclude.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="SimpleInclude.fx">
+    <FxCompile Include="SimpleUniformVert.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

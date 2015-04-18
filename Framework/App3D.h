@@ -6,7 +6,6 @@
 #include <vector>
 #include <iomanip>
 #include "Util.h"
-using namespace std;
 
 class App3D
 {
@@ -24,13 +23,13 @@ public:
 protected:
 	double			mDeltaTime = 0;
 	float			mFPS = 0;
-	string			mBenchmarkResultName;
+	std::string			mBenchmarkResultName;
 	HWND			mWindow;
 	HINSTANCE		mInstance;
 	unsigned int	mHeight;
 	unsigned int	mWidth;
-	string			mAppTitle;
-	string			mWindowClass;
+	std::string			mAppTitle;
+	std::string			mWindowClass;
 	unsigned long	mWindowStyle;
 
 	virtual bool InitAPI() = 0;
@@ -46,7 +45,7 @@ private:
 	__int64			mFrequency = 0;
 	float			mElapsedTime = 0;
 	unsigned int	mDeltaFrameCount = 0;
-	vector<float>	mFrameTimes;
+	std::vector<float>	mFrameTimes;
 	unsigned int	mFrameCount = 0;
 
 	bool InitWindow();

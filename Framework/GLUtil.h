@@ -8,10 +8,9 @@
 #include <glext.h>
 #include <wglext.h>
 #include "Util.h"
-using namespace std;
 
 struct GLUtil
 {
-	static GLuint CreateShader(GLenum type, const string &path);
-	static GLuint CreateProgram(const vector<GLuint> &shaders);
+	static GLuint CreateShader(GLenum type, const std::string &path);
+	static GLuint CreateProgram(const std::vector<GLuint> &shaders);
 };

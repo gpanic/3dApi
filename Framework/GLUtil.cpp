@@ -1,8 +1,8 @@
 #include "GLUtil.h"
 
-GLuint GLUtil::CreateShader(GLenum type, const string &path)
+GLuint GLUtil::CreateShader(GLenum type, const std::string &path)
 {
-	string shaderStr = Util::ReadFile(path);
+	std::string shaderStr = Util::ReadFile(path);
 	const char* shaderChar = shaderStr.c_str();
 	GLuint shader = glCreateShader(type);
 	glShaderSource(shader, 1, &shaderChar, NULL);
@@ -10,7 +10,7 @@ GLuint GLUtil::CreateShader(GLenum type, const string &path)
 	return shader;
 }
 
-GLuint GLUtil::CreateProgram(const vector<GLuint> &shaders)
+GLuint GLUtil::CreateProgram(const std::vector<GLuint> &shaders)
 {
 	GLuint program = glCreateProgram();
 

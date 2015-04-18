@@ -20,13 +20,16 @@ bool SimpleGL::InitScene()
 {
 	glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 
-	vector<GLuint> shaders;
+	std::vector<GLuint> shaders;
 	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "SimpleVert.glsl"));
 	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "SimpleFrag.glsl"));
 	shaderProgram = GLUtil::CreateProgram(shaders);
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
+	glUseProgram(shaderProgram);
 
 	glCreateVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
 	glCreateBuffers(1, &vbo);
 	glNamedBufferData(vbo, sizeof(Data::vertices), Data::vertices, GL_STATIC_DRAW);
 
@@ -50,7 +53,5 @@ void SimpleGL::Update()
 void SimpleGL::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glBindVertexArray(vao);
-	glUseProgram(shaderProgram);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
