@@ -12,6 +12,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Simple", "Simple\Simple.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleUniform", "SimpleUniform\SimpleUniform.vcxproj", "{5A368391-77D1-4709-8F5A-1606E4DB7292}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleIndexedDrawing", "SimpleIndexedDrawing\SimpleIndexedDrawing.vcxproj", "{68EF0201-1BB8-4AAE-9418-08E74732A0C3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleInstancing", "SimpleInstancing\SimpleInstancing.vcxproj", "{2A352296-334F-4A99-B58A-1A01722CC635}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -30,6 +34,14 @@ Global
 		{5A368391-77D1-4709-8F5A-1606E4DB7292}.Debug|Win32.Build.0 = Debug|Win32
 		{5A368391-77D1-4709-8F5A-1606E4DB7292}.Release|Win32.ActiveCfg = Release|Win32
 		{5A368391-77D1-4709-8F5A-1606E4DB7292}.Release|Win32.Build.0 = Release|Win32
+		{68EF0201-1BB8-4AAE-9418-08E74732A0C3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{68EF0201-1BB8-4AAE-9418-08E74732A0C3}.Debug|Win32.Build.0 = Debug|Win32
+		{68EF0201-1BB8-4AAE-9418-08E74732A0C3}.Release|Win32.ActiveCfg = Release|Win32
+		{68EF0201-1BB8-4AAE-9418-08E74732A0C3}.Release|Win32.Build.0 = Release|Win32
+		{2A352296-334F-4A99-B58A-1A01722CC635}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2A352296-334F-4A99-B58A-1A01722CC635}.Debug|Win32.Build.0 = Debug|Win32
+		{2A352296-334F-4A99-B58A-1A01722CC635}.Release|Win32.ActiveCfg = Release|Win32
+		{2A352296-334F-4A99-B58A-1A01722CC635}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,11 +15,18 @@ struct Vertex
 
 namespace Data
 {
-	const unsigned int vertexCount = 3;
+	const unsigned int vertexCount = 4;
 	const Vertex vertices[] =
 	{
 		Vertex(-0.75f, -0.75f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f),
-		Vertex(0.0f, 0.75f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f),
-		Vertex(0.75f, -0.75f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f)
+		Vertex(-0.75f, 0.75f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f),
+		Vertex(0.75f, 0.75f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f),
+		Vertex(0.75f, -0.75f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f)
+	};
+	const unsigned int indexCount = 6;
+	const unsigned short indices[] =
+	{
+		0, 1, 2,
+		0, 2, 3
 	};
 };

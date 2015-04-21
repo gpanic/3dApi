@@ -70,5 +70,5 @@ void SimpleUniformGL::Update()
 void SimpleUniformGL::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, Data::vertexCount);
 }

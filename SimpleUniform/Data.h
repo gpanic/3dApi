@@ -15,6 +15,7 @@ struct Vertex
 
 namespace Data
 {
+	const unsigned int vertexCount = 3;
 	const Vertex vertices[] =
 	{
 		Vertex(-0.75f, -0.75f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f),

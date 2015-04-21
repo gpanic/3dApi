@@ -55,23 +55,6 @@ bool SimpleDX::InitScene()
 	mDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &vertexBuffer);
 	mDevice->CreateInputLayout(vertexLayout, 2, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &inputLayout);
 
-	float colorsBlock[8] = { 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0, 1.0f };
-
-	D3D11_BUFFER_DESC colorsBlockDesc;
-	ZeroMemory(&colorsBlockDesc, sizeof(colorsBlockDesc));
-	colorsBlockDesc.ByteWidth = sizeof(colorsBlock);
-	colorsBlockDesc.Usage = D3D11_USAGE_DYNAMIC;
-	colorsBlockDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	colorsBlockDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	D3D11_SUBRESOURCE_DATA colorsBlockData;
-	ZeroMemory(&colorsBlockData, sizeof(colorsBlockData));
-	colorsBlockData.pSysMem = &colorsBlock;
-
-	ID3D11Buffer* colorsBlockBuffer;
-	mDevice->CreateBuffer(&colorsBlockDesc, &colorsBlockData, &colorsBlockBuffer);
-	mDeviceContext->PSSetConstantBuffers(0, 1, &colorsBlockBuffer);
-
 	return true;
 }
 
@@ -92,5 +75,5 @@ void SimpleDX::Render()
 	mDeviceContext->VSSetShader(vertexShader, 0, 0);
 	mDeviceContext->PSSetShader(pixelShader, 0, 0);
 
-	mDeviceContext->Draw(3, 0);
+	mDeviceContext->Draw(Data::vertexCount, 0);
 }

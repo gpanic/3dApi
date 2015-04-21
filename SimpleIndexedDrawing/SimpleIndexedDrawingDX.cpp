@@ -1,29 +1,31 @@
-#include "SimpleUniformDX.h"
+#include "SimpleIndexedDrawingDX.h"
 
 ID3DBlob* vertexShaderBuffer;
 ID3DBlob* pixelShaderBuffer;
 ID3D11VertexShader* vertexShader;
 ID3D11PixelShader* pixelShader;
 ID3D11Buffer* vertexBuffer;
+ID3D11Buffer* indexBuffer;
 ID3D11InputLayout* inputLayout;
 float bg[4];
 
-SimpleUniformDX::SimpleUniformDX(HINSTANCE hInstance) : DXApp(hInstance)
+SimpleIndexedDrawingDX::SimpleIndexedDrawingDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
-	mAppTitle = "DirectX Simple Uniform";
+	mAppTitle = "DirectX Simple Indexed Drawing";
 }
 
-SimpleUniformDX::~SimpleUniformDX()
+SimpleIndexedDrawingDX::~SimpleIndexedDrawingDX()
 {
 	vertexShaderBuffer->Release();
 	pixelShaderBuffer->Release();
 	vertexShader->Release();
 	pixelShader->Release();
 	vertexBuffer->Release();
+	indexBuffer->Release();
 	inputLayout->Release();
 }
 
-bool SimpleUniformDX::InitScene()
+bool SimpleIndexedDrawingDX::InitScene()
 {
 	D3D11_INPUT_ELEMENT_DESC vertexLayout[] =
 	{
@@ -36,8 +38,8 @@ bool SimpleUniformDX::InitScene()
 	bg[2] = bgColor.b;
 	bg[3] = bgColor.a;
 
-	D3DReadFileToBlob(L"SimpleUniformVert.cso", &vertexShaderBuffer);
-	D3DReadFileToBlob(L"SimpleUniformFrag.cso", &pixelShaderBuffer);
+	D3DReadFileToBlob(L"SimpleIndexedDrawingVert.cso", &vertexShaderBuffer);
+	D3DReadFileToBlob(L"SimpleIndexedDrawingFrag.cso", &pixelShaderBuffer);
 
 	mDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
 	mDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
@@ -55,59 +57,38 @@ bool SimpleUniformDX::InitScene()
 	mDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &vertexBuffer);
 	mDevice->CreateInputLayout(vertexLayout, 2, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &inputLayout);
 
-	float overrideColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
+	D3D11_BUFFER_DESC indexBufferDesc;
+	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
+	indexBufferDesc.ByteWidth = sizeof(Data::indices);
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-	D3D11_BUFFER_DESC overrideColorDesc;
-	ZeroMemory(&overrideColorDesc, sizeof(overrideColorDesc));
-	overrideColorDesc.ByteWidth = sizeof(overrideColor);
-	overrideColorDesc.Usage = D3D11_USAGE_DYNAMIC;
-	overrideColorDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	overrideColorDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	D3D11_SUBRESOURCE_DATA indexBufferData;
+	ZeroMemory(&indexBufferData, sizeof(indexBufferData));
+	indexBufferData.pSysMem = Data::indices;
 
-	D3D11_SUBRESOURCE_DATA overrideColorData;
-	ZeroMemory(&overrideColorData, sizeof(overrideColorData));
-	overrideColorData.pSysMem = &overrideColor;
-
-	ID3D11Buffer* overrideColorBuffer;
-	mDevice->CreateBuffer(&overrideColorDesc, &overrideColorData, &overrideColorBuffer);
-	mDeviceContext->PSSetConstantBuffers(0, 1, &overrideColorBuffer);
-	
-	float colorsBlock[8] = { 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0, 1.0f };
-
-	D3D11_BUFFER_DESC colorsBlockDesc;
-	ZeroMemory(&colorsBlockDesc, sizeof(colorsBlockDesc));
-	colorsBlockDesc.ByteWidth = sizeof(colorsBlock);
-	colorsBlockDesc.Usage = D3D11_USAGE_DYNAMIC;
-	colorsBlockDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	colorsBlockDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	D3D11_SUBRESOURCE_DATA colorsBlockData;
-	ZeroMemory(&colorsBlockData, sizeof(colorsBlockData));
-	colorsBlockData.pSysMem = &colorsBlock;
-
-	ID3D11Buffer* colorsBlockBuffer;
-	mDevice->CreateBuffer(&colorsBlockDesc, &colorsBlockData, &colorsBlockBuffer);
-	mDeviceContext->PSSetConstantBuffers(1, 1, &colorsBlockBuffer);
+	mDevice->CreateBuffer(&indexBufferDesc, &indexBufferData, &indexBuffer);
 
 	return true;
 }
 
-void SimpleUniformDX::Update()
+void SimpleIndexedDrawingDX::Update()
 {
 }
 
-void SimpleUniformDX::Render()
+void SimpleIndexedDrawingDX::Render()
 {
 	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
 
 	UINT stride = 8 * sizeof(float);
 	UINT offset = 0;
 	mDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	mDeviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 	mDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	mDeviceContext->IASetInputLayout(inputLayout);
 
 	mDeviceContext->VSSetShader(vertexShader, 0, 0);
 	mDeviceContext->PSSetShader(pixelShader, 0, 0);
 
-	mDeviceContext->Draw(Data::vertexCount, 0);
+	mDeviceContext->DrawIndexed(Data::indexCount, 0, 0);
 }

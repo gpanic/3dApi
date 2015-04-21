@@ -1,29 +1,30 @@
-#include "SimpleGL.h"
+#include "SimpleIndexedDrawingGL.h"
 
 GLuint shaderProgram;
 GLuint vao;
 GLuint vbo;
+GLuint ibo;
 
-SimpleGL::SimpleGL(HINSTANCE hInstance) : GLApp(hInstance)
+SimpleIndexedDrawingGL::SimpleIndexedDrawingGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
-	mAppTitle = "OpenGL Simple";
+	mAppTitle = "OpenGL Simple Indexed Drawing";
 }
 
-SimpleGL::~SimpleGL()
+SimpleIndexedDrawingGL::~SimpleIndexedDrawingGL()
 {
 	glDeleteProgram(shaderProgram);
 	glDeleteBuffers(1, &vbo);
 	glDeleteVertexArrays(1, &vao);
 }
 
-bool SimpleGL::InitScene()
+bool SimpleIndexedDrawingGL::InitScene()
 {
 	glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	std::vector<GLuint> shaders;
-	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "SimpleVert.glsl"));
-	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "SimpleFrag.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "SimpleIndexedDrawingVert.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "SimpleIndexedDrawingFrag.glsl"));
 	shaderProgram = GLUtil::CreateProgram(shaders);
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 
@@ -41,6 +42,9 @@ bool SimpleGL::InitScene()
 	glVertexArrayAttribFormat(vao, 0, 4, GL_FLOAT, GL_FALSE, 0);
 	glVertexArrayAttribFormat(vao, 1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex().position));
 
+	glCreateBuffers(1, &ibo);
+	glNamedBufferData(ibo, sizeof(Data::indices), Data::indices, GL_STATIC_DRAW);
+
 	//glGenVertexArrays(1, &vao);
 	//glBindVertexArray(vao);
 
@@ -55,22 +59,29 @@ bool SimpleGL::InitScene()
 	//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(Vertex().position)));
 
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	//glGenBuffers(1, &ibo);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Data::indices), Data::indices, GL_STATIC_DRAW);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 	//glBindVertexArray(0);
 
 	return true;
 }
 
 
-void SimpleGL::Update()
+void SimpleIndexedDrawingGL::Update()
 {
 }
 
-void SimpleGL::Render()
+void SimpleIndexedDrawingGL::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glBindVertexArray(vao);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glUseProgram(shaderProgram);
 
-	glDrawArrays(GL_TRIANGLES, 0, Data::vertexCount);
+	glDrawElements(GL_TRIANGLES, Data::indexCount, GL_UNSIGNED_SHORT, 0);
 }
