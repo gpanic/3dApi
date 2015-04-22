@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <fstream>
+#include <iostream>
 
 struct Util
 {
@@ -11,6 +12,8 @@ struct Util
 		file.close();
 		return fileStr;
 	}
+
+	//static int LoadDDS(const std::string &path);
 };
 
 struct Color

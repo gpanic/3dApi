@@ -12,7 +12,7 @@ float bg[4];
 
 SimpleInstancingDX::SimpleInstancingDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
-	mAppTitle = "DirectX Simple";
+	mAppTitle = "DirectX Simple Instancing";
 }
 
 SimpleInstancingDX::~SimpleInstancingDX()

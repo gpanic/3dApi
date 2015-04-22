@@ -8,7 +8,7 @@ GLuint ibo;
 
 SimpleInstancingGL::SimpleInstancingGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
-	mAppTitle = "OpenGL Simple";
+	mAppTitle = "OpenGL Simple Instancing";
 }
 
 SimpleInstancingGL::~SimpleInstancingGL()
