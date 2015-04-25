@@ -51,6 +51,8 @@ bool SimpleTexturingGL::InitScene()
 
 	sampler = glGetUniformLocation(shaderProgram, "textureSampler");
 
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	//glGenVertexArrays(1, &vao);
 	//glBindVertexArray(vao);
 
@@ -85,7 +87,7 @@ void SimpleTexturingGL::Render()
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glUniform1i(sampler, 0);
+	//glUniform1i(sampler, 0);
 
 	glDrawElements(GL_TRIANGLES, Data::indexCount, GL_UNSIGNED_SHORT, 0);
 }

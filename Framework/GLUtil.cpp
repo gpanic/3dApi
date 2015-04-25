@@ -90,10 +90,11 @@ GLuint GLUtil::LoadDDS(const std::string &imagepath)
 
 	// Create one OpenGL texture
 	GLuint textureID;
-	glGenTextures(1, &textureID);
+	glCreateTextures(GL_TEXTURE_2D, 1, &textureID);
+	glTextureStorage2D(textureID, mipMapCount, format, width, height);
 
 	// "Bind" the newly created texture : all future texture functions will modify this texture
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	//glBindTexture(GL_TEXTURE_2D, textureID);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	unsigned int blockSize = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
@@ -103,8 +104,9 @@ GLuint GLUtil::LoadDDS(const std::string &imagepath)
 	for (unsigned int level = 0; level < mipMapCount && (width || height); ++level)
 	{
 		unsigned int size = ((width + 3) / 4)*((height + 3) / 4)*blockSize;
-		glCompressedTexImage2D(GL_TEXTURE_2D, level, format, width, height,
-			0, size, buffer + offset);
+		//glCompressedTexImage2D(GL_TEXTURE_2D, level, format, width, height,
+		//	0, size, buffer + offset);
+		glCompressedTextureSubImage2D(textureID, level, 0, 0, width, height, format, size, buffer + offset);
 
 		offset += size;
 		width /= 2;

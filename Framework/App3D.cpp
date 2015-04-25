@@ -24,10 +24,10 @@ App3D::App3D(HINSTANCE hInstance)
 	mAppTitle = "3D App";
 	mWindowClass = "3DAPPWNDCLASS";
 	mWindowStyle = WS_OVERLAPPEDWINDOW;
-	mBenchmarkResultName = mAppTitle + "Result.txt";
+	mBenchmarkResultName = mAppTitle + " Result.txt";
 
 	benchmarking = true;
-	benchmarkFrameCount = 20000;
+	benchmarkFrameCount = 10000;
 }
 
 App3D::~App3D()
@@ -114,8 +114,6 @@ bool App3D::InitWindow()
 
 	return true;
 }
-
-
 
 int App3D::MsgLoop()
 {

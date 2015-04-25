@@ -8,7 +8,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SimpleTexturingDX dxApp(hInstance);
 	dxApp.benchmarking = BENCH;
 	dxApp.Run();
-	SimpleTexturingGL glApp(hInstance);
-	glApp.benchmarking = BENCH;
-	glApp.Run();
+	//SimpleTexturingGL glApp(hInstance);
+	//glApp.benchmarking = BENCH;
+	//glApp.Run();
 }

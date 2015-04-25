@@ -7,6 +7,7 @@ GLuint vbo;
 SimpleGL::SimpleGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
 	mAppTitle = "OpenGL Simple";
+	mBenchmarkResultName = mAppTitle + " Result.txt";
 }
 
 SimpleGL::~SimpleGL()

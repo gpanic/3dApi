@@ -73,6 +73,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -88,6 +89,7 @@
   <ItemGroup>
     <ClInclude Include="App3D.h" />
     <ClInclude Include="DXApp.h" />
+    <ClInclude Include="DXUtil.h" />
     <ClInclude Include="GLApp.h" />
     <ClInclude Include="GLUtil.h" />
     <ClInclude Include="Util.h" />
@@ -95,6 +97,7 @@
   <ItemGroup>
     <ClCompile Include="App3D.cpp" />
     <ClCompile Include="DXApp.cpp" />
+    <ClCompile Include="DXUtil.cpp" />
     <ClCompile Include="GLApp.cpp" />
     <ClCompile Include="GLUtil.cpp" />
     <ClCompile Include="Util.cpp" />

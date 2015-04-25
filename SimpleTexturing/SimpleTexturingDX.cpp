@@ -72,7 +72,10 @@ bool SimpleTexturingDX::InitScene()
 
 	mDevice->CreateInputLayout(vertexLayout, 2, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &inputLayout);
 
-	DirectX::CreateDDSTextureFromFile(mDevice, mDeviceContext, L"uv_grid.dds", nullptr, &textureResource);
+	DXUtil::LoadDDS(mDevice, "uv_grid.dds", &textureResource);
+
+
+	//DirectX::CreateDDSTextureFromFile(mDevice, mDeviceContext, L"uv_grid.dds", nullptr, &textureResource);
 
 	D3D11_SAMPLER_DESC samplerDesc;
 	ZeroMemory(&samplerDesc, sizeof(samplerDesc));

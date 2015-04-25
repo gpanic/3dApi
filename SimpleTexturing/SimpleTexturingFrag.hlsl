@@ -1,7 +1,7 @@
 #include "SimpleTexturingInclude.fx"
 
-Texture2D tex;
-SamplerState ss;
+Texture2D tex : register(t0);
+SamplerState ss : register(s0);
 
 float4 pixelShader(VertexOutput input) : SV_TARGET
 {

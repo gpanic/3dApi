@@ -11,6 +11,7 @@ float bg[4];
 SimpleDX::SimpleDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
 	mAppTitle = "DirectX Simple";
+	mBenchmarkResultName = mAppTitle + " Result.txt";
 }
 
 SimpleDX::~SimpleDX()

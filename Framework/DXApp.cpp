@@ -9,6 +9,8 @@ DXApp::DXApp(HINSTANCE hInstance) : App3D(hInstance)
 	mDeviceContext = nullptr;
 	mSwapChain = nullptr;
 	mRenderTargetView = nullptr;
+
+	debug = false;
 }
 
 DXApp::~DXApp()
@@ -21,6 +23,7 @@ DXApp::~DXApp()
 
 bool DXApp::InitAPI()
 {
+	UINT createFlags = (debug) ? D3D11_CREATE_DEVICE_DEBUG : 0;
 	D3D_DRIVER_TYPE driverTypes[] =
 	{
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -45,12 +48,12 @@ bool DXApp::InitAPI()
 	HRESULT result;
 	for (unsigned int i = 0; i < numDriverTypes; ++i)
 	{
-		result = D3D11CreateDevice(NULL, driverTypes[i], NULL, NULL, featureLevels, numFeatureLevels,
+		result = D3D11CreateDevice(NULL, driverTypes[i], NULL, createFlags, featureLevels, numFeatureLevels,
 			D3D11_SDK_VERSION, &mDeviceOld, &mFeatureLevel, &mDeviceContextOld);
 
 		if (result == E_INVALIDARG)
 		{
-			result = D3D11CreateDevice(NULL, driverTypes[i], NULL, NULL, &featureLevels[1], numFeatureLevels - 1,
+			result = D3D11CreateDevice(NULL, driverTypes[i], NULL, createFlags, &featureLevels[1], numFeatureLevels - 1,
 				D3D11_SDK_VERSION, &mDeviceOld, &mFeatureLevel, &mDeviceContextOld);
 		}
 

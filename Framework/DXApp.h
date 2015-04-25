@@ -1,5 +1,6 @@
 #pragma once
 #include "App3D.h"
+#include "DXUtil.h"
 #include <d3d11_2.h>
 #include <d3dcompiler.h>
 
@@ -8,6 +9,8 @@ class DXApp : public App3D
 public:
 	DXApp(HINSTANCE hInstance);
 	virtual ~DXApp();
+
+	bool debug;
 
 protected:
 	
@@ -18,7 +21,6 @@ protected:
 	D3D_DRIVER_TYPE				mDriverType;
 	D3D_FEATURE_LEVEL			mFeatureLevel;
 	D3D11_VIEWPORT				mViewport;
-
 
 	virtual bool InitScene() = 0;
 	virtual void Update() = 0;

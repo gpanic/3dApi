@@ -13,5 +13,5 @@ struct GLUtil
 {
 	static GLuint CreateShader(GLenum type, const std::string &path);
 	static GLuint CreateProgram(const std::vector<GLuint> &shaders);
-	static GLuint LoadDDS(const std::string &iamagepath);
+	static GLuint LoadDDS(const std::string &imagepath);
 };

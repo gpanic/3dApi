@@ -4,7 +4,7 @@ smooth in vec2 uv;
 
 out vec4 outputColor;
 
-uniform sampler2D textureSampler;
+layout (binding = 0) uniform sampler2D textureSampler;
 
 void main()
 {
