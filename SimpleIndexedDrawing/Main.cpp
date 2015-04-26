@@ -10,7 +10,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SimpleIndexedDrawingDX dxApp(hInstance);
 	dxApp.benchmarking = BENCH;
 	dxApp.Run();
-	//SimpleIndexedDrawingGL glApp(hInstance);
-	//glApp.benchmarking = BENCH;
-	//glApp.Run();
+	SimpleIndexedDrawingGL glApp(hInstance);
+	glApp.benchmarking = BENCH;
+	glApp.Run();
 }

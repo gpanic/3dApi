@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Structs">
+      <UniqueIdentifier>{670c60b3-b1f9-4d31-a5d8-ef3558a73e43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App3D.h">
@@ -33,6 +36,15 @@
     <ClInclude Include="DXUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ObjReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Face.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App3D.cpp">
@@ -52,6 +64,15 @@
     </ClCompile>
     <ClCompile Include="DXUtil.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Structs</Filter>
+    </ClCompile>
+    <ClCompile Include="Face.cpp">
+      <Filter>Structs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
