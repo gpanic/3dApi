@@ -1,9 +1,13 @@
 #include "Vertex.h"
 
-Vertex::Vertex(float x, float y, float z) : x(x), y(y), z(z), w(1) {};
-Vertex::Vertex(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {};
+Vector3::Vector3() : x(0), y(0), z(0) {};
+Vector3::Vector3(float x, float y, float z) : x(x), y(y), z(z) {};
+
+Vertex::Vertex() : position(Vector3()), normal(Vector3()) {};
+Vertex::Vertex(Vector3 position, Vector3 normal) : position(position), normal(normal) {};
+
 
 std::ostream& operator<<(std::ostream &stream, const Vertex &vert)
 {
-	return stream << vert.x << " " << vert.y << " " << vert.z << " " << vert.w;
+	return stream << vert.position.x << " " << vert.position.y << " " << vert.position.z << " ";
 }

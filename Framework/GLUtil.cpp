@@ -7,6 +7,29 @@ GLuint GLUtil::CreateShader(GLenum type, const std::string &path)
 	GLuint shader = glCreateShader(type);
 	glShaderSource(shader, 1, &shaderChar, NULL);
 	glCompileShader(shader);
+
+	GLint status;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		GLint infoLogLength;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+		std::string infoLog(infoLogLength, ' ');
+		glGetShaderInfoLog(shader, infoLogLength, NULL, &infoLog[0]);
+
+		std::string shaderType;
+		switch (type)
+		{
+		case GL_VERTEX_SHADER: shaderType = "vertex"; break;
+		case GL_FRAGMENT_SHADER: shaderType = "fragment"; break;
+		}
+
+		infoLog.insert(0, "Compile error in " + shaderType + " shader: ");
+		infoLog.append("\n");
+		OutputDebugString(infoLog.c_str());
+	}
+
 	return shader;
 }
 
@@ -18,6 +41,21 @@ GLuint GLUtil::CreateProgram(const std::vector<GLuint> &shaders)
 		glAttachShader(program, shader);
 
 	glLinkProgram(program);
+
+	GLint status;
+	glGetShaderiv(program, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		GLint infoLogLength;
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+		std::string infoLog(infoLogLength, ' ');
+		glGetProgramInfoLog(program, infoLogLength, NULL, &infoLog[0]);
+
+		infoLog.insert(0, "Liner error: ");
+		infoLog.append("\n");
+		OutputDebugString(infoLog.c_str());
+	}
 
 	for (GLuint shader : shaders)
 		glDetachShader(program, shader);

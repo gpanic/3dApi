@@ -1,17 +1,23 @@
 #pragma once
 #include <ostream>
 
-
-struct Vertex
+struct Vector3
 {
-public:
-	Vertex(float x, float y, float z);
-	Vertex(float x, float y, float z, float w);
+	Vector3();
+	Vector3(float x, float y, float z);
 
 	float x;
 	float y;
 	float z;
-	float w;
+};
+
+struct Vertex
+{
+	Vertex();
+	Vertex(Vector3 position, Vector3 normal);
+	
+	Vector3 position;
+	Vector3 normal;
 };
 
 std::ostream& operator<<(std::ostream &stream, const Vertex &vert);

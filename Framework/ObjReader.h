@@ -11,6 +11,9 @@
 class ObjReader
 {
 public:
-	static void Read(const std::string &path, std::vector<Vertex> &verts, std::vector<Face> &faces);
+	static void Read(const std::string &path, std::vector<Vertex> &verts);
+private:
+	static Vector3 ExtractVector3(std::stringstream &stream);
+	static Vertex ExtractVertex(std::stringstream &stream, std::vector<Vector3> &positions, std::vector<Vector3> &normals);
 };
 
