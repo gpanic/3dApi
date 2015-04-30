@@ -7,11 +7,18 @@ out vec3 normalViewSpace;
 out vec3 lightDirectionViewSpace;
 out vec3 viewDirectionViewSpace;
 
+uniform Light
+{
+	vec4 position;
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+}
+light;
+
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-
-uniform vec3 lightPositionViewSpace = vec3(100.0f, 100.0f, 100.0f);
 
 void main()
 {
@@ -19,17 +26,9 @@ void main()
 	gl_Position = projectionMatrix * positionViewSpace;
 
 	normalViewSpace = mat3(viewMatrix) * mat3(modelMatrix) * normal;
-	lightDirectionViewSpace = lightPositionViewSpace - vec3(positionViewSpace);
+
+	vec3 lightPosViewSpace = vec3(viewMatrix * light.position);
+	lightDirectionViewSpace = lightPosViewSpace - vec3(positionViewSpace);
+
 	viewDirectionViewSpace = -vec3(positionViewSpace);
-	
-	//vec3 reflectDirectionViewSpace = reflect(-lightDirectionViewSpace, normalViewSpace);
-
-	//float cosIncidence = dot(normalViewSpace, normalize(lightDirectionViewSpace));
-	//cosIncidence = clamp(cosIncidence, 0.0f, 1.0f);
-
-	//float phongTerm = dot(viewDirection, reflectDirectionViewSpace);
-	//phongTerm = clamp(phongTerm, 0.0f, 1.0f);
-	//phongTerm = pow(phongTerm, shininessFactor);
-
-	//vertexColor = (ambientMaterial * ambientLight) + (diffuseMaterial * diffuseLight * cosIncidence) + (specularMaterial * specularLight * phongTerm);
 }

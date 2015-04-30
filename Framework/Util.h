@@ -3,17 +3,15 @@
 #include <fstream>
 #include <iostream>
 
-struct Util
+namespace Util
 {
-	inline static std::string ReadFile(const std::string &path)
+	inline std::string ReadFile(const std::string &path)
 	{
 		std::ifstream file(path);
 		std::string fileStr((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 		file.close();
 		return fileStr;
 	}
-
-	//static int LoadDDS(const std::string &path);
 };
 
 struct Color

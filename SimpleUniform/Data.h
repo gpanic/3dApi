@@ -1,10 +1,10 @@
 #pragma once
 #include <array>
 
-struct Vertex
+struct Vertex2
 {
-	Vertex() {}
-	Vertex(float x, float y, float z, float w,
+	Vertex2() {}
+	Vertex2(float x, float y, float z, float w,
 		float r, float g, float b, float a) :
 		position({ { x, y, z, w } }), color({ { r, g, b, a } })
 	{
@@ -16,10 +16,10 @@ struct Vertex
 namespace Data
 {
 	const unsigned int vertexCount = 3;
-	const Vertex vertices[] =
+	const Vertex2 vertices[] =
 	{
-		Vertex(-0.75f, -0.75f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f),
-		Vertex(0.0f, 0.75f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f),
-		Vertex(0.75f, -0.75f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f)
+		Vertex2(-0.75f, -0.75f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f),
+		Vertex2(0.0f, 0.75f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f),
+		Vertex2(0.75f, -0.75f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f)
 	};
 };

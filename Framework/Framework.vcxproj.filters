@@ -45,6 +45,18 @@
     <ClInclude Include="Face.h">
       <Filter>Structs</Filter>
     </ClInclude>
+    <ClInclude Include="BinaryIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App3D.cpp">
@@ -73,6 +85,18 @@
     </ClCompile>
     <ClCompile Include="Face.cpp">
       <Filter>Structs</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryIO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Structs</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector.cpp">
+      <Filter>Structs</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

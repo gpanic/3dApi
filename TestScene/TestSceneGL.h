@@ -4,6 +4,8 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
 #include "ObjReader.h"
+#include "Material.h"
+#include "Light.h"
 
 class TestSceneGL : public GLApp
 {

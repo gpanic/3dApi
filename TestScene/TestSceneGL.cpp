@@ -4,26 +4,24 @@ GLuint shaderProgram;
 
 GLint modelMatrixIndex;
 
-GLuint cubeVertexArray;
-GLuint cubeVertexBuffer;
-std::vector<Vertex> cubeVertices;
+GLUtil::Model cube;
 glm::mat4 cubeModelMatrix;
 
-GLuint sphereVertexArray;
-GLuint sphereVertexBuffer;
-std::vector<Vertex> sphereVertices;
+GLUtil::Model sphere;
 glm::mat4 sphereModelMatrix;
 
-GLuint sphereSmoothVertexArray;
-GLuint sphereSmoothVertexBuffer;
-std::vector<Vertex> sphereSmoothVertices;
+GLUtil::Model sphereSmooth;
 glm::mat4 sphereSmoothModelMatrix;
+
+GLUtil::Model monkey;
+glm::mat4 monkeyModelMatrix;
+
+GLUtil::Model plane;
+glm::mat4 planeModelMatrix;
 
 TestSceneGL::TestSceneGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
 	mAppTitle = "OpenGL Test Scene";
-
-	//bgColor = Color(0.0f, 0.2f, 0.4f, 1.0f);
 }
 
 TestSceneGL::~TestSceneGL()
@@ -42,69 +40,61 @@ bool TestSceneGL::InitScene()
 	shaderProgram = GLUtil::CreateProgram(shaders);
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 
+	// LOAD MODELS
+	cube = GLUtil::Model("cube.bin", true);
+	cubeModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, -2.0f));
 
-	// LOAD CUBE
-	ObjReader::Read("cube.obj", cubeVertices);
+	sphere = GLUtil::Model("sphere.bin", true);
+	sphereModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, -2.0f));
 
-	glCreateVertexArrays(1, &cubeVertexArray);
+	sphereSmooth = GLUtil::Model("sphere_smooth.bin", true);
+	sphereSmoothModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, 2.0f));
 
-	glCreateBuffers(1, &cubeVertexBuffer);
-	glNamedBufferData(cubeVertexBuffer, cubeVertices.size() * sizeof(Vertex), &cubeVertices[0], GL_STATIC_DRAW);
+	monkey = GLUtil::Model("monkey.bin", true);
+	monkeyModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, 2.0f));
 
-	glVertexArrayAttribBinding(cubeVertexArray, 0, 0);
-	glVertexArrayAttribBinding(cubeVertexArray, 1, 0);
-	glVertexArrayVertexBuffer(cubeVertexArray, 0, cubeVertexBuffer, 0, sizeof(Vertex));
+	plane = GLUtil::Model("plane.bin", true);
+	planeModelMatrix = glm::mat4(1.0f);
+	planeModelMatrix = glm::scale(planeModelMatrix, glm::vec3(5.0f, 5.0f, 5.0f));
+	planeModelMatrix = glm::translate(planeModelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
 
-	glEnableVertexArrayAttrib(cubeVertexArray, 0);
-	glEnableVertexArrayAttrib(cubeVertexArray, 1);
-	glVertexArrayAttribFormat(cubeVertexArray, 0, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(cubeVertexArray, 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3));
+	// UPLOAD MATERIAL
+	Material material;
+	material.ambient = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	material.diffuse = Vector4(0.6f, 0.6f, 0.6f, 1.0f);
+	material.specular = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	material.shininess = 128.0f;
 
-	cubeModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, -2.0f, -8.0f));
+	GLuint materialBuffer;
+	glCreateBuffers(1, &materialBuffer);
+	glNamedBufferData(materialBuffer, sizeof(Material), &material, GL_STATIC_DRAW);
 
-	// LOAD SPHERE
-	ObjReader::Read("sphere.obj", sphereVertices);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 1, materialBuffer);
 
-	glCreateVertexArrays(1, &sphereVertexArray);
+	GLuint materialBlockIndex = glGetUniformBlockIndex(shaderProgram, "Material");
+	glUniformBlockBinding(shaderProgram, materialBlockIndex, 1);
 
-	glCreateBuffers(1, &sphereVertexBuffer);
-	glNamedBufferData(sphereVertexBuffer, sphereVertices.size() * sizeof(Vertex), &sphereVertices[0], GL_STATIC_DRAW);
+	// UPLOAD LIGHT
+	Light light;
+	light.position = Vector4(5.0f, 10.0f, 5.0f, 1.0f);
+	light.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
+	light.diffuse = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	light.specular = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	glVertexArrayAttribBinding(sphereVertexArray, 0, 0);
-	glVertexArrayAttribBinding(sphereVertexArray, 1, 0);
-	glVertexArrayVertexBuffer(sphereVertexArray, 0, sphereVertexBuffer, 0, sizeof(Vertex));
+	GLuint lightBuffer;
+	glCreateBuffers(1, &lightBuffer);
+	glNamedBufferData(lightBuffer, sizeof(Light), &light, GL_STATIC_DRAW);
 
-	glEnableVertexArrayAttrib(sphereVertexArray, 0);
-	glEnableVertexArrayAttrib(sphereVertexArray, 1);
-	glVertexArrayAttribFormat(sphereVertexArray, 0, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(sphereVertexArray, 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3));
+	glBindBufferBase(GL_UNIFORM_BUFFER, 2, lightBuffer);
 
-	sphereModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(glm::vec3(-2.0f, -2.0f, -8.0f)));
+	GLuint lightBlockIndex = glGetUniformBlockIndex(shaderProgram, "Light");
+	glUniformBlockBinding(shaderProgram, lightBlockIndex, 2);
 
-	// LOAD SMOOTH SPHERE
-	ObjReader::Read("sphere_smooth.obj", sphereSmoothVertices);
-
-	glCreateVertexArrays(1, &sphereSmoothVertexArray);
-
-	glCreateBuffers(1, &sphereSmoothVertexBuffer);
-	glNamedBufferData(sphereSmoothVertexBuffer, sphereSmoothVertices.size() * sizeof(Vertex), &sphereSmoothVertices[0], GL_STATIC_DRAW);
-
-	glVertexArrayAttribBinding(sphereSmoothVertexArray, 0, 0);
-	glVertexArrayAttribBinding(sphereSmoothVertexArray, 1, 0);
-	glVertexArrayVertexBuffer(sphereSmoothVertexArray, 0, sphereSmoothVertexBuffer, 0, sizeof(Vertex));
-
-	glEnableVertexArrayAttrib(sphereSmoothVertexArray, 0);
-	glEnableVertexArrayAttrib(sphereSmoothVertexArray, 1);
-	glVertexArrayAttribFormat(sphereSmoothVertexArray, 0, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(sphereSmoothVertexArray, 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3));
-
-	sphereSmoothModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(glm::vec3(-2.0f, 2.0f, -8.0f)));
-
-	
+	// UPLOAD MVP MATRICES
 	modelMatrixIndex = glGetUniformLocation(shaderProgram, "modelMatrix");
 
-	glm::vec3 eye(0.0f, 0.0f, 0.0f);
-	glm::vec3 center(0.0f, 0.0f, -8.0f);
+	glm::vec3 eye(5.0f, 5.0f, 10.0f);
+	glm::vec3 center(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	glm::mat4 viewMatrix = glm::lookAt(eye, center, up);
 	GLint viewMatrixIndex = glGetUniformLocation(shaderProgram, "viewMatrix");
@@ -129,19 +119,29 @@ void TestSceneGL::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glBindVertexArray(cubeVertexArray);
+	glBindVertexArray(cube.vertexArray);
 	glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(cubeModelMatrix));
 	glUseProgram(shaderProgram);
-	glDrawArrays(GL_TRIANGLES, 0, cubeVertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, cube.vertexCount);
 
-	glBindVertexArray(sphereVertexArray);
+	glBindVertexArray(sphere.vertexArray);
 	glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(sphereModelMatrix));
 	glUseProgram(shaderProgram);
-	glDrawArrays(GL_TRIANGLES, 0, sphereVertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, sphere.vertexCount);
 
-	glBindVertexArray(sphereSmoothVertexArray);
+	glBindVertexArray(sphereSmooth.vertexArray);
 	glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(sphereSmoothModelMatrix));
 	glUseProgram(shaderProgram);
-	glDrawArrays(GL_TRIANGLES, 0, sphereSmoothVertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, sphereSmooth.vertexCount);
+
+	glBindVertexArray(monkey.vertexArray);
+	glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(monkeyModelMatrix));
+	glUseProgram(shaderProgram);
+	glDrawArrays(GL_TRIANGLES, 0, monkey.vertexCount);
+
+	glBindVertexArray(plane.vertexArray);
+	glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(planeModelMatrix));
+	glUseProgram(shaderProgram);
+	glDrawArrays(GL_TRIANGLES, 0, plane.vertexCount);
 
 }

@@ -160,3 +160,38 @@ GLuint GLUtil::LoadDDS(const std::string &imagepath)
 
 	return textureID;
 }
+
+GLUtil::Model::Model() : vertexArray(0), vertexCount(0)
+{
+}
+
+GLUtil::Model::Model(const std::string &model, bool binary)
+{
+	std::vector<Vertex> vertices;
+	if (!binary)
+		ObjReader::Read(model, vertices);
+	else
+		BinaryIO::ReadVertices(model, vertices);
+	vertexArray = CreateVertexArray(vertices);
+	vertexCount = vertices.size();
+}
+
+GLuint GLUtil::Model::CreateVertexArray(const std::vector<Vertex> &vertices)
+{
+	GLuint vertexArray;
+	glCreateVertexArrays(1, &vertexArray);
+
+	GLuint vertexBuffer;
+	glCreateBuffers(1, &vertexBuffer);
+	glNamedBufferData(vertexBuffer, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+
+	glVertexArrayAttribBinding(vertexArray, 0, 0);
+	glVertexArrayAttribBinding(vertexArray, 1, 0);
+	glVertexArrayVertexBuffer(vertexArray, 0, vertexBuffer, 0, sizeof(Vertex));
+
+	glEnableVertexArrayAttrib(vertexArray, 0);
+	glEnableVertexArrayAttrib(vertexArray, 1);
+	glVertexArrayAttribFormat(vertexArray, 0, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribFormat(vertexArray, 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3));
+	return vertexArray;
+}

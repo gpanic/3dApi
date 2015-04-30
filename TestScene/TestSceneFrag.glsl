@@ -6,13 +6,23 @@ in vec3 viewDirectionViewSpace;
 
 out vec4 outputColor;
 
-uniform vec4 ambientMaterial = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-uniform vec4 ambientLight = vec4(0.1f, 0.1f, 0.1f, 1.0f);
-uniform vec4 diffuseMaterial = vec4(0.6f, 0.6f, 0.6f, 1.0f);
-uniform vec4 diffuseLight = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-uniform vec4 specularMaterial = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-uniform vec4 specularLight = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-uniform float shininessFactor = 128.0f;
+uniform Material
+{
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+	float shininess;
+}
+material;
+
+uniform Light
+{
+	vec4 position;
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+}
+light;
 
 void main()
 {
@@ -27,7 +37,7 @@ void main()
 
 	float phongTerm = dot(viewDirectionViewSpace, reflectDirectionViewSpace);
 	phongTerm = clamp(phongTerm, 0.0f, 1.0f);
-	phongTerm = pow(phongTerm, shininessFactor);
+	phongTerm = pow(phongTerm, material.shininess);
 
-	outputColor = (ambientMaterial * ambientLight) + (diffuseMaterial * diffuseLight * cosIncidence) + (specularMaterial * specularLight * phongTerm);
+	outputColor = (material.ambient * light.ambient) + (material.diffuse * light.diffuse * cosIncidence) + (material.specular * light.specular * phongTerm);
 }

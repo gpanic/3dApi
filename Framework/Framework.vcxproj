@@ -88,24 +88,32 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="App3D.h" />
+    <ClInclude Include="BinaryIO.h" />
     <ClInclude Include="DXApp.h" />
     <ClInclude Include="DXUtil.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="GLApp.h" />
     <ClInclude Include="GLUtil.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="ObjReader.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Vector.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App3D.cpp" />
+    <ClCompile Include="BinaryIO.cpp" />
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="DXUtil.cpp" />
     <ClCompile Include="Face.cpp" />
     <ClCompile Include="GLApp.cpp" />
     <ClCompile Include="GLUtil.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="ObjReader.cpp" />
     <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Vector.cpp" />
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
