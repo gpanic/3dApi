@@ -20,11 +20,13 @@ namespace GLUtil
 	struct Model
 	{
 		Model();
-		Model(const std::string &model, bool binary = false);
+		Model(const std::string &model, const std::string &mtlPath, bool binary = false);
 
 		GLuint vertexArray;
+		Material material;
 		unsigned long long vertexCount;
 	private:
 		static GLuint CreateVertexArray(const std::vector<Vertex> &vertices);
+		static GLuint CreateMaterialBuffer(const Material &material);
 	};
 };

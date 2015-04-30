@@ -165,13 +165,19 @@ GLUtil::Model::Model() : vertexArray(0), vertexCount(0)
 {
 }
 
-GLUtil::Model::Model(const std::string &model, bool binary)
+GLUtil::Model::Model(const std::string &objPath, const std::string &mtlPath, bool binary)
 {
 	std::vector<Vertex> vertices;
 	if (!binary)
-		ObjReader::Read(model, vertices);
+	{
+		ObjReader::Read(objPath, mtlPath, vertices, material);
+	}
 	else
-		BinaryIO::ReadVertices(model, vertices);
+	{
+		std::string materialName;
+		BinaryIO::ReadVertices(objPath, vertices, materialName);
+		ObjReader::ReadMtl(mtlPath, materialName, material);
+	}
 	vertexArray = CreateVertexArray(vertices);
 	vertexCount = vertices.size();
 }
@@ -192,6 +198,6 @@ GLuint GLUtil::Model::CreateVertexArray(const std::vector<Vertex> &vertices)
 	glEnableVertexArrayAttrib(vertexArray, 0);
 	glEnableVertexArrayAttrib(vertexArray, 1);
 	glVertexArrayAttribFormat(vertexArray, 0, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(vertexArray, 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3));
+	glVertexArrayAttribFormat(vertexArray, 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex().position));
 	return vertexArray;
 }
