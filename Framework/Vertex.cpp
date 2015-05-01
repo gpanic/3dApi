@@ -1,7 +1,7 @@
 #include "Vertex.h"
 
-Vertex::Vertex() : position(Vector3()), normal(Vector3()) {};
-Vertex::Vertex(Vector3 position, Vector3 normal) : position(position), normal(normal) {};
+Vertex::Vertex() : position(Vector4()), normal(Vector3()) {};
+Vertex::Vertex(Vector4 position, Vector3 normal) : position(position), normal(normal) {};
 
 
 std::ostream& operator<<(std::ostream &stream, const Vertex &vert)

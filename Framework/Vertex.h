@@ -5,9 +5,9 @@
 struct Vertex
 {
 	Vertex();
-	Vertex(Vector3 position, Vector3 normal);
+	Vertex(Vector4 position, Vector3 normal);
 	
-	Vector3 position;
+	Vector4 position;
 	Vector3 normal;
 };
 

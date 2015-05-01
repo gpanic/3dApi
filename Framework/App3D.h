@@ -6,6 +6,10 @@
 #include <vector>
 #include <iomanip>
 #include "Util.h"
+#include "Vertex.h"
+#include "Vector.h"
+#include "Material.h"
+#include "Input.h"
 
 class App3D
 {
@@ -16,6 +20,7 @@ public:
 	bool benchmarking;
 	int benchmarkFrameCount;
 	Color bgColor;
+	Input input;
 
 	int Run();
 	virtual LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

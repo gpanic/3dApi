@@ -2,31 +2,26 @@
 
 GLuint shaderProgram;
 
-GLint modelMatrixIndex;
-
 GLuint materialBindingPoint = 1;
+GLuint lightBindingPoint = 2;
 GLuint materialBuffer;
 
-GLuint lightBindingPoint = 2;
+GLuint modelMatrixIndex;
+GLuint viewMatrixIndex;
+GLuint projectionMatrixIndex;
 
-GLUtil::Model cube;
-glm::mat4 cubeModelMatrix;
+std::vector<ModelGL> models;
 
-GLUtil::Model sphere;
-glm::mat4 sphereModelMatrix;
-
-GLUtil::Model sphereSmooth;
-glm::mat4 sphereSmoothModelMatrix;
-
-GLUtil::Model monkey;
-glm::mat4 monkeyModelMatrix;
-
-GLUtil::Model plane;
-glm::mat4 planeModelMatrix;
+const float rotDelta = 10.0f;
+const glm::vec3 up(0.0f, 1.0f, 0.0f);
+glm::vec3 eye(5.0f, 5.0f, 8.0f);
+glm::vec3 right(1.0f, 0.0f, 0.0f);
+glm::vec3 center(0.0f, 0.0f, 0.0f);
 
 TestSceneGL::TestSceneGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
 	mAppTitle = "OpenGL Test Scene";
+	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
 }
 
 TestSceneGL::~TestSceneGL()
@@ -46,22 +41,24 @@ bool TestSceneGL::InitScene()
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 
 	// PREPARE MODELS
-	cube = GLUtil::Model("cube.bin", "cube.mtl", true);
-	cubeModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, -2.0f));
+	glm::mat4 matrix;
 
-	sphere = GLUtil::Model("sphere.bin", "sphere.mtl", true);
-	sphereModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, -2.0f));
+	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, -2.0f));
+	models.push_back(ModelGL("torus.bin", "torus.mtl", shaderProgram, matrix, true));
 
-	sphereSmooth = GLUtil::Model("sphere_smooth.bin", "sphere_smooth.mtl", true);
-	sphereSmoothModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, 2.0f));
+	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, -2.0f));
+	models.push_back(ModelGL("sphere.bin", "sphere.mtl", shaderProgram, matrix, true));
 
-	monkey = GLUtil::Model("monkey.bin", "monkey.mtl", true);
-	monkeyModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, 2.0f));
+	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, 2.0f));
+	models.push_back(ModelGL("sphere_smooth.bin", "sphere_smooth.mtl", shaderProgram, matrix, true));
 
-	plane = GLUtil::Model("plane.bin", "plane.mtl", true);
-	planeModelMatrix = glm::mat4(1.0f);
-	planeModelMatrix = glm::scale(planeModelMatrix, glm::vec3(5.0f, 5.0f, 5.0f));
-	planeModelMatrix = glm::translate(planeModelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
+	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, 2.0f));
+	models.push_back(ModelGL("monkey.bin", "monkey.mtl", shaderProgram, matrix, true));
+
+	matrix = glm::mat4(1.0f);
+	matrix = glm::scale(matrix, glm::vec3(5.0f, 5.0f, 5.0f));
+	matrix = glm::translate(matrix, glm::vec3(0.0f, 0.0f, 0.0f));
+	models.push_back(ModelGL("plane.bin", "plane.mtl", shaderProgram, matrix, true));
 
 	// PREPARE MATERIAL BUFFER
 	materialBuffer;
@@ -75,7 +72,7 @@ bool TestSceneGL::InitScene()
 	Light light;
 	light.position = Vector4(5.0f, 10.0f, 5.0f, 1.0f);
 	light.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
-	light.diffuse = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	light.diffuse = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
 	light.specular = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	GLuint lightBuffer;
@@ -89,16 +86,11 @@ bool TestSceneGL::InitScene()
 
 	// UPLOAD MVP MATRICES
 	modelMatrixIndex = glGetUniformLocation(shaderProgram, "modelMatrix");
-
-	glm::vec3 eye(5.0f, 5.0f, 10.0f);
-	glm::vec3 center(0.0f, 0.0f, 0.0f);
-	glm::vec3 up(0.0f, 1.0f, 0.0f);
-	glm::mat4 viewMatrix = glm::lookAt(eye, center, up);
-	GLint viewMatrixIndex = glGetUniformLocation(shaderProgram, "viewMatrix");
-	glProgramUniformMatrix4fv(shaderProgram, viewMatrixIndex, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+	viewMatrixIndex = glGetUniformLocation(shaderProgram, "viewMatrix");
+	projectionMatrixIndex = glGetUniformLocation(shaderProgram, "projectionMatrix");
 
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), 800.0f / 800.0f, 1.0f, 500.0f);
-	GLint projectionMatrixIndex = glGetUniformLocation(shaderProgram, "projectionMatrix");
+	
 	glProgramUniformMatrix4fv(shaderProgram, projectionMatrixIndex, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
 	glEnable(GL_DEPTH_TEST);
@@ -107,43 +99,43 @@ bool TestSceneGL::InitScene()
 	return true;
 }
 
-
 void TestSceneGL::Update()
 {
+	float rotAmount = 0.0f;
+	glm::mat4 rotMatrix;
+	if (input.right || input.left)
+	{
+		if (input.right)
+			rotAmount = rotDelta;
+		if (input.left)
+			rotAmount = -rotDelta;
+		rotMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotAmount), up);
+	}
+	else if (input.up || input.down)
+	{
+		if (input.up)
+			rotAmount = -rotDelta;
+		if (input.down)
+			rotAmount = rotDelta;
+		rotMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotAmount), right);
+	}
+
+	eye = glm::vec3(rotMatrix * glm::vec4(eye, 1.0f));
+	right = glm::normalize(-glm::cross(up, (center - eye)));
+
+	glm::mat4 viewMatrix = glm::lookAt(eye, center, up);
+	glProgramUniformMatrix4fv(shaderProgram, viewMatrixIndex, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 }
 
 void TestSceneGL::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glBindVertexArray(cube.vertexArray);
-	glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(cubeModelMatrix));
-	glNamedBufferSubData(materialBuffer, 0, sizeof(Material), &cube.material);
-	glUseProgram(shaderProgram);
-	glDrawArrays(GL_TRIANGLES, 0, cube.vertexCount);
-
-	glBindVertexArray(sphere.vertexArray);
-	glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(sphereModelMatrix));
-	glNamedBufferSubData(materialBuffer, 0, sizeof(Material), &sphere.material);
-	glUseProgram(shaderProgram);
-	glDrawArrays(GL_TRIANGLES, 0, sphere.vertexCount);
-
-	glBindVertexArray(sphereSmooth.vertexArray);
-	glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(sphereSmoothModelMatrix));
-	glNamedBufferSubData(materialBuffer, 0, sizeof(Material), &sphereSmooth.material);
-	glUseProgram(shaderProgram);
-	glDrawArrays(GL_TRIANGLES, 0, sphereSmooth.vertexCount);
-
-	glBindVertexArray(monkey.vertexArray);
-	glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(monkeyModelMatrix));
-	glNamedBufferSubData(materialBuffer, 0, sizeof(Material), &monkey.material);
-	glUseProgram(shaderProgram);
-	glDrawArrays(GL_TRIANGLES, 0, monkey.vertexCount);
-
-	glBindVertexArray(plane.vertexArray);
-	glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(planeModelMatrix));
-	glNamedBufferSubData(materialBuffer, 0, sizeof(Material), &plane.material);
-	glUseProgram(shaderProgram);
-	glDrawArrays(GL_TRIANGLES, 0, plane.vertexCount);
-
+	for (ModelGL model : models)
+	{
+		glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(model.modelMatrix));
+		glNamedBufferSubData(materialBuffer, 0, sizeof(Material), &model.material);
+		glBindVertexArray(model.vertexArray);
+		glUseProgram(shaderProgram);
+		glDrawArrays(GL_TRIANGLES, 0, model.vertexCount);
+	}
 }

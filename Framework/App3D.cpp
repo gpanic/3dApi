@@ -47,11 +47,20 @@ int App3D::Run()
 
 LRESULT App3D::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	input.Reset();
 	switch (msg)
 	{
 	case WM_KEYDOWN:
 		if (wParam == VK_ESCAPE)
 			DestroyWindow(hWnd);
+		if (wParam == VK_LEFT)
+			input.left = true;
+		if (wParam == VK_RIGHT)
+			input.right = true;
+		if (wParam == VK_UP)
+			input.up = true;
+		if (wParam == VK_DOWN)
+			input.down = true;
 		return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);

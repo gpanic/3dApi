@@ -94,8 +94,11 @@
     <ClInclude Include="Face.h" />
     <ClInclude Include="GLApp.h" />
     <ClInclude Include="GLUtil.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="ModelDX.h" />
+    <ClInclude Include="ModelGL.h" />
     <ClInclude Include="ObjReader.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="Vector.h" />
@@ -111,6 +114,8 @@
     <ClCompile Include="GLUtil.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="ModelDX.cpp" />
+    <ClCompile Include="ModelGL.cpp" />
     <ClCompile Include="ObjReader.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="Vector.cpp" />

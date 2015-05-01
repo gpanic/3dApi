@@ -4,7 +4,7 @@ void ObjReader::ReadObj(const std::string &objPath, std::vector<Vertex> &verts, 
 {
 	verts.clear();
 	materialName.clear();
-	std::vector<Vector3> positions;
+	std::vector<Vector4> positions;
 	std::vector<Vector3> normals;
 
 	std::ifstream file(objPath);
@@ -18,7 +18,7 @@ void ObjReader::ReadObj(const std::string &objPath, std::vector<Vertex> &verts, 
 			stream >> word;
 			if (word == "v")
 			{
-				positions.push_back(ExtractVector3(stream));
+				positions.push_back(Vector4(ExtractVector3(stream), 1.0f));
 			}
 			else if (word == "vn")
 			{
@@ -108,7 +108,7 @@ Vector3 ObjReader::ExtractVector3(std::stringstream &stream)
 	return vec3;
 }
 
-Vertex ObjReader::ExtractVertex(std::stringstream &stream, std::vector<Vector3> &positions, std::vector<Vector3> &normals)
+Vertex ObjReader::ExtractVertex(std::stringstream &stream, std::vector<Vector4> &positions, std::vector<Vector3> &normals)
 {
 	std::string word;
 	stream >> word;

@@ -37,6 +37,7 @@ void main()
 
 	float phongTerm = dot(viewDirectionViewSpace, reflectDirectionViewSpace);
 	phongTerm = clamp(phongTerm, 0.0f, 1.0f);
+	phongTerm = cosIncidence != 0.0 ? phongTerm : 0.0;
 	phongTerm = pow(phongTerm, material.shininess);
 
 	outputColor = (material.ambient * light.ambient) + (material.diffuse * light.diffuse * cosIncidence) + (material.specular * light.specular * phongTerm);

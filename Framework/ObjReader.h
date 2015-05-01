@@ -17,6 +17,6 @@ public:
 
 private:
 	static Vector3 ExtractVector3(std::stringstream &stream);
-	static Vertex ExtractVertex(std::stringstream &stream, std::vector<Vector3> &positions, std::vector<Vector3> &normals);
+	static Vertex ExtractVertex(std::stringstream &stream, std::vector<Vector4> &positions, std::vector<Vector3> &normals);
 };
 
