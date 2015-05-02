@@ -4,22 +4,25 @@ ID3DBlob* vertexShaderBuffer;
 ID3DBlob* pixelShaderBuffer;
 ID3D11VertexShader* vertexShader;
 ID3D11PixelShader* pixelShader;
-ID3D11Buffer* vertexBuffer;
-ID3D11InputLayout* inputLayout;
 float bg[4];
 
-std::vector<Vertex> verts;
-Material mat;
+ID3D11Buffer* materialBuffer;
 
-ModelDX model;
+std::vector<ModelDX> models;
 
 XMVECTOR up = { 0.0f, 1.0f, 0.0f };
-XMVECTOR eye = { 0.0f, 0.0f, -8.0f };
+XMVECTOR eye = { 5.0f, 5.0f, -8.0f };
 XMVECTOR center = { 0.0f, 0.0f, 0.0f };
+
+unsigned int modelMatrixBufferSlot = 0;
+unsigned int viewMatrixBufferSlot = 1;
+unsigned int projectionMatrixBufferSlot = 2;
+unsigned int lightBufferSlot = 3;
+unsigned int materialBufferSlot = 0;
 
 TestSceneDX::TestSceneDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
-	mAppTitle = "DirectX Simple";
+	mAppTitle = "DirectX Test Scene";
 	mBenchmarkResultName = mAppTitle + " Result.txt";
 }
 
@@ -29,103 +32,94 @@ TestSceneDX::~TestSceneDX()
 	pixelShaderBuffer->Release();
 	vertexShader->Release();
 	pixelShader->Release();
-	model.Release();
-	//vertexBuffer->Release();
-	//inputLayout->Release();
+	materialBuffer->Release();
+	for (ModelDX model : models)
+	{
+		model.Release();
+	}
 }
 
 bool TestSceneDX::InitScene()
 {
-	D3D11_INPUT_ELEMENT_DESC vertexLayout[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4 * sizeof(float), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-	int vertexLayoutElements = 2;
-
 	bg[0] = bgColor.r;
 	bg[1] = bgColor.g;
 	bg[2] = bgColor.b;
 	bg[3] = bgColor.a;
 
+	// COMPILE SHADERS
 	D3DCompileFromFile(L"SimpleVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
 	D3DCompileFromFile(L"SimpleFrag.hlsl", NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
-	//D3DReadFileToBlob(L"SimpleVert.cso", &vertexShaderBuffer);
-	//D3DReadFileToBlob(L"SimpleFrag.cso", &pixelShaderBuffer);
-
 	mDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
 	mDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
 
-	//float vertices[] =
-	//{
-	//	-0.75f, -0.75f, 0.0f, 1.0f,
-	//	1.0f, 0.0f, 0.0f,
+	// PREPARE MODELS
+	std::vector<D3D11_INPUT_ELEMENT_DESC> vertexLayout;
+	vertexLayout.push_back({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+	vertexLayout.push_back({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(Vertex().position), D3D11_INPUT_PER_VERTEX_DATA, 0 });
 
-	//	0.0f, 0.75f, 0.0f, 1.0f,
-	//	0.0f, 1.0f, 0.0f,
+	XMMATRIX modelMatrix;
 
-	//	0.75f, -0.75f, 0.0f, 1.0f,
-	//	0.0f, 0.0f, 1.0f,
-	//};
+	modelMatrix = XMMatrixTranslation(2.0f, 1.0f, -2.0f);
+	models.push_back(ModelDX("torus.obj", "torus.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix));
 
-	model = ModelDX("sphere_smooth.obj", "sphere_smooth.mtl", mDevice, vertexShaderBuffer, vertexLayout, vertexLayoutElements);
+	modelMatrix = XMMatrixTranslation(-2.0f, 1.0f, -2.0f);
+	models.push_back(ModelDX("sphere.obj", "sphere.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix));
 
-	// MODEL MATRIX
-	XMMATRIX modelMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+	modelMatrix = XMMatrixTranslation(-2.0f, 1.0f, 2.0f);
+	models.push_back(ModelDX("sphere_smooth.obj", "sphere_smooth.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix));
 
-	D3D11_BUFFER_DESC modelMatrixDesc;
-	ZeroMemory(&modelMatrixDesc, sizeof(modelMatrixDesc));
-	modelMatrixDesc.ByteWidth = sizeof(modelMatrix);
-	modelMatrixDesc.Usage = D3D11_USAGE_DYNAMIC;
-	modelMatrixDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	modelMatrixDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	/*modelMatrix = XMMatrixTranslation(2.0f, 1.0f, 2.0f);
+	models.push_back(ModelDX("monkey.obj", "monkey.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix));*/
 
-	D3D11_SUBRESOURCE_DATA modelMatrixData;
-	ZeroMemory(&modelMatrixData, sizeof(modelMatrixData));
-	modelMatrixData.pSysMem = &modelMatrix;
+	modelMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f) * XMMatrixScaling(5.0f, 5.0f, 5.0f);
+	models.push_back(ModelDX("plane.obj", "plane.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix));
 
-	ID3D11Buffer* modelMatrixBuffer;
-	mDevice->CreateBuffer(&modelMatrixDesc, &modelMatrixData, &modelMatrixBuffer);
-	mDeviceContext->VSSetConstantBuffers(0, 1, &modelMatrixBuffer);
-	mDeviceContext->PSSetConstantBuffers(0, 1, &modelMatrixBuffer);
+	// PREPARE MATERIAL BUFFER
+	D3D11_BUFFER_DESC materialDesc;
+	ZeroMemory(&materialDesc, sizeof(materialDesc));
+	materialDesc.ByteWidth = sizeof(Material);
+	materialDesc.Usage = D3D11_USAGE_DEFAULT;
+	materialDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	materialDesc.CPUAccessFlags = 0;
+
+	mDevice->CreateBuffer(&materialDesc, NULL, &materialBuffer);
+	mDeviceContext->PSSetConstantBuffers(materialBufferSlot, 1, &materialBuffer);
+
+	// UPLOAD LIGHT
+	Light light;
+	light.position = Vector4(5.0f, 10.0f, 5.0f, 1.0f);
+	light.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
+	light.diffuse = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
+	light.specular = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	D3D11_BUFFER_DESC lightDesc;
+	ZeroMemory(&lightDesc, sizeof(lightDesc));
+	lightDesc.ByteWidth = sizeof(Light);
+	lightDesc.Usage = D3D11_USAGE_DEFAULT;
+	lightDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	lightDesc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA lightData;
+	ZeroMemory(&lightData, sizeof(lightData));
+	lightData.pSysMem = &light;
+
+	ID3D11Buffer* lightBuffer;
+	mDevice->CreateBuffer(&lightDesc, &lightData, &lightBuffer);
+	mDeviceContext->VSSetConstantBuffers(lightBufferSlot, 1, &lightBuffer);
+	mDeviceContext->PSSetConstantBuffers(lightBufferSlot, 1, &lightBuffer);
+	lightBuffer->Release();
 
 	// VIEW MATRIX
 	XMMATRIX viewMarix = XMMatrixLookAtLH(eye, center, up);
-
-	D3D11_BUFFER_DESC viewMarixDesc;
-	ZeroMemory(&viewMarixDesc, sizeof(viewMarixDesc));
-	viewMarixDesc.ByteWidth = sizeof(viewMarix);
-	viewMarixDesc.Usage = D3D11_USAGE_DYNAMIC;
-	viewMarixDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	viewMarixDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	D3D11_SUBRESOURCE_DATA viewMarixData;
-	ZeroMemory(&viewMarixData, sizeof(viewMarixData));
-	viewMarixData.pSysMem = &viewMarix;
-
-	ID3D11Buffer* viewMarixBuffer;
-	mDevice->CreateBuffer(&viewMarixDesc, &viewMarixData, &viewMarixBuffer);
-	mDeviceContext->VSSetConstantBuffers(1, 1, &viewMarixBuffer);
-	mDeviceContext->PSSetConstantBuffers(1, 1, &viewMarixBuffer);
+	ID3D11Buffer* viewMarixBuffer = DXUtil::CreateMatrixBuffer(mDevice, viewMarix);
+	mDeviceContext->VSSetConstantBuffers(viewMatrixBufferSlot, 1, &viewMarixBuffer);
+	viewMarixBuffer->Release();
 
 	// PROJECTION MATRIX
 	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), 800 / 800, 1.0f, 500.0f);
-
-	D3D11_BUFFER_DESC projectionMatrixDesc;
-	ZeroMemory(&projectionMatrixDesc, sizeof(projectionMatrixDesc));
-	projectionMatrixDesc.ByteWidth = sizeof(projectionMatrix);
-	projectionMatrixDesc.Usage = D3D11_USAGE_DYNAMIC;
-	projectionMatrixDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	projectionMatrixDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	D3D11_SUBRESOURCE_DATA projectionMatrixData;
-	ZeroMemory(&projectionMatrixData, sizeof(projectionMatrixData));
-	projectionMatrixData.pSysMem = &projectionMatrix;
-
-	ID3D11Buffer* projectionMatrixBuffer;
-	mDevice->CreateBuffer(&projectionMatrixDesc, &projectionMatrixData, &projectionMatrixBuffer);
-	mDeviceContext->VSSetConstantBuffers(2, 1, &projectionMatrixBuffer);
-	mDeviceContext->PSSetConstantBuffers(2, 1, &projectionMatrixBuffer);
+	ID3D11Buffer* projectionMatrixBuffer = DXUtil::CreateMatrixBuffer(mDevice, projectionMatrix);
+	mDeviceContext->VSSetConstantBuffers(projectionMatrixBufferSlot, 1, &projectionMatrixBuffer);
+	projectionMatrixBuffer->Release();
 
 	return true;
 }
@@ -137,15 +131,23 @@ void TestSceneDX::Update()
 void TestSceneDX::Render()
 {
 	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
+	mDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	mDeviceContext->IASetVertexBuffers(0, 1, &model.vertexBuffer, &stride, &offset);
-	mDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	mDeviceContext->IASetInputLayout(model.inputLayout);
+	for (ModelDX model : models)
+	{
+		mDeviceContext->IASetVertexBuffers(0, 1, &model.vertexBuffer, &stride, &offset);
+		mDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		mDeviceContext->IASetInputLayout(model.inputLayout);
 
-	mDeviceContext->VSSetShader(vertexShader, 0, 0);
-	mDeviceContext->PSSetShader(pixelShader, 0, 0);
+		mDeviceContext->VSSetShader(vertexShader, 0, 0);
+		mDeviceContext->PSSetShader(pixelShader, 0, 0);
 
-	mDeviceContext->Draw(model.vertexCount, 0);
+		mDeviceContext->VSSetConstantBuffers(modelMatrixBufferSlot, 1, &model.modelMatrixBuffer);
+		mDeviceContext->UpdateSubresource(materialBuffer, 0, NULL, &model.material, 0, 0);
+
+		mDeviceContext->Draw(model.vertexCount, 0);
+	}
+
 }

@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include "ObjReader.h"
 #include "ModelDX.h"
+#include "Light.h"
 using namespace DirectX;
 
 class TestSceneDX : public DXApp

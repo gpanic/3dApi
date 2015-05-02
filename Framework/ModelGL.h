@@ -9,9 +9,9 @@ class ModelGL
 {
 public:
 	ModelGL();
-	ModelGL(const std::string &model, const std::string &mtlPath, const GLuint program, const glm::mat4 &matrix, bool binary = false);
+	ModelGL(const std::string &model, const std::string &mtlPath, const glm::mat4 &matrix, bool binary = false);
 
-	void LoadModel(const std::string &model, const std::string &mtlPath, const GLuint program, const glm::mat4 &matrix, bool binary = false);
+	void LoadModel(const std::string &model, const std::string &mtlPath, const glm::mat4 &matrix, bool binary = false);
 
 	GLuint vertexArray;
 	unsigned long long vertexCount;

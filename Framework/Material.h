@@ -9,5 +9,6 @@ struct Material
 	Vector4 diffuse;
 	Vector4 specular;
 	float shininess;
+	Vector3 padding;
 };
 

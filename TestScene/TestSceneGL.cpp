@@ -44,21 +44,21 @@ bool TestSceneGL::InitScene()
 	glm::mat4 matrix;
 
 	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, -2.0f));
-	models.push_back(ModelGL("torus.bin", "torus.mtl", shaderProgram, matrix, true));
+	models.push_back(ModelGL("torus.bin", "torus.mtl", matrix, true));
 
 	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, -2.0f));
-	models.push_back(ModelGL("sphere.bin", "sphere.mtl", shaderProgram, matrix, true));
+	models.push_back(ModelGL("sphere.bin", "sphere.mtl", matrix, true));
 
 	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, 2.0f));
-	models.push_back(ModelGL("sphere_smooth.bin", "sphere_smooth.mtl", shaderProgram, matrix, true));
+	models.push_back(ModelGL("sphere_smooth.bin", "sphere_smooth.mtl", matrix, true));
 
 	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, 2.0f));
-	models.push_back(ModelGL("monkey.bin", "monkey.mtl", shaderProgram, matrix, true));
+	models.push_back(ModelGL("monkey.bin", "monkey.mtl", matrix, true));
 
 	matrix = glm::mat4(1.0f);
 	matrix = glm::scale(matrix, glm::vec3(5.0f, 5.0f, 5.0f));
 	matrix = glm::translate(matrix, glm::vec3(0.0f, 0.0f, 0.0f));
-	models.push_back(ModelGL("plane.bin", "plane.mtl", shaderProgram, matrix, true));
+	models.push_back(ModelGL("plane.bin", "plane.mtl", matrix, true));
 
 	// PREPARE MATERIAL BUFFER
 	materialBuffer;
@@ -78,9 +78,7 @@ bool TestSceneGL::InitScene()
 	GLuint lightBuffer;
 	glCreateBuffers(1, &lightBuffer);
 	glNamedBufferData(lightBuffer, sizeof(Light), &light, GL_STATIC_DRAW);
-
 	glBindBufferBase(GL_UNIFORM_BUFFER, lightBindingPoint, lightBuffer);
-
 	GLuint lightBlockIndex = glGetUniformBlockIndex(shaderProgram, "Light");
 	glUniformBlockBinding(shaderProgram, lightBlockIndex, lightBindingPoint);
 
@@ -90,7 +88,6 @@ bool TestSceneGL::InitScene()
 	projectionMatrixIndex = glGetUniformLocation(shaderProgram, "projectionMatrix");
 
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), 800.0f / 800.0f, 1.0f, 500.0f);
-	
 	glProgramUniformMatrix4fv(shaderProgram, projectionMatrixIndex, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
 	glEnable(GL_DEPTH_TEST);

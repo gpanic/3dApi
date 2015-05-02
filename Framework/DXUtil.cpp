@@ -116,3 +116,21 @@ void DXUtil::LoadDDS(ID3D11Device1* device, const std::string &imagepath, ID3D11
 	delete[] texData;
 	free(buffer);
 }
+
+ID3D11Buffer* DXUtil::CreateMatrixBuffer(ID3D11Device1 *device, const XMMATRIX &matrix)
+{
+	D3D11_BUFFER_DESC matrixDesc;
+	ZeroMemory(&matrixDesc, sizeof(matrixDesc));
+	matrixDesc.ByteWidth = sizeof(matrix);
+	matrixDesc.Usage = D3D11_USAGE_DEFAULT;
+	matrixDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	matrixDesc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA matrixData;
+	ZeroMemory(&matrixData, sizeof(matrixData));
+	matrixData.pSysMem = &matrix;
+
+	ID3D11Buffer* matrixBuffer;
+	device->CreateBuffer(&matrixDesc, &matrixData, &matrixBuffer);
+	return matrixBuffer;
+}

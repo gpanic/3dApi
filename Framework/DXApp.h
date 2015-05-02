@@ -17,6 +17,7 @@ protected:
 	ID3D11Device1*				mDevice;
 	ID3D11DeviceContext1*		mDeviceContext;
 	IDXGISwapChain1*			mSwapChain;
+	ID3D11DepthStencilView*		mDepthStencilView;
 	ID3D11RenderTargetView*		mRenderTargetView;
 	D3D_DRIVER_TYPE				mDriverType;
 	D3D_FEATURE_LEVEL			mFeatureLevel;

@@ -54,9 +54,6 @@
     <ClInclude Include="Vector.h">
       <Filter>Structs</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ModelGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -65,6 +62,9 @@
     </ClInclude>
     <ClInclude Include="ModelDX.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Structs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -104,14 +104,14 @@
     <ClCompile Include="Vector.cpp">
       <Filter>Structs</Filter>
     </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ModelGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ModelDX.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Structs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

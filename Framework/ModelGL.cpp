@@ -4,12 +4,12 @@ ModelGL::ModelGL() : vertexArray(0), vertexCount(0), shaderProgram(0)
 {
 }
 
-ModelGL::ModelGL(const std::string &objPath, const std::string &mtlPath, const GLuint program, const glm::mat4 &matrix, bool binary)
+ModelGL::ModelGL(const std::string &objPath, const std::string &mtlPath, const glm::mat4 &matrix, bool binary)
 {
-	LoadModel(objPath, mtlPath, program, matrix, binary);
+	LoadModel(objPath, mtlPath, matrix, binary);
 }
 
-void ModelGL::LoadModel(const std::string &objPath, const std::string &mtlPath, const GLuint program, const glm::mat4 &matrix, bool binary)
+void ModelGL::LoadModel(const std::string &objPath, const std::string &mtlPath, const glm::mat4 &matrix, bool binary)
 {
 	std::vector<Vertex> vertices;
 	if (!binary)
@@ -25,7 +25,6 @@ void ModelGL::LoadModel(const std::string &objPath, const std::string &mtlPath, 
 
 	vertexArray = CreateVertexArray(vertices);
 	vertexCount = vertices.size();
-	shaderProgram = program;
 	modelMatrix = glm::mat4(matrix);
 }
 

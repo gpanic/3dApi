@@ -12,6 +12,7 @@ uniform Material
 	vec4 diffuse;
 	vec4 specular;
 	float shininess;
+	vec3 padding;
 }
 material;
 

@@ -18,6 +18,7 @@ DXApp::~DXApp()
 	mDeviceContext->Release();
 	mSwapChain->Release();
 	mDevice->Release();
+	mDepthStencilView->Release();
 	mRenderTargetView->Release();
 }
 
@@ -98,8 +99,27 @@ bool DXApp::InitAPI()
 	mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
 
 	mDevice->CreateRenderTargetView(backBuffer, NULL, &mRenderTargetView);
+	
 
-	mDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, NULL);
+	D3D11_TEXTURE2D_DESC depthStencilDesc;
+	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+	depthStencilDesc.Width = mWidth;
+	depthStencilDesc.Height = mHeight;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.SampleDesc.Count = 1;
+	depthStencilDesc.SampleDesc.Quality = 0;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.CPUAccessFlags = 0;
+	depthStencilDesc.MiscFlags = 0;
+
+	ID3D11Texture2D* depthStencilBuffer;
+	mDevice->CreateTexture2D(&depthStencilDesc, NULL, &depthStencilBuffer);
+	mDevice->CreateDepthStencilView(depthStencilBuffer, NULL, &mDepthStencilView);
+
+	mDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
 
 	mViewport.Width = (FLOAT)mWidth;
 	mViewport.Height = (FLOAT)mHeight;
@@ -114,6 +134,8 @@ bool DXApp::InitAPI()
 	dxgiDevice->Release();
 	dxgiAdapter->Release();
 	dxgiFactory->Release();
+	backBuffer->Release();
+	depthStencilBuffer->Release();
 
 	return true;
 }
