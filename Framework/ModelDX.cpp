@@ -4,10 +4,19 @@ ModelDX::ModelDX() : vertexBuffer(nullptr), inputLayout(nullptr), vertexCount(0)
 {
 }
 
-ModelDX::ModelDX(const std::string &objPath, const std::string &mtlPath, ID3D11Device1 *device, ID3DBlob* vertexShaderBuffer, const std::vector<D3D11_INPUT_ELEMENT_DESC> &layout, const XMMATRIX &matrix)
+ModelDX::ModelDX(const std::string &objPath, const std::string &mtlPath, ID3D11Device1 *device, ID3DBlob* vertexShaderBuffer, const std::vector<D3D11_INPUT_ELEMENT_DESC> &layout, const XMMATRIX &matrix, bool binary)
 {
 	std::vector<Vertex> vertices;
-	ObjReader::Read(objPath, mtlPath, vertices, material);
+	if (!binary)
+	{
+		ObjReader::Read(objPath, mtlPath, vertices, material);
+	}
+	else
+	{
+		std::string materialName;
+		BinaryIO::ReadVertices(objPath, vertices, materialName);
+		ObjReader::ReadMtl(mtlPath, materialName, material);
+	}
 	vertexCount = vertices.size();
 
 	D3D11_BUFFER_DESC vertexBufferDesc;

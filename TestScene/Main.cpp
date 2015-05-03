@@ -9,9 +9,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	dxApp.debug = true;
 	dxApp.benchmarking = BENCH;
 	dxApp.Run();
-	//TestSceneGL glApp(hInstance);
-	//glApp.benchmarking = BENCH;
-	//glApp.Run();
+	TestSceneGL glApp(hInstance);
+	glApp.benchmarking = BENCH;
+	glApp.Run();
 }
 
 //#include <iostream>

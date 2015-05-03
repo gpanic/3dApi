@@ -134,3 +134,17 @@ ID3D11Buffer* DXUtil::CreateMatrixBuffer(ID3D11Device1 *device, const XMMATRIX &
 	device->CreateBuffer(&matrixDesc, &matrixData, &matrixBuffer);
 	return matrixBuffer;
 }
+
+ID3D11Buffer* DXUtil::CreateEmptyMatrixBuffer(ID3D11Device1 *device)
+{
+	D3D11_BUFFER_DESC matrixDesc;
+	ZeroMemory(&matrixDesc, sizeof(matrixDesc));
+	matrixDesc.ByteWidth = sizeof(XMMATRIX);
+	matrixDesc.Usage = D3D11_USAGE_DEFAULT;
+	matrixDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	matrixDesc.CPUAccessFlags = 0;
+
+	ID3D11Buffer* matrixBuffer;
+	device->CreateBuffer(&matrixDesc, NULL, &matrixBuffer);
+	return matrixBuffer;
+}

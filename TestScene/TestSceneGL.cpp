@@ -22,6 +22,7 @@ TestSceneGL::TestSceneGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
 	mAppTitle = "OpenGL Test Scene";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
+	mBenchmarkResultName = mAppTitle + " Result.txt";
 }
 
 TestSceneGL::~TestSceneGL()
@@ -32,6 +33,12 @@ TestSceneGL::~TestSceneGL()
 bool TestSceneGL::InitScene()
 {
 	glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
 
 	// COMPILE SHADERS
 	std::vector<GLuint> shaders;
@@ -68,18 +75,29 @@ bool TestSceneGL::InitScene()
 	GLuint materialBlockIndex = glGetUniformBlockIndex(shaderProgram, "Material");
 	glUniformBlockBinding(shaderProgram, materialBlockIndex, materialBindingPoint);
 
-	// UPLOAD LIGHT
-	Light light;
-	light.position = Vector4(5.0f, 10.0f, 5.0f, 1.0f);
-	light.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
-	light.diffuse = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
-	light.specular = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	// UPLOAD LIGHTING
+	Lighting lighting;
+	lighting.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
+
+	Light point;
+	point.position = Vector4(0.0f, 5.0f, 0.0f, 1.0f);
+	point.diffuse = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	point.specular = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	point.halfDistance = 2.0f;
+
+	Light directional;
+	directional.position = Vector4(5.0f, 5.0f, 5.0f, 1.0f);
+	directional.diffuse = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+	directional.specular = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+
+	lighting.lights[0] = point;
+	lighting.lights[1] = directional;
 
 	GLuint lightBuffer;
 	glCreateBuffers(1, &lightBuffer);
-	glNamedBufferData(lightBuffer, sizeof(Light), &light, GL_STATIC_DRAW);
+	glNamedBufferData(lightBuffer, sizeof(Lighting), &lighting, GL_STATIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, lightBindingPoint, lightBuffer);
-	GLuint lightBlockIndex = glGetUniformBlockIndex(shaderProgram, "Light");
+	GLuint lightBlockIndex = glGetUniformBlockIndex(shaderProgram, "Lighting");
 	glUniformBlockBinding(shaderProgram, lightBlockIndex, lightBindingPoint);
 
 	// UPLOAD MVP MATRICES
@@ -89,9 +107,6 @@ bool TestSceneGL::InitScene()
 
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), 800.0f / 800.0f, 1.0f, 500.0f);
 	glProgramUniformMatrix4fv(shaderProgram, projectionMatrixIndex, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
 
 	return true;
 }

@@ -95,7 +95,7 @@
     <ClInclude Include="GLApp.h" />
     <ClInclude Include="GLUtil.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="Light.h" />
+    <ClInclude Include="Lighting.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="ModelDX.h" />
     <ClInclude Include="ModelGL.h" />
@@ -112,7 +112,7 @@
     <ClCompile Include="Face.cpp" />
     <ClCompile Include="GLApp.cpp" />
     <ClCompile Include="GLUtil.cpp" />
-    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="ModelDX.cpp" />
     <ClCompile Include="ModelGL.cpp" />

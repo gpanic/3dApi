@@ -5,13 +5,14 @@
 #include "ObjReader.h"
 #include <DirectXMath.h>
 #include "DXUtil.h"
+#include "BinaryIO.h"
 using namespace DirectX;
 
 class ModelDX
 {
 public:
 	ModelDX();
-	ModelDX(const std::string &objPath, const std::string &mtlPath, ID3D11Device1 *device, ID3DBlob* vertexShaderBuffer, const std::vector<D3D11_INPUT_ELEMENT_DESC> &layout, const XMMATRIX &matrix);
+	ModelDX(const std::string &objPath, const std::string &mtlPath, ID3D11Device1 *device, ID3DBlob* vertexShaderBuffer, const std::vector<D3D11_INPUT_ELEMENT_DESC> &layout, const XMMATRIX &matrix, bool binary = false);
 	void Release();
 
 	ID3D11Buffer *vertexBuffer;

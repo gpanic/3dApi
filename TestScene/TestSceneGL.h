@@ -5,7 +5,7 @@
 #include <glm\gtc\type_ptr.hpp>
 #include "ObjReader.h"
 #include "Material.h"
-#include "Light.h"
+#include "Lighting.h"
 #include "ModelGL.h"
 
 class TestSceneGL : public GLApp

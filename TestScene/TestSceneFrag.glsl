@@ -1,8 +1,10 @@
 #version 450
 
+const int numberOfLights = 2;
+
 in vec3 normalViewSpace;
-in vec3 lightDirectionViewSpace;
-in vec3 viewDirectionViewSpace;
+in vec3 positionViewSpace;
+in vec3 lightPositionsViewSpace[numberOfLights];
 
 out vec4 outputColor;
 
@@ -16,30 +18,55 @@ uniform Material
 }
 material;
 
-uniform Light
+struct Light
 {
 	vec4 position;
-	vec4 ambient;
 	vec4 diffuse;
 	vec4 specular;
+	float halfDistance;
+};
+
+uniform Lighting
+{
+	vec4 ambient;
+	Light lights[numberOfLights];
 }
-light;
+lighting;
+
 
 void main()
 {
 	vec3 normalViewSpace = normalize(normalViewSpace);
-	vec3 lightDirectionViewSpace = normalize(lightDirectionViewSpace);
-	vec3 viewDirectionViewSpace = normalize(viewDirectionViewSpace);
 
-	vec3 reflectDirectionViewSpace = reflect(-lightDirectionViewSpace, normalViewSpace);
+	vec4 ambient = material.ambient * lighting.ambient;
+	vec4 diffuse;
+	vec4 specular;
+	for (int i = 0; i < numberOfLights; ++i)
+	{	
+		Light light = lighting.lights[i];
 
-	float cosIncidence = dot(normalViewSpace, normalize(lightDirectionViewSpace));
-	cosIncidence = clamp(cosIncidence, 0.0f, 1.0f);
+		vec3 lightDirectionViewSpace = light.position.w == 0.0f ? vec3(lightPositionsViewSpace[i]) : vec3(lightPositionsViewSpace[i] - positionViewSpace);
+		lightDirectionViewSpace = normalize(lightDirectionViewSpace);
+		vec3 viewDirectionViewSpace = normalize(-positionViewSpace);
 
-	float phongTerm = dot(viewDirectionViewSpace, reflectDirectionViewSpace);
-	phongTerm = clamp(phongTerm, 0.0f, 1.0f);
-	phongTerm = cosIncidence != 0.0 ? phongTerm : 0.0;
-	phongTerm = pow(phongTerm, material.shininess);
 
-	outputColor = (material.ambient * light.ambient) + (material.diffuse * light.diffuse * cosIncidence) + (material.specular * light.specular * phongTerm);
+		float cosIncidence = dot(normalViewSpace, normalize(lightDirectionViewSpace));
+		cosIncidence = clamp(cosIncidence, 0.0f, 1.0f);
+
+		vec3 reflectDirectionViewSpace = reflect(-lightDirectionViewSpace, normalViewSpace);
+		float phongTerm = dot(viewDirectionViewSpace, reflectDirectionViewSpace);
+		phongTerm = clamp(phongTerm, 0.0f, 1.0f);
+		phongTerm = cosIncidence != 0.0 ? phongTerm : 0.0;
+		phongTerm = pow(phongTerm, material.shininess);
+
+		vec3 difference = lightPositionsViewSpace[i] - positionViewSpace;
+
+		float attenuation = 1.0f;
+		if (light.position.w != 0.0f)
+			attenuation = 1.0f / (1.0f + (1.0f / (light.halfDistance * light.halfDistance)) * length(difference));
+		
+		diffuse += attenuation * (material.diffuse * light.diffuse * cosIncidence);
+		specular += attenuation * (material.specular * light.specular * phongTerm);
+	}
+	outputColor = ambient + diffuse + specular;
 }

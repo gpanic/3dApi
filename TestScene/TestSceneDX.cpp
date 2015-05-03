@@ -4,15 +4,10 @@ ID3DBlob* vertexShaderBuffer;
 ID3DBlob* pixelShaderBuffer;
 ID3D11VertexShader* vertexShader;
 ID3D11PixelShader* pixelShader;
+ID3D11Buffer* viewMarixBuffer;
 float bg[4];
 
 ID3D11Buffer* materialBuffer;
-
-std::vector<ModelDX> models;
-
-XMVECTOR up = { 0.0f, 1.0f, 0.0f };
-XMVECTOR eye = { 5.0f, 5.0f, -8.0f };
-XMVECTOR center = { 0.0f, 0.0f, 0.0f };
 
 unsigned int modelMatrixBufferSlot = 0;
 unsigned int viewMatrixBufferSlot = 1;
@@ -20,9 +15,18 @@ unsigned int projectionMatrixBufferSlot = 2;
 unsigned int lightBufferSlot = 3;
 unsigned int materialBufferSlot = 0;
 
+std::vector<ModelDX> models;
+
+const float rotDelta = 10.0f;
+XMVECTOR up = { 0.0f, 1.0f, 0.0f };
+XMVECTOR eye = { 5.0f, 5.0f, 8.0f };
+XMVECTOR right = { 1.0f, 0.0f, 0.0f };
+XMVECTOR center = { 0.0f, 0.0f, 0.0f };
+
 TestSceneDX::TestSceneDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
 	mAppTitle = "DirectX Test Scene";
+	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
 	mBenchmarkResultName = mAppTitle + " Result.txt";
 }
 
@@ -37,6 +41,7 @@ TestSceneDX::~TestSceneDX()
 	{
 		model.Release();
 	}
+	viewMarixBuffer->Release();
 }
 
 bool TestSceneDX::InitScene()
@@ -45,6 +50,17 @@ bool TestSceneDX::InitScene()
 	bg[1] = bgColor.g;
 	bg[2] = bgColor.b;
 	bg[3] = bgColor.a;
+
+	ID3D11RasterizerState1 *rasterizerState;
+	D3D11_RASTERIZER_DESC1 rasterizerDesc;
+	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
+	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	rasterizerDesc.FrontCounterClockwise = true;
+
+	mDevice->CreateRasterizerState1(&rasterizerDesc, &rasterizerState);
+	mDeviceContext->RSSetState(rasterizerState);
+
 
 	// COMPILE SHADERS
 	D3DCompileFromFile(L"SimpleVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
@@ -60,19 +76,19 @@ bool TestSceneDX::InitScene()
 	XMMATRIX modelMatrix;
 
 	modelMatrix = XMMatrixTranslation(2.0f, 1.0f, -2.0f);
-	models.push_back(ModelDX("torus.obj", "torus.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix));
+	models.push_back(ModelDX("torus.bin", "torus.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixTranslation(-2.0f, 1.0f, -2.0f);
-	models.push_back(ModelDX("sphere.obj", "sphere.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix));
+	models.push_back(ModelDX("sphere.bin", "sphere.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixTranslation(-2.0f, 1.0f, 2.0f);
-	models.push_back(ModelDX("sphere_smooth.obj", "sphere_smooth.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix));
+	models.push_back(ModelDX("sphere_smooth.bin", "sphere_smooth.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
-	/*modelMatrix = XMMatrixTranslation(2.0f, 1.0f, 2.0f);
-	models.push_back(ModelDX("monkey.obj", "monkey.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix));*/
+	modelMatrix = XMMatrixTranslation(2.0f, 1.0f, 2.0f);
+	models.push_back(ModelDX("monkey.bin", "monkey.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
-	modelMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f) * XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	models.push_back(ModelDX("plane.obj", "plane.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix));
+	modelMatrix = XMMatrixScaling(5.0f, 5.0f, 5.0f);
+	models.push_back(ModelDX("plane.bin", "plane.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	// PREPARE MATERIAL BUFFER
 	D3D11_BUFFER_DESC materialDesc;
@@ -85,23 +101,57 @@ bool TestSceneDX::InitScene()
 	mDevice->CreateBuffer(&materialDesc, NULL, &materialBuffer);
 	mDeviceContext->PSSetConstantBuffers(materialBufferSlot, 1, &materialBuffer);
 
-	// UPLOAD LIGHT
-	Light light;
-	light.position = Vector4(5.0f, 10.0f, 5.0f, 1.0f);
-	light.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
-	light.diffuse = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
-	light.specular = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	// UPLOAD LIGHTING
+	//Light light;
+	//light.position = Vector4(5.0f, 10.0f, 5.0f, 1.0f);
+	//light.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
+	//light.diffuse = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
+	//light.specular = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//D3D11_BUFFER_DESC lightDesc;
+	//ZeroMemory(&lightDesc, sizeof(lightDesc));
+	//lightDesc.ByteWidth = sizeof(Light);
+	//lightDesc.Usage = D3D11_USAGE_DEFAULT;
+	//lightDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	//lightDesc.CPUAccessFlags = 0;
+
+	//D3D11_SUBRESOURCE_DATA lightData;
+	//ZeroMemory(&lightData, sizeof(lightData));
+	//lightData.pSysMem = &light;
+
+	//ID3D11Buffer* lightBuffer;
+	//mDevice->CreateBuffer(&lightDesc, &lightData, &lightBuffer);
+	//mDeviceContext->VSSetConstantBuffers(lightBufferSlot, 1, &lightBuffer);
+	//mDeviceContext->PSSetConstantBuffers(lightBufferSlot, 1, &lightBuffer);
+	//lightBuffer->Release();
+
+	Lighting lighting;
+	lighting.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
+
+	Light point;
+	point.position = Vector4(0.0f, 5.0f, 0.0f, 1.0f);
+	point.diffuse = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	point.specular = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	point.halfDistance = 2.0f;
+
+	Light directional;
+	directional.position = Vector4(5.0f, 5.0f, 5.0f, 1.0f);
+	directional.diffuse = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+	directional.specular = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+
+	lighting.lights[0] = point;
+	lighting.lights[1] = directional;
 
 	D3D11_BUFFER_DESC lightDesc;
 	ZeroMemory(&lightDesc, sizeof(lightDesc));
-	lightDesc.ByteWidth = sizeof(Light);
+	lightDesc.ByteWidth = sizeof(Lighting);
 	lightDesc.Usage = D3D11_USAGE_DEFAULT;
 	lightDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	lightDesc.CPUAccessFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA lightData;
 	ZeroMemory(&lightData, sizeof(lightData));
-	lightData.pSysMem = &light;
+	lightData.pSysMem = &lighting;
 
 	ID3D11Buffer* lightBuffer;
 	mDevice->CreateBuffer(&lightDesc, &lightData, &lightBuffer);
@@ -109,14 +159,11 @@ bool TestSceneDX::InitScene()
 	mDeviceContext->PSSetConstantBuffers(lightBufferSlot, 1, &lightBuffer);
 	lightBuffer->Release();
 
-	// VIEW MATRIX
-	XMMATRIX viewMarix = XMMatrixLookAtLH(eye, center, up);
-	ID3D11Buffer* viewMarixBuffer = DXUtil::CreateMatrixBuffer(mDevice, viewMarix);
+	// PREPARE VIEW AND PROJECTION
+	viewMarixBuffer = DXUtil::CreateEmptyMatrixBuffer(mDevice);
 	mDeviceContext->VSSetConstantBuffers(viewMatrixBufferSlot, 1, &viewMarixBuffer);
-	viewMarixBuffer->Release();
 
-	// PROJECTION MATRIX
-	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(60.0f), 800 / 800, 1.0f, 500.0f);
+	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovRH(XMConvertToRadians(60.0f), 800 / 800, 1.0f, 500.0f);
 	ID3D11Buffer* projectionMatrixBuffer = DXUtil::CreateMatrixBuffer(mDevice, projectionMatrix);
 	mDeviceContext->VSSetConstantBuffers(projectionMatrixBufferSlot, 1, &projectionMatrixBuffer);
 	projectionMatrixBuffer->Release();
@@ -126,6 +173,30 @@ bool TestSceneDX::InitScene()
 
 void TestSceneDX::Update()
 {
+	float rotAmount = 0.0f;
+	XMMATRIX rotMatrix = XMMatrixIdentity();
+	if (input.right || input.left)
+	{
+		if (input.right)
+			rotAmount = rotDelta;
+		if (input.left)
+			rotAmount = -rotDelta;
+		rotMatrix = XMMatrixRotationAxis(up, XMConvertToRadians(rotAmount));
+	}
+	else if (input.up || input.down)
+	{
+		if (input.up)
+			rotAmount = rotDelta;
+		if (input.down)
+			rotAmount = -rotDelta;
+		rotMatrix = XMMatrixRotationAxis(right, XMConvertToRadians(rotAmount));
+	}
+
+	eye = XMVector3Transform(eye, rotMatrix);
+	right = XMVector3Normalize(XMVector3Cross(up, (center - eye)));
+
+	XMMATRIX viewMarix = XMMatrixLookAtRH(eye, center, up);
+	mDeviceContext->UpdateSubresource(viewMarixBuffer, 0, NULL, &viewMarix, 0, 0);
 }
 
 void TestSceneDX::Render()

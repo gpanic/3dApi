@@ -63,8 +63,8 @@
     <ClInclude Include="ModelDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Structs</Filter>
+    <ClInclude Include="Lighting.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -110,8 +110,8 @@
     <ClCompile Include="ModelDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Structs</Filter>
+    <ClCompile Include="Lighting.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
