@@ -6,6 +6,7 @@ struct VS_OUTPUT
 	float3 normalViewSpace : TEXCOORD0;
 	float3 positionViewSpace : TEXCOORD1;
 	float3 lightPositionsViewSpace[numberOfLights] : TEXCOORD2;
+	float4 shadowCoord : TEXCOORD4;
 };
 
 struct Material
@@ -41,14 +42,17 @@ cbuffer Material : register(b0)
 	Material material;
 };
 
+Texture2D shadowMap : register(t0);
+SamplerState shadowMapSampler : register(s0);
+
 float4 pixelShader(VS_OUTPUT input) : SV_TARGET
 {
 	float3 normalViewSpace = normalize(input.normalViewSpace);
 
 	float4 ambient = material.ambient * lighting.ambient;
-	float4 diffuse;
-	float4 specular;
-	for (int i = 0; i < numberOfLights; ++i)
+	float4 diffuse = 0.0f;
+	float4 specular = 0.0f;
+	for (int i = 1; i < numberOfLights; ++i)
 	{
 		Light light = lighting.lights[i];
 
@@ -75,5 +79,14 @@ float4 pixelShader(VS_OUTPUT input) : SV_TARGET
 		specular += attenuation * (material.specular * light.specular * phongTerm);
 	}
 
-	return ambient + diffuse + specular;
+	float visibility = 1.0f;
+	float2 uv = input.shadowCoord.xy;
+	uv.y = 1 - uv.y;
+	if (shadowMap.Sample(shadowMapSampler, uv).x < input.shadowCoord.z)
+	{
+		visibility = 0.0f;
+	}
+
+	return ambient + visibility * diffuse + visibility * specular;
+	//return ambient + diffuse + specular;
 }

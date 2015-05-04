@@ -8,6 +8,7 @@ layout(location = 1) in vec3 normal;
 out vec3 normalViewSpace;
 out vec3 positionViewSpace;
 out vec3 lightPositionsViewSpace[numberOfLights];
+out vec4 shadowCoord;
 
 struct Light
 {
@@ -28,6 +29,9 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
+uniform mat4 depthViewProjectionMatrix;
+uniform mat4 depthBiasMatrix;
+
 void main()
 {
 	vec4 posViewSpace = viewMatrix * modelMatrix * vec4(position, 1.0f);
@@ -40,4 +44,6 @@ void main()
 	}
 
 	gl_Position = projectionMatrix * posViewSpace;
+
+	shadowCoord = depthBiasMatrix * depthViewProjectionMatrix * modelMatrix * vec4(position, 1.0f);
 }

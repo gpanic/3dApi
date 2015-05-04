@@ -79,6 +79,7 @@ void SimpleIndexedDrawingDX::Update()
 void SimpleIndexedDrawingDX::Render()
 {
 	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
+	mDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	UINT stride = 8 * sizeof(float);
 	UINT offset = 0;

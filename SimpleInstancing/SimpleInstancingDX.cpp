@@ -96,6 +96,7 @@ void SimpleInstancingDX::Update()
 void SimpleInstancingDX::Render()
 {
 	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
+	mDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	ID3D11Buffer* buffers[2] = { vertexBuffer, instanceBuffer };
 	UINT strides[2] = { 4 * sizeof(float), 2 * 4 * sizeof(float) };

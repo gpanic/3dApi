@@ -43,12 +43,24 @@
     <None Include="TestSceneVert.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="ShadowMappingVert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ShadowMappingFrag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SimpleFrag.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="SimpleVert.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ShadowMappingFrag.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ShadowMappingVert.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

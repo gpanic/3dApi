@@ -62,7 +62,7 @@ bool SimpleTexturingDX::InitScene()
 	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
 	indexBufferDesc.ByteWidth = sizeof(Data::indices);
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA indexBufferData;
 	ZeroMemory(&indexBufferData, sizeof(indexBufferData));
@@ -73,7 +73,6 @@ bool SimpleTexturingDX::InitScene()
 	mDevice->CreateInputLayout(vertexLayout, 2, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &inputLayout);
 
 	DXUtil::LoadDDS(mDevice, "uv_grid.dds", &textureResource);
-
 
 	//DirectX::CreateDDSTextureFromFile(mDevice, mDeviceContext, L"uv_grid.dds", nullptr, &textureResource);
 
@@ -99,6 +98,7 @@ void SimpleTexturingDX::Update()
 void SimpleTexturingDX::Render()
 {
 	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
+	mDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	UINT stride = 6 * sizeof(float);
 	UINT offset = 0;

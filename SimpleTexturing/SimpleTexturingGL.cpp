@@ -37,12 +37,12 @@ bool SimpleTexturingGL::InitScene()
 
 	glVertexArrayAttribBinding(vao, 0, 0);
 	glVertexArrayAttribBinding(vao, 1, 0);
-	glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(Vertex));
+	glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(Vertex2));
 
 	glEnableVertexArrayAttrib(vao, 0);
 	glEnableVertexArrayAttrib(vao, 1);
 	glVertexArrayAttribFormat(vao, 0, 4, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(vao, 1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex().position));
+	glVertexArrayAttribFormat(vao, 1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2().position));
 
 	glCreateBuffers(1, &ibo);
 	glNamedBufferData(ibo, sizeof(Data::indices), Data::indices, GL_STATIC_DRAW);

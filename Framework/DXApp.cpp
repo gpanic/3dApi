@@ -99,7 +99,6 @@ bool DXApp::InitAPI()
 	mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
 
 	mDevice->CreateRenderTargetView(backBuffer, NULL, &mRenderTargetView);
-	
 
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
 	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));

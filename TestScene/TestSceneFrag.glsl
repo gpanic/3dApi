@@ -5,6 +5,7 @@ const int numberOfLights = 2;
 in vec3 normalViewSpace;
 in vec3 positionViewSpace;
 in vec3 lightPositionsViewSpace[numberOfLights];
+in vec4 shadowCoord;
 
 out vec4 outputColor;
 
@@ -33,6 +34,8 @@ uniform Lighting
 }
 lighting;
 
+layout (binding = 0) uniform sampler2D shadowMap;
+
 
 void main()
 {
@@ -41,7 +44,9 @@ void main()
 	vec4 ambient = material.ambient * lighting.ambient;
 	vec4 diffuse;
 	vec4 specular;
-	for (int i = 0; i < numberOfLights; ++i)
+
+	float cosTheta;
+	for (int i = 1; i < numberOfLights; ++i)
 	{	
 		Light light = lighting.lights[i];
 
@@ -52,6 +57,7 @@ void main()
 
 		float cosIncidence = dot(normalViewSpace, normalize(lightDirectionViewSpace));
 		cosIncidence = clamp(cosIncidence, 0.0f, 1.0f);
+		cosTheta = cosIncidence;
 
 		vec3 reflectDirectionViewSpace = reflect(-lightDirectionViewSpace, normalViewSpace);
 		float phongTerm = dot(viewDirectionViewSpace, reflectDirectionViewSpace);
@@ -68,5 +74,14 @@ void main()
 		diffuse += attenuation * (material.diffuse * light.diffuse * cosIncidence);
 		specular += attenuation * (material.specular * light.specular * phongTerm);
 	}
-	outputColor = ambient + diffuse + specular;
+
+	float visibility = 1.0f;
+	if (texture(shadowMap, shadowCoord.xy).z < shadowCoord.z)
+	{
+		visibility = 0.0f;
+	}
+
+	//float bias = 0.005*tan(acos(cosTheta));
+	//float visibility = texture(shadowMap, vec3(shadowCoord.xy, (shadowCoord.z - bias) / shadowCoord.w));
+	outputColor = ambient + visibility * diffuse + visibility * specular;
 }
