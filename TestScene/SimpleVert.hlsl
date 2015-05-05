@@ -6,7 +6,7 @@ struct VS_OUTPUT
 	float3 normalViewSpace : TEXCOORD0;
 	float3 positionViewSpace : TEXCOORD1;
 	float3 lightPositionsViewSpace[numberOfLights] : TEXCOORD2;
-	float4 shadowCoord : TEXCOORD4;
+	float4 shadowCoord[numberOfLights] : TEXCOORD4;
 };
 
 struct Light
@@ -45,7 +45,7 @@ cbuffer Lighting : register(b3)
 
 cbuffer ShadowViewProjectionMatrix : register(b4)
 {
-	float4x4 shadowViewProjectionMatrix;
+	float4x4 shadowViewProjectionMatrix[numberOfLights];
 };
 
 cbuffer ShadowBiasMatrix : register(b5)
@@ -64,11 +64,10 @@ VS_OUTPUT vertexShader(float4 inPos : POSITION, float3 inNormal : NORMAL)
 	for (int i = 0; i < numberOfLights; ++i)
 	{
 		output.lightPositionsViewSpace[i] = mul(viewMatrix, lighting.lights[i].position);
+		output.shadowCoord[i] = mul(shadowBiasMatrix, mul(shadowViewProjectionMatrix[i], mul(modelMatrix, inPos)));
 	}
 
 	output.position = mul(projectionMatrix, positionViewSpace);
-
-	output.shadowCoord = mul(shadowBiasMatrix, mul(shadowViewProjectionMatrix, mul(modelMatrix, inPos)));
 
 	return output;
 }

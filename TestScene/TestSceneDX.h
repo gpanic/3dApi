@@ -15,5 +15,7 @@ private:
 	bool InitScene() override;
 	void Update() override;
 	void Render() override;
+
+	void RenderShadowMaps();
 };
 

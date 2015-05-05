@@ -6,7 +6,6 @@ const bool BENCH = false;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	TestSceneDX dxApp(hInstance);
-	dxApp.debug = true;
 	dxApp.benchmarking = BENCH;
 	dxApp.Run();
 	TestSceneGL glApp(hInstance);
