@@ -86,7 +86,6 @@ bool TestSceneGL::InitScene()
 	glViewport(0, 0, mWidth, mHeight);
 
 	// PREPARE MATERIAL BUFFER
-	materialBuffer;
 	glCreateBuffers(1, &materialBuffer);
 	glNamedBufferData(materialBuffer, sizeof(Material), NULL, GL_STATIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, materialBindingPoint, materialBuffer);

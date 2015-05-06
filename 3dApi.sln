@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestScene", "TestScene\Test
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestPoints", "TestPoints\TestPoints.vcxproj", "{7879B9C2-6434-460F-ABF9-10DDBB5DF319}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestRasterization", "TestRasterization\TestRasterization.vcxproj", "{DD51F923-398F-4CC0-9B19-E2B9DFDD19E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -91,6 +93,12 @@ Global
 		{7879B9C2-6434-460F-ABF9-10DDBB5DF319}.Release|Win32.ActiveCfg = Release|Win32
 		{7879B9C2-6434-460F-ABF9-10DDBB5DF319}.Release|Win32.Build.0 = Release|Win32
 		{7879B9C2-6434-460F-ABF9-10DDBB5DF319}.Release|x64.ActiveCfg = Release|Win32
+		{DD51F923-398F-4CC0-9B19-E2B9DFDD19E0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DD51F923-398F-4CC0-9B19-E2B9DFDD19E0}.Debug|Win32.Build.0 = Debug|Win32
+		{DD51F923-398F-4CC0-9B19-E2B9DFDD19E0}.Debug|x64.ActiveCfg = Debug|Win32
+		{DD51F923-398F-4CC0-9B19-E2B9DFDD19E0}.Release|Win32.ActiveCfg = Release|Win32
+		{DD51F923-398F-4CC0-9B19-E2B9DFDD19E0}.Release|Win32.Build.0 = Release|Win32
+		{DD51F923-398F-4CC0-9B19-E2B9DFDD19E0}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

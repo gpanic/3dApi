@@ -77,7 +77,6 @@ bool TestPointsGL::InitScene()
 	return true;
 }
 
-
 void TestPointsGL::Update()
 {
 	float rotAmount = 0.0f;
