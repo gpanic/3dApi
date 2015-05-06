@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK_Desktop_2013", "D
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestScene", "TestScene\TestScene.vcxproj", "{5E443ECF-C31B-4438-BD00-5ED06A7034DC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestPoints", "TestPoints\TestPoints.vcxproj", "{7879B9C2-6434-460F-ABF9-10DDBB5DF319}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -83,6 +85,12 @@ Global
 		{5E443ECF-C31B-4438-BD00-5ED06A7034DC}.Release|Win32.ActiveCfg = Release|Win32
 		{5E443ECF-C31B-4438-BD00-5ED06A7034DC}.Release|Win32.Build.0 = Release|Win32
 		{5E443ECF-C31B-4438-BD00-5ED06A7034DC}.Release|x64.ActiveCfg = Release|Win32
+		{7879B9C2-6434-460F-ABF9-10DDBB5DF319}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7879B9C2-6434-460F-ABF9-10DDBB5DF319}.Debug|Win32.Build.0 = Debug|Win32
+		{7879B9C2-6434-460F-ABF9-10DDBB5DF319}.Debug|x64.ActiveCfg = Debug|Win32
+		{7879B9C2-6434-460F-ABF9-10DDBB5DF319}.Release|Win32.ActiveCfg = Release|Win32
+		{7879B9C2-6434-460F-ABF9-10DDBB5DF319}.Release|Win32.Build.0 = Release|Win32
+		{7879B9C2-6434-460F-ABF9-10DDBB5DF319}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
