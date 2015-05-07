@@ -1,27 +1,5 @@
 #include "TestPointsDX.h"
 
-ID3DBlob* vertexShaderBuffer;
-ID3DBlob* pixelShaderBuffer;
-ID3D11VertexShader* vertexShader;
-ID3D11PixelShader* pixelShader;
-ID3D11Buffer* vertexBuffer;
-ID3D11InputLayout* inputLayout;
-float bg[4];
-
-unsigned int modelMatrixBufferSlot = 0;
-unsigned int viewMatrixBufferSlot = 1;
-unsigned int projectionMatrixBufferSlot = 2;
-
-std::vector<Vector4> verts2;
-
-ID3D11Buffer* viewMatrixBuffer;
-
-const float rotDelta = 5.0f;
-XMVECTOR up = { 0.0f, 1.0f, 0.0f };
-XMVECTOR eye = { 2.2f, 2.2f, 2.2f };
-XMVECTOR right = { 1.0f, 0.0f, 0.0f };
-XMVECTOR center = { 0.0f, 0.0f, 0.0f };
-
 TestPointsDX::TestPointsDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
 	mAppTitle = "DirectX Test Points";
@@ -58,7 +36,7 @@ bool TestPointsDX::InitScene()
 	mDeviceContext->RSSetState(rasterizerState);
 	rasterizerState->Release();
 
-	BinaryIO::ReadVector4s("point_cube.bin", verts2);
+	BinaryIO::ReadVector4s("point_cube.bin", verts);
 
 	D3D11_INPUT_ELEMENT_DESC vertexLayout[] =
 	{
@@ -72,13 +50,13 @@ bool TestPointsDX::InitScene()
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
-	vertexBufferDesc.ByteWidth = sizeof(Vector4) * verts2.size();
+	vertexBufferDesc.ByteWidth = sizeof(Vector4) * verts.size();
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData;
 	ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
-	vertexBufferData.pSysMem = &verts2[0];
+	vertexBufferData.pSysMem = &verts[0];
 
 	mDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &vertexBuffer);
 	mDevice->CreateInputLayout(vertexLayout, 1, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &inputLayout);
@@ -143,5 +121,5 @@ void TestPointsDX::Render()
 	mDeviceContext->VSSetShader(vertexShader, 0, 0);
 	mDeviceContext->PSSetShader(pixelShader, 0, 0);
 
-	mDeviceContext->Draw(verts2.size(), 0);
+	mDeviceContext->Draw(verts.size(), 0);
 }

@@ -1,43 +1,5 @@
 #include "TestSceneDX.h"
 
-ID3DBlob* vertexShaderBuffer;
-ID3DBlob* pixelShaderBuffer;
-ID3D11VertexShader* vertexShader;
-ID3D11PixelShader* pixelShader;
-ID3D11Buffer* viewMarixBuffer;
-float bg[4];
-
-ID3D11Buffer* materialBuffer;
-
-unsigned int modelMatrixBufferSlot = 0;
-unsigned int viewMatrixBufferSlot = 1;
-unsigned int projectionMatrixBufferSlot = 2;
-unsigned int lightBufferSlot = 3;
-unsigned int materialBufferSlot = 0;
-
-std::vector<ModelDX> models;
-
-const float rotDelta = 10.0f;
-XMVECTOR up = { 0.0f, 1.0f, 0.0f };
-XMVECTOR eye = { 5.0f, 5.0f, 8.0f };
-XMVECTOR right = { 1.0f, 0.0f, 0.0f };
-XMVECTOR center = { 0.0f, 0.0f, 0.0f };
-
-// LIGHTING
-const int NUMBER_OF_LIGHTS = 2;
-Lighting lighting;
-
-// SHADOW MAPPING
-const int SHADOW_RESOLUTION = 1024;
-ID3DBlob* shadowVertexShaderBuffer;
-ID3DBlob* shadowPixelShaderBuffer;
-ID3D11VertexShader* shadowVertexShader;
-ID3D11PixelShader* shadowPixelShader;
-unsigned int shadowViewProjectionMatrixBufferSlot = 4;
-unsigned int shadowBiasMatrixBufferSlot = 5;
-ID3D11ShaderResourceView* shadowMapResources[NUMBER_OF_LIGHTS];
-ID3D11SamplerState* shadowMapSamplerState;
-
 TestSceneDX::TestSceneDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
 	mAppTitle = "DirectX Test Scene";
@@ -241,7 +203,7 @@ void TestSceneDX::Render()
 
 		mDeviceContext->PSSetShaderResources(0, 2, &shadowMapResources[0]);
 		mDeviceContext->PSSetSamplers(0, 1, &shadowMapSamplerState);
-
+		
 		mDeviceContext->VSSetConstantBuffers(modelMatrixBufferSlot, 1, &model.modelMatrixBuffer);
 		mDeviceContext->UpdateSubresource(materialBuffer, 0, NULL, &model.material, 0, 0);
 

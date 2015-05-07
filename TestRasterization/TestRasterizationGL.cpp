@@ -1,26 +1,5 @@
 #include "TestRasterizationGL.h"
 
-GLuint shaderProgram;
-
-GLuint vertexArray;
-std::vector<Vertex> vertices;
-Material material;
-std::vector<Vector3> offsets;
-
-GLuint materialBuffer;
-GLuint materialBindingPoint = 1;
-GLuint lightBindingPoint = 2;
-
-GLuint modelMatrixIndex;
-GLuint viewMatrixIndex;
-GLuint projectionMatrixIndex;
-
-const float rotDelta = 5.0f;
-const glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-glm::vec3 eye = glm::vec3(0.0f, 10.0f, 60.0f);
-glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
-glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
-
 TestRasterizationGL::TestRasterizationGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
 	mAppTitle = "OpenGL Test Rasterization";
@@ -50,14 +29,7 @@ bool TestRasterizationGL::InitScene()
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 
 	ObjReader::Read("sphere_smooth.obj", "sphere_smooth.mtl", vertices, material);
-
-	for (int i = 0; i < 100; ++i)
-	{
-		for (int j = 0; j < 100; ++j)
-		{
-			offsets.push_back(Vector3(-50.0f + 0.5f + (i * 100.0f / 100.0f), 0.0f, 50.f - 0.5f - (j * 100.0f / 100.0f)));
-		}
-	}
+	BinaryIO::ReadVector3s("verts.bin", offsets);
 
 	glCreateVertexArrays(1, &vertexArray);
 
@@ -85,6 +57,7 @@ bool TestRasterizationGL::InitScene()
 	glVertexArrayAttribFormat(vertexArray, 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex().position));
 	glVertexArrayAttribFormat(vertexArray, 2, 3, GL_FLOAT, GL_FALSE, 0);
 
+	// UPLOAD LIGHT
 	Light light;
 	light.position = Vector4(5.0f, 5.0f, 5.0f, 0.0f);
 	light.diffuse = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -101,12 +74,14 @@ bool TestRasterizationGL::InitScene()
 	GLuint ambientIndex = glGetUniformLocation(shaderProgram, "ambient");
 	glProgramUniform4fv(shaderProgram, ambientIndex, 1, (GLfloat *)&ambient);
 
+	// PREPARE MATERIAL
 	glCreateBuffers(1, &materialBuffer);
 	glNamedBufferData(materialBuffer, sizeof(Material), NULL, GL_STATIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, materialBindingPoint, materialBuffer);
 	GLuint materialBlockIndex = glGetUniformBlockIndex(shaderProgram, "Material");
 	glUniformBlockBinding(shaderProgram, materialBlockIndex, materialBindingPoint);
 
+	// UPLOAD MVP MATRICES
 	glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f, 0.5f, 0.5f));
 	glm::mat4 viewMatrix = glm::lookAt(eye, center, up);

@@ -8,9 +8,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	dxApp.debug = true;
 	dxApp.benchmarking = BENCH;
 	dxApp.Run();
-	//TestPointsGL glApp(hInstance);
-	//glApp.benchmarking = BENCH;
-	//glApp.Run();
+	TestPointsGL glApp(hInstance);
+	glApp.benchmarking = BENCH;
+	glApp.Run();
 }
 
 //const int DIMENSION_SIZE = 200.0f;
@@ -24,9 +24,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 //		{
 //			for (int k = 0; k < DIMENSION_SIZE; ++k)
 //			{
-//				float x = -1.0f + ((i + 1) * 2.0f / DIMENSION_SIZE);
-//				float y = -1.0f + ((j + 1) * 2.0f / DIMENSION_SIZE);
-//				float z = -1.0f + ((k + 1) * 2.0f / DIMENSION_SIZE);
+//				float x = -1.0f + (1.0f / DIMENSION_SIZE) + (i * 2.0f / DIMENSION_SIZE);
+//				float y = -1.0f + (1.0f / DIMENSION_SIZE) + (j * 2.0f / DIMENSION_SIZE);
+//				float z = -1.0f + (1.0f / DIMENSION_SIZE) + (k * 2.0f / DIMENSION_SIZE);
 //				verts.push_back(Vector4(x, y, z, 1.0f));
 //			}
 //		}
@@ -35,6 +35,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 //	BinaryIO::WriteVector4s("point_cube.bin", verts);
 //
 //	std::cout << std::endl;
-//	std::cout << "AAAAAAA" << std::endl;
+//	std::cout << "DONE" << std::endl;
 //	std::cin.get();
 //}

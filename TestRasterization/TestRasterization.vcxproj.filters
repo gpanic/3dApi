@@ -29,6 +29,9 @@
     <ClInclude Include="TestRasterizationGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestRasterizationDX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -37,5 +40,16 @@
     <ClCompile Include="TestRasterizationGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestRasterizationDX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="TestRasterizationFrag.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TestRasterizationVert.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

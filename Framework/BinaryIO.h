@@ -11,5 +11,8 @@ namespace BinaryIO
 
 	void WriteVector4s(const std::string &path, const std::vector<Vector4> &vertices);
 	void ReadVector4s(const std::string &path, std::vector<Vector4> &vertices);
+
+	void WriteVector3s(const std::string &path, const std::vector<Vector3> &vertices);
+	void ReadVector3s(const std::string &path, std::vector<Vector3> &vertices);
 };
 

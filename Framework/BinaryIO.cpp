@@ -59,3 +59,26 @@ void BinaryIO::ReadVector4s(const std::string &path, std::vector<Vector4> &verti
 	}
 	file.close();
 }
+
+void BinaryIO::WriteVector3s(const std::string &path, const std::vector<Vector3> &vertices)
+{
+	std::ofstream file(path, std::ios::out | std::ios::binary);
+	if (file.is_open())
+	{
+		file.write(reinterpret_cast<const char *>(&vertices[0]), vertices.size() * sizeof(Vector3));
+	}
+	file.close();
+}
+
+void BinaryIO::ReadVector3s(const std::string &path, std::vector<Vector3> &vertices)
+{
+	std::ifstream file(path, std::ios::in | std::ios::ate | std::ios::binary);
+	if (file.is_open())
+	{
+		long long size = file.tellg() / sizeof(Vector3);
+		vertices.resize(size);
+		file.seekg(0);
+		file.read(reinterpret_cast<char *>(&vertices[0]), size * sizeof(Vector3));
+	}
+	file.close();
+}
