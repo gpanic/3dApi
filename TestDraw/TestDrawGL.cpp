@@ -16,7 +16,7 @@ TestDrawGL::~TestDrawGL()
 
 bool TestDrawGL::InitScene()
 {
-	BinaryIO::ReadVector4s("../Bin/point_cube_50.bin", verts);
+	BinaryIO::ReadVector4s("../Binary/point_cube_50.bin", verts);
 
 	glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 	glClear(GL_COLOR_BUFFER_BIT);

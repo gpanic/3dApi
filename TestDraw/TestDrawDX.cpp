@@ -36,7 +36,7 @@ bool TestDrawDX::InitScene()
 	mDeviceContext->RSSetState(rasterizerState);
 	rasterizerState->Release();
 
-	BinaryIO::ReadVector4s("../Bin/point_cube_50.bin", verts);
+	BinaryIO::ReadVector4s("../Binary/point_cube_50.bin", verts);
 
 	D3D11_INPUT_ELEMENT_DESC vertexLayout[] =
 	{
