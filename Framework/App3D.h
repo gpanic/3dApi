@@ -18,6 +18,7 @@ public:
 	virtual ~App3D();
 
 	bool benchmarking;
+	bool processInput;
 	int benchmarkFrameCount;
 	Color bgColor;
 	Input input;

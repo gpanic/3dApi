@@ -25,8 +25,6 @@ void main()
 	vec4 posViewSpace = viewMatrix * (modelMatrix * position + vec4(offset, 0.0f));
 	positionViewSpace = vec3(posViewSpace);
 	normalViewSpace = mat3(viewMatrix) * mat3(modelMatrix) * normal;
-
 	lightDirViewSpace = vec3(viewMatrix * light.position);
-	
 	gl_Position = projectionMatrix * posViewSpace;
 }

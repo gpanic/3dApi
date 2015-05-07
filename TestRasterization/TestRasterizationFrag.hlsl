@@ -46,10 +46,10 @@ float4 pixelShader(VS_OUTPUT input) : SV_TARGET
 	float3 reflectDirectionViewSpace = reflect(-lightDirectionViewSpace, normalViewSpace);
 
 	float cosIncidence = dot(normalViewSpace, lightDirectionViewSpace);
-	cosIncidence = clamp(cosIncidence, 0.0f, 1.0f);
+	cosIncidence = saturate(cosIncidence);
 
 	float phongTerm = dot(viewDirectionViewSpace, reflectDirectionViewSpace);
-	phongTerm = clamp(phongTerm, 0.0f, 1.0f);
+	phongTerm = saturate(phongTerm);
 	phongTerm = cosIncidence != 0.0 ? phongTerm : 0.0;
 	phongTerm = pow(phongTerm, material.shininess);
 

@@ -1,18 +1,27 @@
 #include "TestPointsDX.h"
 #include "TestPointsGL.h"
+
 const bool BENCH = false;
+const int BENCH_FRAME_COUNT = 1000;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	TestPointsDX dxApp(hInstance);
-	dxApp.debug = true;
-	dxApp.benchmarking = BENCH;
-	dxApp.Run();
-	TestPointsGL glApp(hInstance);
-	glApp.benchmarking = BENCH;
-	glApp.Run();
-}
+	TestPointsDX* dxApp = new TestPointsDX(hInstance);
+	dxApp->debug = false;
+	dxApp->benchmarking = BENCH;
+	dxApp->processInput = !BENCH;
+	dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	dxApp->Run();
+	delete dxApp;
 
+	TestPointsGL* glApp = new TestPointsGL(hInstance);
+	glApp->benchmarking = BENCH;
+	glApp->processInput = !BENCH;
+	glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	glApp->Run();
+	delete glApp;
+}
+//
 //const int DIMENSION_SIZE = 200.0f;
 //int main()
 //{

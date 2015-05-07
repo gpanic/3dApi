@@ -16,7 +16,7 @@ TestPointsGL::~TestPointsGL()
 
 bool TestPointsGL::InitScene()
 {
-	BinaryIO::ReadVector4s("point_cube.bin", verts);
+	BinaryIO::ReadVector4s("../Bin/point_cube_200.bin", verts);
 
 	glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -62,30 +62,33 @@ bool TestPointsGL::InitScene()
 
 void TestPointsGL::Update()
 {
-	float rotAmount = 0.0f;
-	glm::mat4 rotMatrix;
-	if (input.right || input.left)
+	if (processInput)
 	{
-		if (input.right)
-			rotAmount = rotDelta;
-		if (input.left)
-			rotAmount = -rotDelta;
-		rotMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotAmount), up);
-	}
-	else if (input.up || input.down)
-	{
-		if (input.up)
-			rotAmount = -rotDelta;
-		if (input.down)
-			rotAmount = rotDelta;
-		rotMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotAmount), right);
-	}
+		float rotAmount = 0.0f;
+		glm::mat4 rotMatrix;
+		if (input.right || input.left)
+		{
+			if (input.right)
+				rotAmount = rotDelta;
+			if (input.left)
+				rotAmount = -rotDelta;
+			rotMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotAmount), up);
+		}
+		else if (input.up || input.down)
+		{
+			if (input.up)
+				rotAmount = -rotDelta;
+			if (input.down)
+				rotAmount = rotDelta;
+			rotMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotAmount), right);
+		}
 
-	eye = glm::vec3(rotMatrix * glm::vec4(eye, 1.0f));
-	right = glm::normalize(-glm::cross(up, (center - eye)));
+		eye = glm::vec3(rotMatrix * glm::vec4(eye, 1.0f));
+		right = glm::normalize(-glm::cross(up, (center - eye)));
 
-	glm::mat4 viewMatrix = glm::lookAt(eye, center, up);
-	glProgramUniformMatrix4fv(shaderProgram, viewMatrixIndex, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glm::mat4 viewMatrix = glm::lookAt(eye, center, up);
+		glProgramUniformMatrix4fv(shaderProgram, viewMatrixIndex, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+	}
 }
 
 void TestPointsGL::Render()

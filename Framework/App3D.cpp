@@ -27,6 +27,7 @@ App3D::App3D(HINSTANCE hInstance)
 	mBenchmarkResultName = mAppTitle + " Result.txt";
 
 	benchmarking = true;
+	processInput = true;
 	benchmarkFrameCount = 10000;
 }
 
@@ -124,9 +125,22 @@ bool App3D::InitWindow()
 	return true;
 }
 
+float mUpdateTime = 0;
+float mRenderTime = 0;
+float mSwapBufferTime = 0;
+
+std::vector<float>	mUpdateTimes;
+std::vector<float>	mRenderTimes;
+std::vector<float>	mSwapBufferTimes;
+
 int App3D::MsgLoop()
 {
 	StartTime();
+
+	__int64 first = 0;
+	__int64 second = 0;
+	__int64 freq = 0;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
 
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
@@ -141,11 +155,27 @@ int App3D::MsgLoop()
 		else
 		{
 			UpdateDeltaTime();
+
+			QueryPerformanceCounter((LARGE_INTEGER*)&first);
 			Update();
+			QueryPerformanceCounter((LARGE_INTEGER*)&second);
+			mUpdateTime = (float)(second - first) / (float)freq;
+
+			QueryPerformanceCounter((LARGE_INTEGER*)&first);
 			Render();
-			UpdateWindowTitle();
+			QueryPerformanceCounter((LARGE_INTEGER*)&second);
+			mRenderTime = (float)(second - first) / (float)freq;
+
+			if (!benchmarking)
+				UpdateWindowTitle();
+
+			QueryPerformanceCounter((LARGE_INTEGER*)&first);
 			SwapBuffer();
+			QueryPerformanceCounter((LARGE_INTEGER*)&second);
+			mSwapBufferTime = (float)(second - first) / (float)freq;
+
 			UpdateTime();
+
 			if (!Benchmark())
 				break;
 		}
@@ -185,22 +215,44 @@ bool App3D::Benchmark()
 	{
 		if (mFrameTimes.size() != benchmarkFrameCount)
 			mFrameTimes.resize(benchmarkFrameCount);
+		if (mUpdateTimes.size() != benchmarkFrameCount)
+			mUpdateTimes.resize(benchmarkFrameCount);
+		if (mRenderTimes.size() != benchmarkFrameCount)
+			mRenderTimes.resize(benchmarkFrameCount);
+		if (mSwapBufferTimes.size() != benchmarkFrameCount)
+			mSwapBufferTimes.resize(benchmarkFrameCount);
 
 		mFrameTimes[mFrameCount] = mDeltaTime;
+		mUpdateTimes[mFrameCount] = mUpdateTime;
+		mRenderTimes[mFrameCount] = mRenderTime;
+		mSwapBufferTimes[mFrameCount] = mSwapBufferTime;
+
 		++mFrameCount;
+
 		if (mFrameCount == benchmarkFrameCount)
 		{
 			std::ofstream file;
 			file.open(mBenchmarkResultName);
-			float timeSum = 0;
+			float deltaSum = 0;
+			float updateSum = 0;
+			float renderSum = 0;
+			float swapBufferSum = 0;
 			for (int j = 0; j < benchmarkFrameCount; ++j)
 			{
-				float time = mFrameTimes[j];
-				timeSum += time;
-				file << std::setfill('0') << std::setw(2) << j << " " << std::fixed << time << std::endl;
+				float delta = mFrameTimes[j];
+				float update = mUpdateTimes[j];
+				float render = mRenderTimes[j];
+				float swapBuffer = mSwapBufferTimes[j];
+
+				deltaSum += delta;
+				updateSum += update;
+				renderSum += render;
+				swapBufferSum += swapBuffer;
+
+				file << std::setfill('0') << std::setw(2) << j << " DT " << std::fixed << delta << " U " << update << " R " << render << " B " << swapBuffer << std::endl;
 			}
-			file << "TIME " << timeSum << std::endl;
-			file << "FPS " << (float)benchmarkFrameCount / timeSum << std::endl;
+			file << "SUM " << std::fixed << "DT " << deltaSum << " U " << updateSum << " R " << renderSum << " B " << swapBufferSum << std::endl;
+			file << "FPS " << (float)benchmarkFrameCount / deltaSum << std::endl;
 			file.close();
 			return false;
 		}

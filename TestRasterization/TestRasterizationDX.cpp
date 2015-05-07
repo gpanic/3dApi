@@ -28,7 +28,7 @@ bool TestRasterizationDX::InitScene()
 	ID3D11RasterizerState1 *rasterizerState;
 	D3D11_RASTERIZER_DESC1 rasterizerDesc;
 	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
-	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	rasterizerDesc.FrontCounterClockwise = true;
 
@@ -150,30 +150,33 @@ bool TestRasterizationDX::InitScene()
 
 void TestRasterizationDX::Update()
 {
-	float rotAmount = 0.0f;
-	XMMATRIX rotMatrix = XMMatrixIdentity();
-	if (input.right || input.left)
+	if (processInput)
 	{
-		if (input.right)
-			rotAmount = rotDelta;
-		if (input.left)
-			rotAmount = -rotDelta;
-		rotMatrix = XMMatrixRotationAxis(up, XMConvertToRadians(rotAmount));
-	}
-	else if (input.up || input.down)
-	{
-		if (input.up)
-			rotAmount = rotDelta;
-		if (input.down)
-			rotAmount = -rotDelta;
-		rotMatrix = XMMatrixRotationAxis(right, XMConvertToRadians(rotAmount));
-	}
+		float rotAmount = 0.0f;
+		XMMATRIX rotMatrix = XMMatrixIdentity();
+		if (input.right || input.left)
+		{
+			if (input.right)
+				rotAmount = rotDelta;
+			if (input.left)
+				rotAmount = -rotDelta;
+			rotMatrix = XMMatrixRotationAxis(up, XMConvertToRadians(rotAmount));
+		}
+		else if (input.up || input.down)
+		{
+			if (input.up)
+				rotAmount = rotDelta;
+			if (input.down)
+				rotAmount = -rotDelta;
+			rotMatrix = XMMatrixRotationAxis(right, XMConvertToRadians(rotAmount));
+		}
 
-	eye = XMVector3Transform(eye, rotMatrix);
-	right = XMVector3Normalize(XMVector3Cross(up, (center - eye)));
+		eye = XMVector3Transform(eye, rotMatrix);
+		right = XMVector3Normalize(XMVector3Cross(up, (center - eye)));
 
-	XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, center, up);
-	mDeviceContext->UpdateSubresource(viewMatrixBuffer, 0, NULL, &viewMatrix, 0, 0);
+		XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, center, up);
+		mDeviceContext->UpdateSubresource(viewMatrixBuffer, 0, NULL, &viewMatrix, 0, 0);
+	}
 }
 
 void TestRasterizationDX::Render()

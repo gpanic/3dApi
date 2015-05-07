@@ -39,9 +39,9 @@ VS_OUTPUT vertexShader(float4 inPos : POSITION, float3 inNormal : NORMAL, float3
 	VS_OUTPUT output;
 
 	float4 posViewSpace = mul(viewMatrix, (mul(modelMatrix, inPos) + float4(inOffset, 0.0f)));
-	output.positionViewSpace = posViewSpace;
-	output.normalViewSpace = mul(viewMatrix, mul(modelMatrix, inNormal));
-	output.lightDirViewSpace = mul(viewMatrix, light.position);
+	output.positionViewSpace = (float3)posViewSpace;
+	output.normalViewSpace = mul((float3x3)viewMatrix, mul((float3x3)modelMatrix, inNormal));
+	output.lightDirViewSpace = mul((float3x3)viewMatrix, light.position);
 	output.position = mul(projectionMatrix, mul(viewMatrix, (mul(modelMatrix, inPos) + float4(inOffset, 0.0f))));
 
 	return output;
