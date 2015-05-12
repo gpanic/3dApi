@@ -76,7 +76,7 @@ bool SimpleInstancingDX::InitScene()
 	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
 	indexBufferDesc.ByteWidth = sizeof(Data::indices);
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA indexBufferData;
 	ZeroMemory(&indexBufferData, sizeof(indexBufferData));
