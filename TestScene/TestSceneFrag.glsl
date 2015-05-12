@@ -42,8 +42,8 @@ void main()
 	vec3 viewDirectionViewSpace = normalize(-positionViewSpace);
 
 	vec4 ambient = material.ambient * lighting.ambient;
-	vec4 diffuse;
-	vec4 specular;
+	vec4 diffuse = vec4(0);
+	vec4 specular = vec4(0);
 
 	for (int i = 0; i < numberOfLights; ++i)
 	{	
