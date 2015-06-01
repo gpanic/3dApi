@@ -125,14 +125,6 @@ bool App3D::InitWindow()
 	return true;
 }
 
-float mUpdateTime = 0;
-float mRenderTime = 0;
-float mSwapBufferTime = 0;
-
-std::vector<float>	mUpdateTimes;
-std::vector<float>	mRenderTimes;
-std::vector<float>	mSwapBufferTimes;
-
 int App3D::MsgLoop()
 {
 	StartTime();
@@ -167,7 +159,9 @@ int App3D::MsgLoop()
 			mRenderTime = (float)(second - first) / (float)freq;
 
 			if (!benchmarking)
+			{
 				UpdateWindowTitle();
+			}
 
 			QueryPerformanceCounter((LARGE_INTEGER*)&first);
 			SwapBuffer();
@@ -213,48 +207,64 @@ bool App3D::Benchmark()
 {
 	if (benchmarking)
 	{
-		if (mFrameTimes.size() != benchmarkFrameCount)
-			mFrameTimes.resize(benchmarkFrameCount);
-		if (mUpdateTimes.size() != benchmarkFrameCount)
-			mUpdateTimes.resize(benchmarkFrameCount);
-		if (mRenderTimes.size() != benchmarkFrameCount)
-			mRenderTimes.resize(benchmarkFrameCount);
-		if (mSwapBufferTimes.size() != benchmarkFrameCount)
-			mSwapBufferTimes.resize(benchmarkFrameCount);
-
-		mFrameTimes[mFrameCount] = mDeltaTime;
-		mUpdateTimes[mFrameCount] = mUpdateTime;
-		mRenderTimes[mFrameCount] = mRenderTime;
-		mSwapBufferTimes[mFrameCount] = mSwapBufferTime;
-
-		++mFrameCount;
-
-		if (mFrameCount == benchmarkFrameCount)
+		if (!firstSnapshot)
 		{
-			std::ofstream file;
-			file.open(mBenchmarkResultName);
-			float deltaSum = 0;
-			float updateSum = 0;
-			float renderSum = 0;
-			float swapBufferSum = 0;
-			for (int j = 0; j < benchmarkFrameCount; ++j)
+			CreateDirectory("Results", NULL);
+			SaveSnapshot("Results/" + mBenchmarkResultName + " Start.bmp");
+			firstSnapshot = true;
+		}
+		else
+		{
+			if (mFrameCount <= benchmarkFrameCount - 1)
 			{
-				float delta = mFrameTimes[j];
-				float update = mUpdateTimes[j];
-				float render = mRenderTimes[j];
-				float swapBuffer = mSwapBufferTimes[j];
+				if (mFrameTimes.size() != benchmarkFrameCount)
+					mFrameTimes.resize(benchmarkFrameCount);
+				if (mUpdateTimes.size() != benchmarkFrameCount)
+					mUpdateTimes.resize(benchmarkFrameCount);
+				if (mRenderTimes.size() != benchmarkFrameCount)
+					mRenderTimes.resize(benchmarkFrameCount);
+				if (mSwapBufferTimes.size() != benchmarkFrameCount)
+					mSwapBufferTimes.resize(benchmarkFrameCount);
 
-				deltaSum += delta;
-				updateSum += update;
-				renderSum += render;
-				swapBufferSum += swapBuffer;
+				mFrameTimes[mFrameCount] = mDeltaTime;
+				mUpdateTimes[mFrameCount] = mUpdateTime;
+				mRenderTimes[mFrameCount] = mRenderTime;
+				mSwapBufferTimes[mFrameCount] = mSwapBufferTime;
 
-				file << std::setfill('0') << std::setw(2) << j << " DT " << std::fixed << delta << " U " << update << " R " << render << " B " << swapBuffer << std::endl;
+				++mFrameCount;
+
+				if (mFrameCount == benchmarkFrameCount)
+				{
+					std::ofstream file;
+					file.open("Results/" + mBenchmarkResultName + ".txt");
+					float deltaSum = 0;
+					float updateSum = 0;
+					float renderSum = 0;
+					float swapBufferSum = 0;
+					for (int j = 0; j < benchmarkFrameCount; ++j)
+					{
+						float delta = mFrameTimes[j];
+						float update = mUpdateTimes[j];
+						float render = mRenderTimes[j];
+						float swapBuffer = mSwapBufferTimes[j];
+
+						deltaSum += delta;
+						updateSum += update;
+						renderSum += render;
+						swapBufferSum += swapBuffer;
+
+						file << std::setfill('0') << std::setw(4) << j + 1 << " DT " << std::fixed << delta << " U " << update << " R " << render << " B " << swapBuffer << std::endl;
+					}
+					file << "SUM " << std::fixed << "DT " << deltaSum << " U " << updateSum << " R " << renderSum << " B " << swapBufferSum << std::endl;
+					file << "FPS " << (float)benchmarkFrameCount / deltaSum << std::endl;
+					file.close();
+				}
 			}
-			file << "SUM " << std::fixed << "DT " << deltaSum << " U " << updateSum << " R " << renderSum << " B " << swapBufferSum << std::endl;
-			file << "FPS " << (float)benchmarkFrameCount / deltaSum << std::endl;
-			file.close();
-			return false;
+			else
+			{
+				SaveSnapshot("Results/" + mBenchmarkResultName + " End.bmp");
+				return false;
+			}
 		}
 	}
 	return true;

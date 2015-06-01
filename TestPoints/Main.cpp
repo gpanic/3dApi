@@ -1,7 +1,7 @@
 #include "TestPointsDX.h"
 #include "TestPointsGL.h"
 
-const bool BENCH = false;
+const bool BENCH = true;
 const int BENCH_FRAME_COUNT = 1000;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
@@ -21,8 +21,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	glApp->Run();
 	delete glApp;
 }
-//
-//const int DIMENSION_SIZE = 200.0f;
+
+//const int DIMENSION_SIZE = 180.0f;
 //int main()
 //{
 //	std::vector<Vector4> verts;

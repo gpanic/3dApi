@@ -1,13 +1,13 @@
 #include "TestTriangleStripsDX.h"
 #include "TestTriangleStripsGL.h"
 
-const bool BENCH = false;
+const bool BENCH = true;
 const int BENCH_FRAME_COUNT = 1000;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	TestTriangleStripsDX* dxApp = new TestTriangleStripsDX(hInstance);
-	dxApp->debug = true;
+	dxApp->debug = false;
 	dxApp->benchmarking = BENCH;
 	dxApp->processInput = !BENCH;
 	dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
@@ -27,8 +27,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 //#include "Vector.h"
 //#include "BinaryIO.h"
 //
-//const int DIM_X = 1200;
-//const int DIM_Y = 1200;
+//const int DIM_X = 1800;
+//const int DIM_Y = 1800;
 //const float SIZE_X = 20;
 //const float SIZE_Y = 20;
 //

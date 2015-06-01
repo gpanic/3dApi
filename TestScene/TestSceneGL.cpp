@@ -4,7 +4,7 @@ TestSceneGL::TestSceneGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
 	mAppTitle = "OpenGL Test Scene";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
-	mBenchmarkResultName = mAppTitle + " Result.txt";
+	mBenchmarkResultName = mAppTitle + " Result";
 }
 
 TestSceneGL::~TestSceneGL()
@@ -32,22 +32,25 @@ bool TestSceneGL::InitScene()
 	// PREPARE MODELS
 	glm::mat4 matrix;
 
-	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, -2.0f));
-	models.push_back(ModelGL("torus.bin", "torus.mtl", matrix, true));
+	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, -2.0f));
+	matrix = glm::scale(matrix, glm::vec3(2.0f, 2.0f, 2.0f));
+	models.push_back(ModelGL("../Binary/chair.bin", "chair.mtl", matrix, true));
 
 	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, -2.0f));
-	models.push_back(ModelGL("sphere.bin", "sphere.mtl", matrix, true));
+	models.push_back(ModelGL("../Binary/sphere_smooth.bin", "sphere_smooth.mtl", matrix, true));
 
 	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, 2.0f));
-	models.push_back(ModelGL("sphere_smooth.bin", "sphere_smooth.mtl", matrix, true));
+	matrix = glm::rotate(matrix, glm::radians(100.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	matrix = glm::scale(matrix, glm::vec3(3.0f, 3.0f, 3.0f));
+	models.push_back(ModelGL("../Binary/knife.bin", "knife.mtl", matrix, true));
 
 	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, 2.0f));
-	models.push_back(ModelGL("monkey.bin", "monkey.mtl", matrix, true));
+	models.push_back(ModelGL("../Binary/monkey.bin", "monkey.mtl", matrix, true));
 
 	matrix = glm::mat4(1.0f);
 	matrix = glm::scale(matrix, glm::vec3(5.0f, 5.0f, 5.0f));
 	matrix = glm::translate(matrix, glm::vec3(0.0f, 0.0f, 0.0f));
-	models.push_back(ModelGL("plane.bin", "plane.mtl", matrix, true));
+	models.push_back(ModelGL("../Binary/plane.bin", "plane.mtl", matrix, true));
 
 	// PREPARE LIGHTING
 	lighting.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);

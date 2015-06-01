@@ -1,0 +1,11 @@
+# Blender MTL File: 'knife.blend'
+# Material Count: 1
+
+newmtl KnifeMaterial
+Ns 584.313725
+Ka 1.000000 1.000000 1.000000
+Kd 0.086588 0.800000 0.587157
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2

@@ -4,7 +4,7 @@ TestSceneDX::TestSceneDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
 	mAppTitle = "DirectX Test Scene";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
-	mBenchmarkResultName = mAppTitle + " Result.txt";
+	mBenchmarkResultName = mAppTitle + " Result";
 }
 
 TestSceneDX::~TestSceneDX()
@@ -66,20 +66,23 @@ bool TestSceneDX::InitScene()
 
 	XMMATRIX modelMatrix;
 
-	modelMatrix = XMMatrixTranslation(2.0f, 1.0f, -2.0f);
-	models.push_back(ModelDX("torus.bin", "torus.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	modelMatrix = XMMatrixScaling(2.0f, 2.0f, 2.0f);
+	modelMatrix *= XMMatrixTranslation(2.0f, 0.0f, -2.0f);
+	models.push_back(ModelDX("../Binary/chair.bin", "chair.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixTranslation(-2.0f, 1.0f, -2.0f);
-	models.push_back(ModelDX("sphere.bin", "sphere.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX("../Binary/sphere_smooth.bin", "sphere_smooth.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
-	modelMatrix = XMMatrixTranslation(-2.0f, 1.0f, 2.0f);
-	models.push_back(ModelDX("sphere_smooth.bin", "sphere_smooth.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	modelMatrix = XMMatrixScaling(3.0f, 3.0f, 3.0f);
+	modelMatrix *= XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), XMConvertToRadians(100.0f));
+	modelMatrix *= XMMatrixTranslation(-2.0f, 1.0f, 2.0f);
+	models.push_back(ModelDX("../Binary/knife.bin", "knife.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixTranslation(2.0f, 1.0f, 2.0f);
-	models.push_back(ModelDX("monkey.bin", "monkey.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX("../Binary/monkey.bin", "monkey.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	models.push_back(ModelDX("plane.bin", "plane.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX("../Binary/plane.bin", "plane.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	// PREPARE LIGHTING
 	lighting.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);

@@ -150,3 +150,78 @@ void DXApp::SwapBuffer()
 {
 	mSwapChain->Present(0, 0);
 }
+
+void DXApp::SaveSnapshot(std::string filePath)
+{
+	ID3D11Texture2D *backBuffer;
+	mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&backBuffer));
+
+	D3D11_TEXTURE2D_DESC desc;
+	ZeroMemory(&desc, sizeof(desc));
+	backBuffer->GetDesc(&desc);
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.Usage = D3D11_USAGE_STAGING;
+	desc.BindFlags = 0;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+
+	ID3D11Texture2D *newTex;
+	mDevice->CreateTexture2D(&desc, NULL, &newTex);
+	mDeviceContext->CopyResource(newTex, backBuffer);
+
+	D3D11_MAPPED_SUBRESOURCE res;
+	ZeroMemory(&res, sizeof(res));
+	mDeviceContext->Map(newTex, 0, D3D11_MAP_READ, 0, &res);
+
+	byte *bmpTempBuffer = reinterpret_cast<byte *>(res.pData);
+	if (!bmpTempBuffer) return;
+
+	byte *bmpBuffer = new byte[mWidth * mHeight * 3];
+
+	for (int y = 0; y < mHeight; ++y)
+	{
+		for (int x = 0; x < mWidth; ++x)
+		{
+			int i = (x + (y * mWidth)) * 3;
+			int iInv = (x + ((mWidth - y - 1) * mWidth)) * 3;
+			int c = iInv / 3;
+			bmpBuffer[i + 0] = bmpTempBuffer[iInv + 2 + c];
+			bmpBuffer[i + 1] = bmpTempBuffer[iInv + 1 + c];
+			bmpBuffer[i + 2] = bmpTempBuffer[iInv + 0 + c];
+		}
+	}
+
+	mDeviceContext->Unmap(newTex, 0);
+	bmpTempBuffer = nullptr;
+	backBuffer->Release();
+	newTex->Release();
+
+	std::ofstream file(filePath, std::ios::out | std::ios::binary);
+	if (!file.is_open()) return;
+
+	BITMAPFILEHEADER bitmapFileHeader;
+	bitmapFileHeader.bfType = 0x4D42; //"BM"
+	bitmapFileHeader.bfSize = mWidth * mHeight * 3;
+	bitmapFileHeader.bfReserved1 = 0;
+	bitmapFileHeader.bfReserved2 = 0;
+	bitmapFileHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+
+	BITMAPINFOHEADER bitmapInfoHeader;
+	bitmapInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bitmapInfoHeader.biWidth = mWidth - 1;
+	bitmapInfoHeader.biHeight = mHeight - 1;
+	bitmapInfoHeader.biPlanes = 1;
+	bitmapInfoHeader.biBitCount = 24;
+	bitmapInfoHeader.biCompression = BI_RGB;
+	bitmapInfoHeader.biSizeImage = 0;
+	bitmapInfoHeader.biXPelsPerMeter = 0; // ?
+	bitmapInfoHeader.biYPelsPerMeter = 0; // ?
+	bitmapInfoHeader.biClrUsed = 0;
+	bitmapInfoHeader.biClrImportant = 0;
+
+	file.write(reinterpret_cast<char *>(&bitmapFileHeader), sizeof(bitmapFileHeader));
+	file.write(reinterpret_cast<char *>(&bitmapInfoHeader), sizeof(bitmapInfoHeader));
+	file.write(reinterpret_cast<char *>(bmpBuffer), mWidth * mHeight * 3);
+	file.close();
+
+	delete[] bmpBuffer;
+}

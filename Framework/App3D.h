@@ -29,13 +29,13 @@ public:
 protected:
 	double			mDeltaTime = 0;
 	float			mFPS = 0;
-	std::string			mBenchmarkResultName;
+	std::string		mBenchmarkResultName;
 	HWND			mWindow;
 	HINSTANCE		mInstance;
 	unsigned int	mHeight;
 	unsigned int	mWidth;
-	std::string			mAppTitle;
-	std::string			mWindowClass;
+	std::string		mAppTitle;
+	std::string		mWindowClass;
 	unsigned long	mWindowStyle;
 
 	virtual bool InitAPI() = 0;
@@ -44,6 +44,7 @@ protected:
 	virtual void Render() = 0;
 	virtual void UpdateWindowTitle() = 0;
 	virtual void SwapBuffer() = 0;
+	virtual void SaveSnapshot(std::string file) = 0;
 
 private:
 	__int64			mPreviousCount = 0;
@@ -53,6 +54,16 @@ private:
 	unsigned int	mDeltaFrameCount = 0;
 	std::vector<float>	mFrameTimes;
 	unsigned int	mFrameCount = 0;
+
+	float mUpdateTime = 0;
+	float mRenderTime = 0;
+	float mSwapBufferTime = 0;
+
+	std::vector<float>	mUpdateTimes;
+	std::vector<float>	mRenderTimes;
+	std::vector<float>	mSwapBufferTimes;
+
+	bool firstSnapshot = false;
 
 	bool InitWindow();
 	int MsgLoop();

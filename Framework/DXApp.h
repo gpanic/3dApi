@@ -31,5 +31,6 @@ private:
 	bool InitAPI() override;
 	void UpdateWindowTitle() override;
 	void SwapBuffer() override;
+	void SaveSnapshot(std::string file) override;
 };
 

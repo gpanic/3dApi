@@ -198,3 +198,5 @@ FakesAssemblies/
 !/[Dd]ebug/
 /[Dd]ebug/*
 !glew32.dll
+Binary
+Results

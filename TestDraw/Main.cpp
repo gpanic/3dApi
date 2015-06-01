@@ -1,7 +1,7 @@
 #include "TestDrawDX.h"
 #include "TestDrawGL.h"
 
-const bool BENCH = false;
+const bool BENCH = true;
 const int BENCH_FRAME_COUNT = 1000;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
