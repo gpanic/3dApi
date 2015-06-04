@@ -66,15 +66,15 @@ bool TestUniformUpdateDX::InitScene()
 
 	const float color[]
 	{
-		0.0f, 0.0f, 0.0f, 1.0f
+		1.0f, 0.0f, 0.0f, 1.0f
 	};
 
 	D3D11_BUFFER_DESC colorsBlockDesc;
 	ZeroMemory(&colorsBlockDesc, sizeof(colorsBlockDesc));
 	colorsBlockDesc.ByteWidth = sizeof(color);
-	colorsBlockDesc.Usage = D3D11_USAGE_DYNAMIC;
+	colorsBlockDesc.Usage = D3D11_USAGE_DEFAULT;
 	colorsBlockDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	colorsBlockDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	colorsBlockDesc.CPUAccessFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA colorsBlockData;
 	ZeroMemory(&colorsBlockData, sizeof(colorsBlockData));
@@ -88,31 +88,28 @@ bool TestUniformUpdateDX::InitScene()
 
 void TestUniformUpdateDX::Update()
 {
-	float color2[]
-	{
-		1.0f, 1.0f, 0.0f, 1.0f
-	};
-
-	//for (int i = 0; i < 50000; ++i)
-	//{
-	//	mDeviceContext->UpdateSubresource(colorsBlockBuffer, 0, NULL, color2, 0, 0);
-	//}
+	float color2[] = { 1.0f, 1.0f, 0.0f, 1.0f };
 
 	for (int i = 0; i < 50000; ++i)
 	{
-		D3D11_MAPPED_SUBRESOURCE res;
-		ZeroMemory(&res, sizeof(res));
-		mDeviceContext->Map(colorsBlockBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
-		float *ptr = (float *)res.pData;
-		memcpy(ptr, color2, sizeof(color2));
-		mDeviceContext->Unmap(colorsBlockBuffer, 0);
+		mDeviceContext->UpdateSubresource(colorsBlockBuffer, 0, NULL, color2, 0, 0);
 	}
+
+	//for (int i = 0; i < 50000; ++i)
+	//{
+	//	D3D11_MAPPED_SUBRESOURCE res;
+	//	ZeroMemory(&res, sizeof(res));
+	//	mDeviceContext->Map(colorsBlockBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+	//	float *ptr = (float *)res.pData;
+	//	memcpy(ptr, color2, sizeof(color2));
+	//	mDeviceContext->Unmap(colorsBlockBuffer, 0);
+	//}
 }
 
 void TestUniformUpdateDX::Render()
 {
 	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
-	mDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	mDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	UINT stride = 8 * sizeof(float);
 	UINT offset = 0;

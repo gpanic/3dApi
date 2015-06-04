@@ -113,7 +113,7 @@ void TestPointsDX::Update()
 void TestPointsDX::Render()
 {
 	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
-	mDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	mDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	UINT stride = 4 * sizeof(float);
 	UINT offset = 0;

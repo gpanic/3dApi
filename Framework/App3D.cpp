@@ -25,10 +25,6 @@ App3D::App3D(HINSTANCE hInstance)
 	mWindowClass = "3DAPPWNDCLASS";
 	mWindowStyle = WS_OVERLAPPEDWINDOW;
 	mBenchmarkResultName = mAppTitle + " Result.txt";
-
-	benchmarking = true;
-	processInput = true;
-	benchmarkFrameCount = 10000;
 }
 
 App3D::~App3D()
@@ -62,6 +58,10 @@ LRESULT App3D::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			input.up = true;
 		if (wParam == VK_DOWN)
 			input.down = true;
+		if (wParam == 0x53)
+		{
+			SaveSnapshot("snapshot.bmp");
+		}
 		return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -137,6 +137,7 @@ int App3D::MsgLoop()
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
 
+	mInLoop = true;
 	while (WM_QUIT != msg.message)
 	{
 		if (PeekMessage(&msg, NULL, NULL, NULL, PM_REMOVE))
@@ -149,7 +150,10 @@ int App3D::MsgLoop()
 			UpdateDeltaTime();
 
 			QueryPerformanceCounter((LARGE_INTEGER*)&first);
-			Update();
+			if (update)
+			{
+				Update();
+			}
 			QueryPerformanceCounter((LARGE_INTEGER*)&second);
 			mUpdateTime = (float)(second - first) / (float)freq;
 

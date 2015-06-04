@@ -74,24 +74,20 @@ bool TestUniformUpdateGL::InitScene()
 
 void TestUniformUpdateGL::Update()
 {
-	float color2[]
+	float color2[] = {1.0f, 1.0f, 0.0f, 1.0f};
+
+	for (int i = 0; i < 50000; ++i)
 	{
-		1.0f, 1.0f, 0.0f, 1.0f
-	};
+		glNamedBufferSubData(colorBlockBuffer, 0, sizeof(color2), color2);
+	}
 
 
 	//for (int i = 0; i < 50000; ++i)
 	//{
-	//	glNamedBufferSubData(colorBlockBuffer, 0, sizeof(color2), color2);
+	//	GLfloat *pBuffer = reinterpret_cast<GLfloat *>(glMapNamedBufferRange(colorBlockBuffer, 0, sizeof(color2), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
+	//	memcpy(pBuffer, color2, sizeof(color2));
+	//	glUnmapNamedBuffer(colorBlockBuffer);
 	//}
-
-
-	for (int i = 0; i < 50000; ++i)
-	{
-		GLfloat *pBuffer = reinterpret_cast<GLfloat *>(glMapNamedBufferRange(colorBlockBuffer, 0, sizeof(color2), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
-		memcpy(pBuffer, color2, sizeof(color2));
-		glUnmapNamedBuffer(colorBlockBuffer);
-	}
 }
 
 void TestUniformUpdateGL::Render()

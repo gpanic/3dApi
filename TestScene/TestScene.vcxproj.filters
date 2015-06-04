@@ -51,16 +51,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="SimpleFrag.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="SimpleVert.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="ShadowMappingFrag.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ShadowMappingVert.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TestSceneFrag.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TestSceneVert.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

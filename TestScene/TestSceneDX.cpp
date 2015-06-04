@@ -49,13 +49,13 @@ bool TestSceneDX::InitScene()
 	rasterizerState->Release();
 
 	// COMPILE SHADERS
-	D3DCompileFromFile(L"SimpleVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
-	D3DCompileFromFile(L"SimpleFrag.hlsl", NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
+	D3DCompileFromFile(L"../Assets/HLSL/TestSceneVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
+	D3DCompileFromFile(L"../Assets/HLSL/TestSceneFrag.hlsl", NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
 	mDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
 	mDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
 
-	D3DCompileFromFile(L"ShadowMappingVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &shadowVertexShaderBuffer, NULL);
-	D3DCompileFromFile(L"ShadowMappingFrag.hlsl", NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &shadowPixelShaderBuffer, NULL);
+	D3DCompileFromFile(L"../Assets/HLSL/ShadowMappingVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &shadowVertexShaderBuffer, NULL);
+	D3DCompileFromFile(L"../Assets/HLSL/ShadowMappingFrag.hlsl", NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &shadowPixelShaderBuffer, NULL);
 	mDevice->CreateVertexShader(shadowVertexShaderBuffer->GetBufferPointer(), shadowVertexShaderBuffer->GetBufferSize(), NULL, &shadowVertexShader);
 	mDevice->CreatePixelShader(shadowPixelShaderBuffer->GetBufferPointer(), shadowPixelShaderBuffer->GetBufferSize(), NULL, &shadowPixelShader);
 
@@ -68,21 +68,21 @@ bool TestSceneDX::InitScene()
 
 	modelMatrix = XMMatrixScaling(2.0f, 2.0f, 2.0f);
 	modelMatrix *= XMMatrixTranslation(2.0f, 0.0f, -2.0f);
-	models.push_back(ModelDX("../Binary/chair.bin", "chair.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX("../Assets/Models/chair.bin", "../Assets/Models/chair.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixTranslation(-2.0f, 1.0f, -2.0f);
-	models.push_back(ModelDX("../Binary/sphere_smooth.bin", "sphere_smooth.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX("../Assets/Models/sphere_smooth.bin", "../Assets/Models/sphere_smooth.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixScaling(3.0f, 3.0f, 3.0f);
 	modelMatrix *= XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), XMConvertToRadians(100.0f));
 	modelMatrix *= XMMatrixTranslation(-2.0f, 1.0f, 2.0f);
-	models.push_back(ModelDX("../Binary/knife.bin", "knife.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX("../Assets/Models/knife.bin", "../Assets/Models/knife.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixTranslation(2.0f, 1.0f, 2.0f);
-	models.push_back(ModelDX("../Binary/monkey.bin", "monkey.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX("../Assets/Models/monkey.bin", "../Assets/Models/monkey.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	models.push_back(ModelDX("../Binary/plane.bin", "plane.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX("../Assets/Models/plane.bin", "../Assets/Models/plane.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	// PREPARE LIGHTING
 	lighting.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
@@ -157,6 +157,9 @@ bool TestSceneDX::InitScene()
 	mDeviceContext->VSSetConstantBuffers(projectionMatrixBufferSlot, 1, &projectionMatrixBuffer);
 	projectionMatrixBuffer->Release();
 
+	mDeviceContext->PSSetShaderResources(0, 2, &shadowMapResources[0]);
+	mDeviceContext->PSSetSamplers(0, 1, &shadowMapSamplerState);
+
 	return true;
 }
 
@@ -191,7 +194,7 @@ void TestSceneDX::Update()
 void TestSceneDX::Render()
 {
 	mDeviceContext->ClearRenderTargetView(mRenderTargetView, bg);
-	mDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	mDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
@@ -203,9 +206,6 @@ void TestSceneDX::Render()
 
 		mDeviceContext->VSSetShader(vertexShader, 0, 0);
 		mDeviceContext->PSSetShader(pixelShader, 0, 0);
-
-		mDeviceContext->PSSetShaderResources(0, 2, &shadowMapResources[0]);
-		mDeviceContext->PSSetSamplers(0, 1, &shadowMapSamplerState);
 		
 		mDeviceContext->VSSetConstantBuffers(modelMatrixBufferSlot, 1, &model.modelMatrixBuffer);
 		mDeviceContext->UpdateSubresource(materialBuffer, 0, NULL, &model.material, 0, 0);

@@ -17,9 +17,10 @@ public:
 	App3D(HINSTANCE hInstance);
 	virtual ~App3D();
 
-	bool benchmarking;
-	bool processInput;
-	int benchmarkFrameCount;
+	bool benchmarking = false;
+	bool processInput = true;
+	bool update = true;
+	int benchmarkFrameCount = 10000;
 	Color bgColor;
 	Input input;
 
@@ -54,6 +55,7 @@ private:
 	unsigned int	mDeltaFrameCount = 0;
 	std::vector<float>	mFrameTimes;
 	unsigned int	mFrameCount = 0;
+	bool			mInLoop = false;
 
 	float mUpdateTime = 0;
 	float mRenderTime = 0;
