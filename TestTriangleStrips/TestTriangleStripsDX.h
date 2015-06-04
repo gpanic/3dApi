@@ -10,6 +10,7 @@ class TestTriangleStripsDX : public DXApp
 public:
 	TestTriangleStripsDX(HINSTANCE hInstance);;
 	virtual ~TestTriangleStripsDX();
+
 private:
 	bool InitScene() override;
 	void Update() override;
@@ -31,9 +32,9 @@ private:
 	std::vector<Vector4> vertices;
 
 	const float rotDelta = 5.0f;
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
-	XMVECTOR eye = XMVectorSet(0.0f, 18.0f, 18.0f, 1.0f);
-	XMVECTOR right = XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f);
-	XMVECTOR center = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+	XMFLOAT4 up;
+	XMFLOAT4 eye;
+	XMFLOAT4 right;
+	XMFLOAT4 center;
 };
 

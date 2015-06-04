@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <Windows.h>
 
 namespace Util
 {
@@ -12,6 +13,7 @@ namespace Util
 		file.close();
 		return fileStr;
 	}
+	std::wstring s2ws(const std::string& s);
 };
 
 struct Color

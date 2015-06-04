@@ -24,7 +24,7 @@ private:
 	ID3DBlob* pixelShaderBuffer;
 	ID3D11VertexShader* vertexShader;
 	ID3D11PixelShader* pixelShader;
-	ID3D11Buffer* viewMarixBuffer;
+	ID3D11Buffer* viewMatrixBuffer;
 	float bg[4];
 
 	ID3D11Buffer* materialBuffer;
@@ -38,10 +38,10 @@ private:
 	std::vector<ModelDX> models;
 
 	const float rotDelta = 10.0f;
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
-	XMVECTOR eye = XMVectorSet(5.0f, 5.0f, 8.0f, 1.0f);
-	XMVECTOR right = XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f);
-	XMVECTOR center = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+	XMFLOAT4 up;
+	XMFLOAT4 eye;
+	XMFLOAT4 right;
+	XMFLOAT4 center;
 
 	// LIGHTING
 	Lighting lighting;

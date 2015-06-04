@@ -3,7 +3,7 @@
 TestRasterizationGL::TestRasterizationGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
 	mAppTitle = "OpenGL Test Rasterization";
-	mBenchmarkResultName = mAppTitle + " Result.txt";
+	mBenchmarkResultName = "gl_test_rasterization";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
 }
 
@@ -14,6 +14,11 @@ TestRasterizationGL::~TestRasterizationGL()
 
 bool TestRasterizationGL::InitScene()
 {
+	up = glm::vec3(0.0f, 1.0f, 0.0f);
+	eye = glm::vec3(0.0f, 20.0f, 60.0f);
+	right = glm::vec3(1.0f, 0.0f, 0.0f);
+	center = glm::vec3(0.0f, 0.0f, 0.0f);
+
 	glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -23,13 +28,15 @@ bool TestRasterizationGL::InitScene()
 	glCullFace(GL_NONE);
 
 	std::vector<GLuint> shaders;
-	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "TestRasterizationVert.glsl"));
-	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "TestRasterizationFrag.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, shaderPath + "TestRasterizationVert.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, shaderPath + "TestRasterizationFrag.glsl"));
 	shaderProgram = GLUtil::CreateProgram(shaders);
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 
-	ObjReader::Read("sphere_smooth.obj", "sphere_smooth.mtl", vertices, material);
-	BinaryIO::ReadVector3s("verts.bin", offsets);
+	std::string materialName;
+	BinaryIO::ReadVertices(modelPath + "sphere_smooth_low_poly.bin", vertices, materialName);
+	ObjReader::ReadMtl(modelPath + "sphere_smooth_low_poly.mtl", materialName, material);
+	BinaryIO::ReadVector3s(binaryPath + "instance_offsets.bin", offsets);
 
 	glCreateVertexArrays(1, &vertexArray);
 

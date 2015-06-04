@@ -3,8 +3,8 @@
 TestSceneGL::TestSceneGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
 	mAppTitle = "OpenGL Test Scene";
+	mBenchmarkResultName = "gl_test_scene";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
-	mBenchmarkResultName = mAppTitle + " Result";
 }
 
 TestSceneGL::~TestSceneGL()
@@ -14,17 +14,22 @@ TestSceneGL::~TestSceneGL()
 
 bool TestSceneGL::InitScene()
 {
+	up = glm::vec3(0.0f, 1.0f, 0.0f);
+	eye = glm::vec3(5.0f, 5.0f, 8.0f);
+	right = glm::vec3(1.0f, 0.0f, 0.0f);
+	center = glm::vec3(0.0f, 0.0f, 0.0f);
+
 	// COMPILE SHADERS
 	std::vector<GLuint> shadowShaders;
-	shadowShaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "../Assets/GLSL/ShadowMappingVert.glsl"));
-	shadowShaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "..Assets/GLSL/ShadowMappingFrag.glsl"));
+	shadowShaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, shaderPath + "ShadowMappingVert.glsl"));
+	shadowShaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, shaderPath + "ShadowMappingFrag.glsl"));
 	shadowShaderProgram = GLUtil::CreateProgram(shadowShaders);
 	for_each(shadowShaders.begin(), shadowShaders.end(), glDeleteShader);
 	shadowShaders.clear();
 
 	std::vector<GLuint> shaders;
-	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "../Assets/GLSL/TestSceneVert.glsl"));
-	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "../Assets/GLSL/TestSceneFrag.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, shaderPath + "TestSceneVert.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, shaderPath + "TestSceneFrag.glsl"));
 	shaderProgram = GLUtil::CreateProgram(shaders);
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 	shaders.clear();
@@ -34,23 +39,23 @@ bool TestSceneGL::InitScene()
 
 	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, -2.0f));
 	matrix = glm::scale(matrix, glm::vec3(2.0f, 2.0f, 2.0f));
-	models.push_back(ModelGL("../Assets/Models/chair.bin", "../Assets/Models/chair.mtl", matrix, true));
+	models.push_back(ModelGL(modelPath + "chair.bin", modelPath + "chair.mtl", matrix, true));
 
 	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, -2.0f));
-	models.push_back(ModelGL("../Assets/Models/sphere_smooth.bin", "../Assets/Models/sphere_smooth.mtl", matrix, true));
+	models.push_back(ModelGL(modelPath + "sphere_smooth.bin", modelPath + "sphere_smooth.mtl", matrix, true));
 
 	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, 2.0f));
 	matrix = glm::rotate(matrix, glm::radians(100.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	matrix = glm::scale(matrix, glm::vec3(3.0f, 3.0f, 3.0f));
-	models.push_back(ModelGL("../Assets/Models/knife.bin", "../Assets/Models/knife.mtl", matrix, true));
+	models.push_back(ModelGL(modelPath + "knife.bin", modelPath + "knife.mtl", matrix, true));
 
 	matrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, 2.0f));
-	models.push_back(ModelGL("../Assets/Models/monkey.bin", "../Assets/Models/monkey.mtl", matrix, true));
+	models.push_back(ModelGL(modelPath + "monkey.bin", modelPath + "monkey.mtl", matrix, true));
 
 	matrix = glm::mat4(1.0f);
 	matrix = glm::scale(matrix, glm::vec3(5.0f, 5.0f, 5.0f));
 	matrix = glm::translate(matrix, glm::vec3(0.0f, 0.0f, 0.0f));
-	models.push_back(ModelGL("../Assets/Models/plane.bin", "../Assets/Models/plane.mtl", matrix, true));
+	models.push_back(ModelGL(modelPath + "plane.bin", modelPath + "plane.mtl", matrix, true));
 
 	// PREPARE LIGHTING
 	lighting.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
@@ -100,6 +105,9 @@ bool TestSceneGL::InitScene()
 	viewMatrixIndex = glGetUniformLocation(shaderProgram, "viewMatrix");
 	projectionMatrixIndex = glGetUniformLocation(shaderProgram, "projectionMatrix");
 
+	glm::mat4 viewMatrix = glm::lookAt(eye, center, up);
+	glProgramUniformMatrix4fv(shaderProgram, viewMatrixIndex, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), 800.0f / 800.0f, 1.0f, 500.0f);
 	glProgramUniformMatrix4fv(shaderProgram, projectionMatrixIndex, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
@@ -114,30 +122,33 @@ bool TestSceneGL::InitScene()
 
 void TestSceneGL::Update()
 {
-	float rotAmount = 0.0f;
-	glm::mat4 rotMatrix;
-	if (input.right || input.left)
+	if (processInput)
 	{
-		if (input.right)
-			rotAmount = rotDelta;
-		if (input.left)
-			rotAmount = -rotDelta;
-		rotMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotAmount), up);
-	}
-	else if (input.up || input.down)
-	{
-		if (input.up)
-			rotAmount = -rotDelta;
-		if (input.down)
-			rotAmount = rotDelta;
-		rotMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotAmount), right);
-	}
+		float rotAmount = 0.0f;
+		glm::mat4 rotMatrix;
+		if (input.right || input.left)
+		{
+			if (input.right)
+				rotAmount = rotDelta;
+			if (input.left)
+				rotAmount = -rotDelta;
+			rotMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotAmount), up);
+		}
+		else if (input.up || input.down)
+		{
+			if (input.up)
+				rotAmount = -rotDelta;
+			if (input.down)
+				rotAmount = rotDelta;
+			rotMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotAmount), right);
+		}
 
-	eye = glm::vec3(rotMatrix * glm::vec4(eye, 1.0f));
-	right = glm::normalize(-glm::cross(up, (center - eye)));
+		eye = glm::vec3(rotMatrix * glm::vec4(eye, 1.0f));
+		right = glm::normalize(-glm::cross(up, (center - eye)));
 
-	glm::mat4 viewMatrix = glm::lookAt(eye, center, up);
-	glProgramUniformMatrix4fv(shaderProgram, viewMatrixIndex, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glm::mat4 viewMatrix = glm::lookAt(eye, center, up);
+		glProgramUniformMatrix4fv(shaderProgram, viewMatrixIndex, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+	}
 }
 
 void TestSceneGL::Render()
@@ -157,21 +168,20 @@ void TestSceneGL::Render()
 void TestSceneGL::RenderShadowMaps()
 {
 	GLuint FramebufferName = 0;
-	glGenFramebuffers(1, &FramebufferName);
+	glCreateFramebuffers(1, &FramebufferName);
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 
 	glm::mat4 depthViewProjectionMatrices[NUMBER_OF_LIGHTS];
 	for (int i = 0; i < NUMBER_OF_LIGHTS; ++i)
 	{
-		glGenTextures(1, &shadowMaps[i]);
-		glBindTexture(GL_TEXTURE_2D, shadowMaps[i]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, SHADOW_RESOLUTION, SHADOW_RESOLUTION, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+		glCreateTextures(GL_TEXTURE_2D, 1, &shadowMaps[i]);
+		glTextureImage2DEXT(shadowMaps[i], GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, SHADOW_RESOLUTION, SHADOW_RESOLUTION, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+		glTextureParameteri(shadowMaps[i], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(shadowMaps[i], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(shadowMaps[i], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(shadowMaps[i], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(shadowMaps[i], GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+		glTextureParameteri(shadowMaps[i], GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowMaps[i], 0);
 

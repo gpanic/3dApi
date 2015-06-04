@@ -1,11 +1,9 @@
 #include "TestTriangleStripsGL.h"
 
-
-
 TestTriangleStripsGL::TestTriangleStripsGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
-	mAppTitle = "OpenGL Test Rasterization";
-	mBenchmarkResultName = mAppTitle + " Result.txt";
+	mAppTitle = "OpenGL Test Triangle Strips";
+	mBenchmarkResultName = "gl_test_triangle_strips";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
 }
 
@@ -16,7 +14,12 @@ TestTriangleStripsGL::~TestTriangleStripsGL()
 
 bool TestTriangleStripsGL::InitScene()
 {
+	up = glm::vec3(0.0f, 1.0f, 0.0f);
+	eye = glm::vec3(0.0f, 18.0f, 18.0f);
+	right = glm::vec3(1.0f, 0.0f, 0.0f);
+	center = glm::vec3(0.0f, 0.0f, 0.0f);
 	glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
@@ -26,12 +29,12 @@ bool TestTriangleStripsGL::InitScene()
 	//glPolygonMode(GL_FRONT, GL_LINE);
 
 	std::vector<GLuint> shaders;
-	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "TestTriangleStripsVert.glsl"));
-	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "TestTriangleStripsFrag.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, shaderPath + "TestTriangleStripsVert.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, shaderPath + "TestTriangleStripsFrag.glsl"));
 	shaderProgram = GLUtil::CreateProgram(shaders);
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 
-	BinaryIO::ReadVector4s("../Binary/triangle_strip_plane.bin", vertices);
+	BinaryIO::ReadVector4s(binaryPath + "triangle_strip_plane.bin", vertices);
 
 	glCreateVertexArrays(1, &vertexArray);
 

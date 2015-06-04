@@ -25,10 +25,14 @@ App3D::App3D(HINSTANCE hInstance)
 	mWindowClass = "3DAPPWNDCLASS";
 	mWindowStyle = WS_OVERLAPPEDWINDOW;
 	mBenchmarkResultName = mAppTitle + " Result.txt";
+
+	binaryPath = assetPath + "Binary/";
+	modelPath = assetPath + "Models/";
 }
 
 App3D::~App3D()
 {
+	UnregisterClass(mWindowClass.c_str(), mInstance);
 }
 
 int App3D::Run()
@@ -175,7 +179,7 @@ int App3D::MsgLoop()
 			UpdateTime();
 
 			if (!Benchmark())
-				break;
+				DestroyWindow(mWindow);
 		}
 	}
 	return static_cast<int>(msg.wParam);
@@ -214,7 +218,7 @@ bool App3D::Benchmark()
 		if (!firstSnapshot)
 		{
 			CreateDirectory("Results", NULL);
-			SaveSnapshot("Results/" + mBenchmarkResultName + " Start.bmp");
+			SaveSnapshot("Results/" + mBenchmarkResultName + "_start.bmp");
 			firstSnapshot = true;
 		}
 		else
@@ -266,7 +270,7 @@ bool App3D::Benchmark()
 			}
 			else
 			{
-				SaveSnapshot("Results/" + mBenchmarkResultName + " End.bmp");
+				SaveSnapshot("Results/" + mBenchmarkResultName + "_end.bmp");
 				return false;
 			}
 		}

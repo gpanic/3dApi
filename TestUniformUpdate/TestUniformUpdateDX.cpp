@@ -1,19 +1,10 @@
 #include "TestUniformUpdateDX.h"
 
-ID3DBlob* vertexShaderBuffer;
-ID3DBlob* pixelShaderBuffer;
-ID3D11VertexShader* vertexShader;
-ID3D11PixelShader* pixelShader;
-ID3D11Buffer* vertexBuffer;
-ID3D11InputLayout* inputLayout;
-float bg[4];
-
-ID3D11Buffer* colorsBlockBuffer;
-
 TestUniformUpdateDX::TestUniformUpdateDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
 	mAppTitle = "DirectX Test Uniform Update";
-	mBenchmarkResultName = mAppTitle + " Result.txt";
+	mBenchmarkResultName = "dx_test_uniform_update";
+	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
 }
 
 TestUniformUpdateDX::~TestUniformUpdateDX()
@@ -46,8 +37,8 @@ bool TestUniformUpdateDX::InitScene()
 	bg[2] = bgColor.b;
 	bg[3] = bgColor.a;
 
-	D3DCompileFromFile(L"TestUniformUpdateVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
-	D3DCompileFromFile(L"TestUniformUpdateFrag.hlsl", NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "TestUniformUpdateVert.hlsl").c_str(), NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "TestUniformUpdateFrag.hlsl").c_str(), NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
 	mDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
 	mDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
 

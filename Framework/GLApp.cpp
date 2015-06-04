@@ -4,6 +4,7 @@ GLApp::GLApp(HINSTANCE hInstance) : App3D(hInstance)
 {
 	mAppTitle = "OpenGL App";
 	mWindowClass = "GLAPPWNDCLASS";
+	shaderPath = assetPath + "GLSL/";
 
 	mDeviceContext = nullptr;
 	mGLRenderContext = nullptr;

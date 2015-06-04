@@ -13,14 +13,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{1b487f3a-9df7-4492-84f2-8f484f6bdc43}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TestSceneGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -35,33 +29,5 @@
     <ClInclude Include="TestSceneDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TestSceneFrag.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="TestSceneVert.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="ShadowMappingVert.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="ShadowMappingFrag.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="ShadowMappingFrag.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="ShadowMappingVert.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="TestSceneFrag.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="TestSceneVert.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

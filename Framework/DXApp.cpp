@@ -4,6 +4,7 @@ DXApp::DXApp(HINSTANCE hInstance) : App3D(hInstance)
 {
 	mAppTitle = "DirectX App";
 	mWindowClass = "DXAPPWNDCLASS";
+	shaderPath = assetPath + "HLSL/";
 
 	mDevice = nullptr;
 	mDeviceContext = nullptr;

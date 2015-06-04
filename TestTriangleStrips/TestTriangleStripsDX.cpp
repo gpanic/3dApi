@@ -2,9 +2,13 @@
 
 TestTriangleStripsDX::TestTriangleStripsDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
-	mAppTitle = "DirectX Test Rasterization";
-	mBenchmarkResultName = mAppTitle + " Result.txt";
+	mAppTitle = "DirectX Test Triangle Strips";
+	mBenchmarkResultName = "dx_test_triangle_strips";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
+	bg[0] = bgColor.r;
+	bg[1] = bgColor.g;
+	bg[2] = bgColor.b;
+	bg[3] = bgColor.a;
 }
 
 TestTriangleStripsDX::~TestTriangleStripsDX()
@@ -19,10 +23,10 @@ TestTriangleStripsDX::~TestTriangleStripsDX()
 
 bool TestTriangleStripsDX::InitScene()
 {
-	bg[0] = bgColor.r;
-	bg[1] = bgColor.g;
-	bg[2] = bgColor.b;
-	bg[3] = bgColor.a;
+	XMStoreFloat4(&up, XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f));
+	XMStoreFloat4(&eye, XMVectorSet(0.0f, 18.0f, 18.0f, 1.0f));
+	XMStoreFloat4(&right, XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f));
+	XMStoreFloat4(&center, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
 
 	ID3D11RasterizerState1 *rasterizerState;
 	D3D11_RASTERIZER_DESC1 rasterizerDesc;
@@ -35,15 +39,15 @@ bool TestTriangleStripsDX::InitScene()
 	mDeviceContext->RSSetState(rasterizerState);
 	rasterizerState->Release();
 
-	BinaryIO::ReadVector4s("../Binary/triangle_strip_plane.bin", vertices);
+	BinaryIO::ReadVector4s(binaryPath + "triangle_strip_plane.bin", vertices);
 
 	D3D11_INPUT_ELEMENT_DESC vertexLayout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	D3DCompileFromFile(L"TestTriangleStripsVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
-	D3DCompileFromFile(L"TestTriangleStripsFrag.hlsl", NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "TestTriangleStripsVert.hlsl").c_str(), NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "TestTriangleStripsFrag.hlsl").c_str(), NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
 	mDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
 	mDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
 
@@ -63,7 +67,7 @@ bool TestTriangleStripsDX::InitScene()
 
 	// UPLOAD MVP MATRICES
 	XMMATRIX modelMatrix = XMMatrixIdentity();
-	XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, center, up);
+	XMMATRIX viewMatrix = XMMatrixLookAtRH(XMLoadFloat4(&eye), XMLoadFloat4(&center), XMLoadFloat4(&up));
 	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovRH(XMConvertToRadians(60.0f), 800 / 800, 1.0f, 500.0f);
 
 	ID3D11Buffer* modelMatrixBuffer = DXUtil::CreateMatrixBuffer(mDevice, modelMatrix);
@@ -93,7 +97,7 @@ void TestTriangleStripsDX::Update()
 				rotAmount = rotDelta;
 			if (input.left)
 				rotAmount = -rotDelta;
-			rotMatrix = XMMatrixRotationAxis(up, XMConvertToRadians(rotAmount));
+			rotMatrix = XMMatrixRotationAxis(XMLoadFloat4(&up), XMConvertToRadians(rotAmount));
 		}
 		else if (input.up || input.down)
 		{
@@ -101,13 +105,13 @@ void TestTriangleStripsDX::Update()
 				rotAmount = rotDelta;
 			if (input.down)
 				rotAmount = -rotDelta;
-			rotMatrix = XMMatrixRotationAxis(right, XMConvertToRadians(rotAmount));
+			rotMatrix = XMMatrixRotationAxis(XMLoadFloat4(&right), XMConvertToRadians(rotAmount));
 		}
 
-		eye = XMVector3Transform(eye, rotMatrix);
-		right = XMVector3Normalize(XMVector3Cross(up, (center - eye)));
+		XMStoreFloat4(&eye, XMVector3Transform(XMLoadFloat4(&eye), rotMatrix));
+		XMStoreFloat4(&right, XMVector3Normalize(XMVector3Cross(XMLoadFloat4(&up), (XMLoadFloat4(&center) - XMLoadFloat4(&eye)))));
 
-		XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, center, up);
+		XMMATRIX viewMatrix = XMMatrixLookAtRH(XMLoadFloat4(&eye), XMLoadFloat4(&center), XMLoadFloat4(&up));
 		mDeviceContext->UpdateSubresource(viewMatrixBuffer, 0, NULL, &viewMatrix, 0, 0);
 	}
 }

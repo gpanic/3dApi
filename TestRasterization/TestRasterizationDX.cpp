@@ -3,8 +3,12 @@
 TestRasterizationDX::TestRasterizationDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
 	mAppTitle = "DirectX Test Rasterization";
-	mBenchmarkResultName = mAppTitle + " Result.txt";
+	mBenchmarkResultName = "dx_test_rasterization";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
+	bg[0] = bgColor.r;
+	bg[1] = bgColor.g;
+	bg[2] = bgColor.b;
+	bg[3] = bgColor.a;
 }
 
 TestRasterizationDX::~TestRasterizationDX()
@@ -20,10 +24,10 @@ TestRasterizationDX::~TestRasterizationDX()
 
 bool TestRasterizationDX::InitScene()
 {
-	bg[0] = bgColor.r;
-	bg[1] = bgColor.g;
-	bg[2] = bgColor.b;
-	bg[3] = bgColor.a;
+	XMStoreFloat4(&up, XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f));
+	XMStoreFloat4(&eye, XMVectorSet(0.0f, 20.0f, 60.0f, 1.0f));
+	XMStoreFloat4(&right, XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f));
+	XMStoreFloat4(&center, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
 
 	ID3D11RasterizerState1 *rasterizerState;
 	D3D11_RASTERIZER_DESC1 rasterizerDesc;
@@ -36,8 +40,10 @@ bool TestRasterizationDX::InitScene()
 	mDeviceContext->RSSetState(rasterizerState);
 	rasterizerState->Release();
 
-	ObjReader::Read("sphere_smooth.obj", "sphere_smooth.mtl", vertices, material);
-	BinaryIO::ReadVector3s("verts.bin", offsets);
+	std::string materialName;
+	BinaryIO::ReadVertices(modelPath + "sphere_smooth_low_poly.bin", vertices, materialName);
+	ObjReader::ReadMtl(modelPath + "sphere_smooth_low_poly.mtl", materialName, material);
+	BinaryIO::ReadVector3s(binaryPath + "instance_offsets.bin", offsets);
 
 	D3D11_INPUT_ELEMENT_DESC vertexLayout[] =
 	{
@@ -46,8 +52,8 @@ bool TestRasterizationDX::InitScene()
 		{ "OFFSET", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
 	};
 
-	D3DCompileFromFile(L"TestRasterizationVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
-	D3DCompileFromFile(L"TestRasterizationFrag.hlsl", NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "TestRasterizationVert.hlsl").c_str() , NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "TestRasterizationFrag.hlsl").c_str(), NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
 	mDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
 	mDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
 
@@ -130,7 +136,7 @@ bool TestRasterizationDX::InitScene()
 
 	// UPLOAD MVP MATRICES
 	XMMATRIX modelMatrix = XMMatrixScaling(0.5f, 0.5f, 0.5f);
-	XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, center, up);
+	XMMATRIX viewMatrix = XMMatrixLookAtRH(XMLoadFloat4(&eye), XMLoadFloat4(&center), XMLoadFloat4(&up));
 	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovRH(XMConvertToRadians(60.0f), 800 / 800, 1.0f, 500.0f);
 
 	ID3D11Buffer* modelMatrixBuffer = DXUtil::CreateMatrixBuffer(mDevice, modelMatrix);
@@ -160,7 +166,7 @@ void TestRasterizationDX::Update()
 				rotAmount = rotDelta;
 			if (input.left)
 				rotAmount = -rotDelta;
-			rotMatrix = XMMatrixRotationAxis(up, XMConvertToRadians(rotAmount));
+			rotMatrix = XMMatrixRotationAxis(XMLoadFloat4(&up), XMConvertToRadians(rotAmount));
 		}
 		else if (input.up || input.down)
 		{
@@ -168,13 +174,13 @@ void TestRasterizationDX::Update()
 				rotAmount = rotDelta;
 			if (input.down)
 				rotAmount = -rotDelta;
-			rotMatrix = XMMatrixRotationAxis(right, XMConvertToRadians(rotAmount));
+			rotMatrix = XMMatrixRotationAxis(XMLoadFloat4(&right), XMConvertToRadians(rotAmount));
 		}
 
-		eye = XMVector3Transform(eye, rotMatrix);
-		right = XMVector3Normalize(XMVector3Cross(up, (center - eye)));
+		XMStoreFloat4(&eye, XMVector3Transform(XMLoadFloat4(&eye), rotMatrix));
+		XMStoreFloat4(&right, XMVector3Normalize(XMVector3Cross(XMLoadFloat4(&up), (XMLoadFloat4(&center) - XMLoadFloat4(&eye)))));
 
-		XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, center, up);
+		XMMATRIX viewMatrix = XMMatrixLookAtRH(XMLoadFloat4(&eye), XMLoadFloat4(&center), XMLoadFloat4(&up));
 		mDeviceContext->UpdateSubresource(viewMatrixBuffer, 0, NULL, &viewMatrix, 0, 0);
 	}
 }

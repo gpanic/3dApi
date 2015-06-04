@@ -33,6 +33,36 @@
     <None Include="GLSL\TestSceneVert.glsl">
       <Filter>GLSL</Filter>
     </None>
+    <None Include="GLSL\TestTriangleStripsFrag.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="GLSL\TestTriangleStripsVert.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="GLSL\TestRasterizationFrag.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="GLSL\TestRasterizationVert.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="GLSL\TestDrawFrag.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="GLSL\TestDrawVert.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="GLSL\TestPointsFrag.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="GLSL\TestPointsVert.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="GLSL\TestUniformUpdateFrag.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="GLSL\TestUniformUpdateVert.glsl">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\ShadowMappingFrag.hlsl">
@@ -45,6 +75,36 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\TestSceneVert.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\TestTriangleStripsFrag.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\TestTriangleStripsVert.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\TestRasterizationFrag.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\TestRasterizationVert.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\TestDrawFrag.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\TestDrawVert.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\TestPointsFrag.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\TestPointsVert.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\TestUniformUpdateFrag.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\TestUniformUpdateVert.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>

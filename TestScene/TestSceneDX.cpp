@@ -3,8 +3,12 @@
 TestSceneDX::TestSceneDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
 	mAppTitle = "DirectX Test Scene";
+	mBenchmarkResultName = "dx_test_scene";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
-	mBenchmarkResultName = mAppTitle + " Result";
+	bg[0] = bgColor.r;
+	bg[1] = bgColor.g;
+	bg[2] = bgColor.b;
+	bg[3] = bgColor.a;
 }
 
 TestSceneDX::~TestSceneDX()
@@ -22,7 +26,7 @@ TestSceneDX::~TestSceneDX()
 	{
 		model.Release();
 	}
-	viewMarixBuffer->Release();
+	viewMatrixBuffer->Release();
 	for (int i = 0; i < NUMBER_OF_LIGHTS; ++i)
 	{
 		shadowMapResources[i]->Release();
@@ -32,10 +36,10 @@ TestSceneDX::~TestSceneDX()
 
 bool TestSceneDX::InitScene()
 {
-	bg[0] = bgColor.r;
-	bg[1] = bgColor.g;
-	bg[2] = bgColor.b;
-	bg[3] = bgColor.a;
+	XMStoreFloat4(&up, XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f));
+	XMStoreFloat4(&eye, XMVectorSet(5.0f, 5.0f, 8.0f, 1.0f));
+	XMStoreFloat4(&right, XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f));
+	XMStoreFloat4(&center, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
 
 	ID3D11RasterizerState1 *rasterizerState;
 	D3D11_RASTERIZER_DESC1 rasterizerDesc;
@@ -49,13 +53,13 @@ bool TestSceneDX::InitScene()
 	rasterizerState->Release();
 
 	// COMPILE SHADERS
-	D3DCompileFromFile(L"../Assets/HLSL/TestSceneVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
-	D3DCompileFromFile(L"../Assets/HLSL/TestSceneFrag.hlsl", NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "TestSceneVert.hlsl").c_str(), NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "TestSceneFrag.hlsl").c_str(), NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
 	mDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
 	mDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
 
-	D3DCompileFromFile(L"../Assets/HLSL/ShadowMappingVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &shadowVertexShaderBuffer, NULL);
-	D3DCompileFromFile(L"../Assets/HLSL/ShadowMappingFrag.hlsl", NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &shadowPixelShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "ShadowMappingVert.hlsl").c_str(), NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &shadowVertexShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "ShadowMappingFrag.hlsl").c_str(), NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &shadowPixelShaderBuffer, NULL);
 	mDevice->CreateVertexShader(shadowVertexShaderBuffer->GetBufferPointer(), shadowVertexShaderBuffer->GetBufferSize(), NULL, &shadowVertexShader);
 	mDevice->CreatePixelShader(shadowPixelShaderBuffer->GetBufferPointer(), shadowPixelShaderBuffer->GetBufferSize(), NULL, &shadowPixelShader);
 
@@ -68,21 +72,21 @@ bool TestSceneDX::InitScene()
 
 	modelMatrix = XMMatrixScaling(2.0f, 2.0f, 2.0f);
 	modelMatrix *= XMMatrixTranslation(2.0f, 0.0f, -2.0f);
-	models.push_back(ModelDX("../Assets/Models/chair.bin", "../Assets/Models/chair.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX(modelPath + "chair.bin", modelPath + "chair.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixTranslation(-2.0f, 1.0f, -2.0f);
-	models.push_back(ModelDX("../Assets/Models/sphere_smooth.bin", "../Assets/Models/sphere_smooth.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX(modelPath + "sphere_smooth.bin", modelPath + "sphere_smooth.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixScaling(3.0f, 3.0f, 3.0f);
 	modelMatrix *= XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), XMConvertToRadians(100.0f));
 	modelMatrix *= XMMatrixTranslation(-2.0f, 1.0f, 2.0f);
-	models.push_back(ModelDX("../Assets/Models/knife.bin", "../Assets/Models/knife.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX(modelPath + "knife.bin", modelPath + "knife.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixTranslation(2.0f, 1.0f, 2.0f);
-	models.push_back(ModelDX("../Assets/Models/monkey.bin", "../Assets/Models/monkey.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX(modelPath + "monkey.bin", modelPath + "monkey.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	modelMatrix = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	models.push_back(ModelDX("../Assets/Models/plane.bin", "../Assets/Models/plane.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
+	models.push_back(ModelDX(modelPath + "plane.bin", modelPath + "plane.mtl", mDevice, vertexShaderBuffer, vertexLayout, modelMatrix, true));
 
 	// PREPARE LIGHTING
 	lighting.ambient = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
@@ -149,8 +153,9 @@ bool TestSceneDX::InitScene()
 	mDeviceContext->PSSetConstantBuffers(materialBufferSlot, 1, &materialBuffer);
 
 	// PREPARE VIEW AND PROJECTION
-	viewMarixBuffer = DXUtil::CreateEmptyMatrixBuffer(mDevice);
-	mDeviceContext->VSSetConstantBuffers(viewMatrixBufferSlot, 1, &viewMarixBuffer);
+	XMMATRIX viewMatrix = XMMatrixLookAtRH(XMLoadFloat4(&eye), XMLoadFloat4(&center), XMLoadFloat4(&up));
+	viewMatrixBuffer = DXUtil::CreateMatrixBuffer(mDevice, viewMatrix);
+	mDeviceContext->VSSetConstantBuffers(viewMatrixBufferSlot, 1, &viewMatrixBuffer);
 
 	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovRH(XMConvertToRadians(60.0f), 800 / 800, 1.0f, 500.0f);
 	ID3D11Buffer* projectionMatrixBuffer = DXUtil::CreateMatrixBuffer(mDevice, projectionMatrix);
@@ -165,30 +170,33 @@ bool TestSceneDX::InitScene()
 
 void TestSceneDX::Update()
 {
-	float rotAmount = 0.0f;
-	XMMATRIX rotMatrix = XMMatrixIdentity();
-	if (input.right || input.left)
+	if (processInput)
 	{
-		if (input.right)
-			rotAmount = rotDelta;
-		if (input.left)
-			rotAmount = -rotDelta;
-		rotMatrix = XMMatrixRotationAxis(up, XMConvertToRadians(rotAmount));
-	}
-	else if (input.up || input.down)
-	{
-		if (input.up)
-			rotAmount = rotDelta;
-		if (input.down)
-			rotAmount = -rotDelta;
-		rotMatrix = XMMatrixRotationAxis(right, XMConvertToRadians(rotAmount));
-	}
+		float rotAmount = 0.0f;
+		XMMATRIX rotMatrix = XMMatrixIdentity();
+		if (input.right || input.left)
+		{
+			if (input.right)
+				rotAmount = rotDelta;
+			if (input.left)
+				rotAmount = -rotDelta;
+			rotMatrix = XMMatrixRotationAxis(XMLoadFloat4(&up), XMConvertToRadians(rotAmount));
+		}
+		else if (input.up || input.down)
+		{
+			if (input.up)
+				rotAmount = rotDelta;
+			if (input.down)
+				rotAmount = -rotDelta;
+			rotMatrix = XMMatrixRotationAxis(XMLoadFloat4(&right), XMConvertToRadians(rotAmount));
+		}
 
-	eye = XMVector3Transform(eye, rotMatrix);
-	right = XMVector3Normalize(XMVector3Cross(up, (center - eye)));
+		XMStoreFloat4(&eye, XMVector3Transform(XMLoadFloat4(&eye), rotMatrix));
+		XMStoreFloat4(&right, XMVector3Normalize(XMVector3Cross(XMLoadFloat4(&up), (XMLoadFloat4(&center) - XMLoadFloat4(&eye)))));
 
-	XMMATRIX viewMarix = XMMatrixLookAtRH(eye, center, up);
-	mDeviceContext->UpdateSubresource(viewMarixBuffer, 0, NULL, &viewMarix, 0, 0);
+		XMMATRIX viewMatrix = XMMatrixLookAtRH(XMLoadFloat4(&eye), XMLoadFloat4(&center), XMLoadFloat4(&up));
+		mDeviceContext->UpdateSubresource(viewMatrixBuffer, 0, NULL, &viewMatrix, 0, 0);
+	}
 }
 
 void TestSceneDX::Render()
@@ -206,7 +214,7 @@ void TestSceneDX::Render()
 
 		mDeviceContext->VSSetShader(vertexShader, 0, 0);
 		mDeviceContext->PSSetShader(pixelShader, 0, 0);
-		
+
 		mDeviceContext->VSSetConstantBuffers(modelMatrixBufferSlot, 1, &model.modelMatrixBuffer);
 		mDeviceContext->UpdateSubresource(materialBuffer, 0, NULL, &model.material, 0, 0);
 

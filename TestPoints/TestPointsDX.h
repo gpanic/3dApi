@@ -30,9 +30,9 @@ private:
 	ID3D11Buffer* viewMatrixBuffer;
 
 	const float rotDelta = 5.0f;
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
-	XMVECTOR eye = XMVectorSet(2.2f, 2.2f, 2.2f, 1.0f);
-	XMVECTOR right = XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f);
-	XMVECTOR center = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+	XMFLOAT4 up;
+	XMFLOAT4 eye;
+	XMFLOAT4 right;
+	XMFLOAT4 center;
 };
 

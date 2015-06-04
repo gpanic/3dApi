@@ -2,8 +2,8 @@
 
 TestDrawGL::TestDrawGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
-	mAppTitle = "OpenGL Test Points";
-	mBenchmarkResultName = mAppTitle + " Result.txt";
+	mAppTitle = "OpenGL Test Draw";
+	mBenchmarkResultName = "gl_test_draw";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
 }
 
@@ -16,7 +16,12 @@ TestDrawGL::~TestDrawGL()
 
 bool TestDrawGL::InitScene()
 {
-	BinaryIO::ReadVector4s("../Binary/point_cube_50.bin", verts);
+	up = glm::vec3(0.0f, 1.0f, 0.0f);
+	eye = glm::vec3(2.2f, 2.2f, 2.2f);
+	right = glm::vec3(1.0f, 0.0f, 0.0f);
+	center = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	BinaryIO::ReadVector4s(binaryPath + "point_cube_50.bin", verts);
 
 	glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -30,8 +35,8 @@ bool TestDrawGL::InitScene()
 	glCullFace(GL_BACK);
 
 	std::vector<GLuint> shaders;
-	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "TestDrawVert.glsl"));
-	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "TestDrawFrag.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, shaderPath + "TestDrawVert.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, shaderPath + "TestDrawFrag.glsl"));
 	shaderProgram = GLUtil::CreateProgram(shaders);
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 

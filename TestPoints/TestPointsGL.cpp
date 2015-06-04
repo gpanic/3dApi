@@ -3,7 +3,7 @@
 TestPointsGL::TestPointsGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
 	mAppTitle = "OpenGL Test Points";
-	mBenchmarkResultName = mAppTitle + " Result.txt";
+	mBenchmarkResultName = "gl_test_points";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
 }
 
@@ -16,7 +16,12 @@ TestPointsGL::~TestPointsGL()
 
 bool TestPointsGL::InitScene()
 {
-	BinaryIO::ReadVector4s("../Binary/point_cube_180.bin", verts);
+	up = glm::vec3(0.0f, 1.0f, 0.0f);
+	eye = glm::vec3(2.2f, 2.2f, 2.2f);
+	right = glm::vec3(1.0f, 0.0f, 0.0f);
+	center = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	BinaryIO::ReadVector4s(binaryPath + "point_cube_180.bin", verts);
 
 	glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -30,8 +35,8 @@ bool TestPointsGL::InitScene()
 	glCullFace(GL_BACK);
 
 	std::vector<GLuint> shaders;
-	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "TestPointsVert.glsl"));
-	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "TestPointsFrag.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, shaderPath + "TestPointsVert.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, shaderPath + "TestPointsFrag.glsl"));
 	shaderProgram = GLUtil::CreateProgram(shaders);
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 

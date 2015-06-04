@@ -3,8 +3,12 @@
 TestPointsDX::TestPointsDX(HINSTANCE hInstance) : DXApp(hInstance)
 {
 	mAppTitle = "DirectX Test Points";
-	mBenchmarkResultName = mAppTitle + " Result.txt";
+	mBenchmarkResultName = "dx_test_points";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
+	bg[0] = bgColor.r;
+	bg[1] = bgColor.g;
+	bg[2] = bgColor.b;
+	bg[3] = bgColor.a;
 }
 
 TestPointsDX::~TestPointsDX()
@@ -20,10 +24,10 @@ TestPointsDX::~TestPointsDX()
 
 bool TestPointsDX::InitScene()
 {
-	bg[0] = bgColor.r;
-	bg[1] = bgColor.g;
-	bg[2] = bgColor.b;
-	bg[3] = bgColor.a;
+	XMStoreFloat4(&up, XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f));
+	XMStoreFloat4(&eye, XMVectorSet(2.2f, 2.2f, 2.2f, 1.0f));
+	XMStoreFloat4(&right, XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f));
+	XMStoreFloat4(&center, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
 
 	ID3D11RasterizerState1 *rasterizerState;
 	D3D11_RASTERIZER_DESC1 rasterizerDesc;
@@ -36,15 +40,15 @@ bool TestPointsDX::InitScene()
 	mDeviceContext->RSSetState(rasterizerState);
 	rasterizerState->Release();
 
-	BinaryIO::ReadVector4s("../Binary/point_cube_180.bin", verts);
+	BinaryIO::ReadVector4s(binaryPath + "point_cube_180.bin", verts);
 
 	D3D11_INPUT_ELEMENT_DESC vertexLayout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
-	D3DCompileFromFile(L"TestPointsVert.hlsl", NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
-	D3DCompileFromFile(L"TestPointsFrag.hlsl", NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "TestPointsVert.hlsl").c_str(), NULL, NULL, "vertexShader", "vs_5_0", NULL, NULL, &vertexShaderBuffer, NULL);
+	D3DCompileFromFile(Util::s2ws(shaderPath + "TestPointsFrag.hlsl").c_str(), NULL, NULL, "pixelShader", "ps_5_0", NULL, NULL, &pixelShaderBuffer, NULL);
 	mDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &vertexShader);
 	mDevice->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
 
@@ -62,7 +66,7 @@ bool TestPointsDX::InitScene()
 	mDevice->CreateInputLayout(vertexLayout, 1, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &inputLayout);
 
 	XMMATRIX modelMatrix = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
-	XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, center, up);
+	XMMATRIX viewMatrix = XMMatrixLookAtRH(XMLoadFloat4(&eye), XMLoadFloat4(&center), XMLoadFloat4(&up));
 	XMMATRIX projectionMatrix = XMMatrixPerspectiveFovRH(XMConvertToRadians(60.0f), 800 / 800, 1.0f, 500.0f);
 
 	ID3D11Buffer* modelMatrixBuffer = DXUtil::CreateMatrixBuffer(mDevice, modelMatrix);
@@ -91,7 +95,7 @@ void TestPointsDX::Update()
 				rotAmount = rotDelta;
 			if (input.left)
 				rotAmount = -rotDelta;
-			rotMatrix = XMMatrixRotationAxis(up, XMConvertToRadians(rotAmount));
+			rotMatrix = XMMatrixRotationAxis(XMLoadFloat4(&up), XMConvertToRadians(rotAmount));
 		}
 		else if (input.up || input.down)
 		{
@@ -99,13 +103,13 @@ void TestPointsDX::Update()
 				rotAmount = rotDelta;
 			if (input.down)
 				rotAmount = -rotDelta;
-			rotMatrix = XMMatrixRotationAxis(right, XMConvertToRadians(rotAmount));
+			rotMatrix = XMMatrixRotationAxis(XMLoadFloat4(&right), XMConvertToRadians(rotAmount));
 		}
 
-		eye = XMVector3Transform(eye, rotMatrix);
-		right = XMVector3Normalize(XMVector3Cross(up, (center - eye)));
+		XMStoreFloat4(&eye, XMVector3Transform(XMLoadFloat4(&eye), rotMatrix));
+		XMStoreFloat4(&right, XMVector3Normalize(XMVector3Cross(XMLoadFloat4(&up), (XMLoadFloat4(&center) - XMLoadFloat4(&eye)))));
 
-		XMMATRIX viewMatrix = XMMatrixLookAtRH(eye, center, up);
+		XMMATRIX viewMatrix = XMMatrixLookAtRH(XMLoadFloat4(&eye), XMLoadFloat4(&center), XMLoadFloat4(&up));
 		mDeviceContext->UpdateSubresource(viewMatrixBuffer, 0, NULL, &viewMatrix, 0, 0);
 	}
 }

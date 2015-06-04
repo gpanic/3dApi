@@ -21,6 +21,10 @@ public:
 	bool processInput = true;
 	bool update = true;
 	int benchmarkFrameCount = 10000;
+	std::string assetPath = "../Assets/";
+	std::string shaderPath;
+	std::string binaryPath;
+	std::string modelPath;
 	Color bgColor;
 	Input input;
 

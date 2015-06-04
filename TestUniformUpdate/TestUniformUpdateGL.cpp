@@ -9,7 +9,8 @@ GLuint colorBlockBuffer;
 TestUniformUpdateGL::TestUniformUpdateGL(HINSTANCE hInstance) : GLApp(hInstance)
 {
 	mAppTitle = "OpenGL Test Uniform Update";
-	mBenchmarkResultName = mAppTitle + " Result.txt";
+	mBenchmarkResultName = "gl_test_uniform_update";
+	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
 }
 
 TestUniformUpdateGL::~TestUniformUpdateGL()
@@ -32,8 +33,8 @@ bool TestUniformUpdateGL::InitScene()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	std::vector<GLuint> shaders;
-	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, "TestUniformUpdateVert.glsl"));
-	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, "TestUniformUpdateFrag.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_VERTEX_SHADER, shaderPath + "TestUniformUpdateVert.glsl"));
+	shaders.push_back(GLUtil::CreateShader(GL_FRAGMENT_SHADER, shaderPath + "TestUniformUpdateFrag.glsl"));
 	shaderProgram = GLUtil::CreateProgram(shaders);
 	for_each(shaders.begin(), shaders.end(), glDeleteShader);
 
@@ -44,10 +45,12 @@ bool TestUniformUpdateGL::InitScene()
 
 	GLuint colorBlockBindingPoint = 1;
 
-	glGenBuffers(1, &colorBlockBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, colorBlockBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glGenBuffers(1, &colorBlockBuffer);
+	//glBindBuffer(GL_ARRAY_BUFFER, colorBlockBuffer);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_DYNAMIC_DRAW);
+
+	glCreateBuffers(1, &colorBlockBuffer);
+	glNamedBufferData(colorBlockBuffer, sizeof(color), color, GL_DYNAMIC_DRAW);
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, colorBlockBindingPoint, colorBlockBuffer);
 
