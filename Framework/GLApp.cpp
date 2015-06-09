@@ -5,6 +5,7 @@ GLApp::GLApp(HINSTANCE hInstance) : App3D(hInstance)
 	mAppTitle = "OpenGL App";
 	mWindowClass = "GLAPPWNDCLASS";
 	shaderPath = assetPath + "GLSL/";
+	mDeviceInfoFileName = "gl_device_info";
 
 	mDeviceContext = nullptr;
 	mGLRenderContext = nullptr;
@@ -109,6 +110,24 @@ void GLApp::SaveSnapshot(std::string filePath)
 	file.close();
 
 	delete[] bmpBuffer;
+}
+
+void GLApp::SaveDeviceInfo(std::string filePath)
+{
+	GLint majorVersion = 0;
+	GLint minorVersion = 0;
+	glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+	glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+	std::string glslVersion = reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION));
+	std::string vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+	std::string renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+
+	std::ofstream file(filePath);
+	file << "OpenGL " << std::to_string(majorVersion) << "." << std::to_string(minorVersion) << std::endl;
+	file << "GLSL " << glslVersion << std::endl;
+	file << "Vendor: " << vendor << std::endl;
+	file << "Renderer: " << renderer << std::endl;
+	file.close();
 }
 
 bool GLApp::WGLExtSupported(std::string extName)

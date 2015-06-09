@@ -20,8 +20,9 @@ public:
 	bool benchmarking = false;
 	bool processInput = true;
 	bool update = true;
+	bool saveDeviceInfo = false;
 	int benchmarkFrameCount = 10000;
-	std::string assetPath = "../Assets/";
+	std::string assetPath = "Assets/";
 	std::string shaderPath;
 	std::string binaryPath;
 	std::string modelPath;
@@ -35,6 +36,7 @@ protected:
 	double			mDeltaTime = 0;
 	float			mFPS = 0;
 	std::string		mBenchmarkResultName;
+	std::string		mDeviceInfoFileName;
 	HWND			mWindow;
 	HINSTANCE		mInstance;
 	unsigned int	mHeight;
@@ -50,6 +52,7 @@ protected:
 	virtual void UpdateWindowTitle() = 0;
 	virtual void SwapBuffer() = 0;
 	virtual void SaveSnapshot(std::string file) = 0;
+	virtual void SaveDeviceInfo(std::string file) = 0;
 
 private:
 	__int64			mPreviousCount = 0;

@@ -5,10 +5,6 @@ TestTriangleStripsDX::TestTriangleStripsDX(HINSTANCE hInstance) : DXApp(hInstanc
 	mAppTitle = "DirectX Test Triangle Strips";
 	mBenchmarkResultName = "dx_test_triangle_strips";
 	bgColor = Color(0.1f, 0.1f, 0.1f, 1.0f);
-	bg[0] = bgColor.r;
-	bg[1] = bgColor.g;
-	bg[2] = bgColor.b;
-	bg[3] = bgColor.a;
 }
 
 TestTriangleStripsDX::~TestTriangleStripsDX()
@@ -27,6 +23,11 @@ bool TestTriangleStripsDX::InitScene()
 	XMStoreFloat4(&eye, XMVectorSet(0.0f, 18.0f, 18.0f, 1.0f));
 	XMStoreFloat4(&right, XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f));
 	XMStoreFloat4(&center, XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
+
+	bg[0] = bgColor.r;
+	bg[1] = bgColor.g;
+	bg[2] = bgColor.b;
+	bg[3] = bgColor.a;
 
 	ID3D11RasterizerState1 *rasterizerState;
 	D3D11_RASTERIZER_DESC1 rasterizerDesc;

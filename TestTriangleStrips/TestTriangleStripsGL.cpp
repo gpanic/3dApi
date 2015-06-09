@@ -18,6 +18,7 @@ bool TestTriangleStripsGL::InitScene()
 	eye = glm::vec3(0.0f, 18.0f, 18.0f);
 	right = glm::vec3(1.0f, 0.0f, 0.0f);
 	center = glm::vec3(0.0f, 0.0f, 0.0f);
+
 	glClearColor(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 
 	glEnable(GL_DEPTH_TEST);

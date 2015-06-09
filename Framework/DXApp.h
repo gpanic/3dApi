@@ -32,5 +32,6 @@ private:
 	void UpdateWindowTitle() override;
 	void SwapBuffer() override;
 	void SaveSnapshot(std::string file) override;
+	void SaveDeviceInfo(std::string file) override;
 };
 

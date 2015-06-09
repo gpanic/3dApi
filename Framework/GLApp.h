@@ -24,15 +24,18 @@ protected:
 	virtual void Render() = 0;
 
 private:
-	PFNWGLSWAPINTERVALEXTPROC       wglSwapIntervalEXT = nullptr;
-	PFNWGLGETSWAPINTERVALEXTPROC    wglGetSwapIntervalEXT = nullptr;
+	PFNWGLSWAPINTERVALEXTPROC			wglSwapIntervalEXT = nullptr;
+	PFNWGLGETSWAPINTERVALEXTPROC		wglGetSwapIntervalEXT = nullptr;
+	PFNWGLCREATECONTEXTATTRIBSARBPROC	wglCreateContextAttribsARB = nullptr;
 
 	bool InitAPI() override;
 	void UpdateWindowTitle() override;
 	void SwapBuffer() override;
 	void SaveSnapshot(std::string file) override;
+	void SaveDeviceInfo(std::string file) override;
 	
 	bool WGLExtSupported(std::string extName);
 	void SetVsync();
+	void PrintVersion();
 };
 

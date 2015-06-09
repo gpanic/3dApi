@@ -271,6 +271,10 @@ bool App3D::Benchmark()
 			else
 			{
 				SaveSnapshot("Results/" + mBenchmarkResultName + "_end.bmp");
+				if (saveDeviceInfo)
+				{
+					SaveDeviceInfo("Results/" + mDeviceInfoFileName + ".txt");
+				}
 				return false;
 			}
 		}

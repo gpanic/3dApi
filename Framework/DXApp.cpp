@@ -5,6 +5,7 @@ DXApp::DXApp(HINSTANCE hInstance) : App3D(hInstance)
 	mAppTitle = "DirectX App";
 	mWindowClass = "DXAPPWNDCLASS";
 	shaderPath = assetPath + "HLSL/";
+	mDeviceInfoFileName = "dx_device_info";
 
 	mDevice = nullptr;
 	mDeviceContext = nullptr;
@@ -225,4 +226,8 @@ void DXApp::SaveSnapshot(std::string filePath)
 	file.close();
 
 	delete[] bmpBuffer;
+}
+
+void DXApp::SaveDeviceInfo(std::string filePath)
+{
 }

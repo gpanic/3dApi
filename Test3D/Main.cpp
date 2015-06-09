@@ -38,6 +38,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		glApp->benchmarking = BENCH;
 		glApp->processInput = !BENCH;
 		glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+		glApp->saveDeviceInfo = true;
 		glApp->Run();
 		delete glApp;
 	}
