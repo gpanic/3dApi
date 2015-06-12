@@ -1,6 +1,7 @@
 #pragma once
 #include "App3D.h"
 #include <glew.h>
+#include <wglew.h>
 #include <gl\GL.h>
 #include <gl\GLU.h>
 #include <glext.h>
