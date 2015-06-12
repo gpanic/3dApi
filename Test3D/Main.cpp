@@ -1,15 +1,15 @@
 #include "TestSceneDX.h"
 #include "TestSceneGL.h"
-#include "TestTriangleStripsDX.h"
-#include "TestTriangleStripsGL.h"
-#include "TestRasterizationDX.h"
-#include "TestRasterizationGL.h"
-#include "TestDrawDX.h"
-#include "TestDrawGL.h"
-#include "TestPointsDX.h"
-#include "TestPointsGL.h"
-#include "TestUniformUpdateDX.h"
-#include "TestUniformUpdateGL.h"
+//#include "TestTriangleStripsDX.h"
+//#include "TestTriangleStripsGL.h"
+//#include "TestRasterizationDX.h"
+//#include "TestRasterizationGL.h"
+//#include "TestDrawDX.h"
+//#include "TestDrawGL.h"
+//#include "TestPointsDX.h"
+//#include "TestPointsGL.h"
+//#include "TestUniformUpdateDX.h"
+//#include "TestUniformUpdateGL.h"
 
 const bool BENCH = false;
 const bool DEBUG = false;
@@ -44,95 +44,95 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		delete glApp;
 	}
 
-	if (TEST_TRIANGLE_STRIPS)
-	{
-		TestTriangleStripsDX* dxApp = new TestTriangleStripsDX(hInstance);
-		dxApp->debug = DEBUG;
-		dxApp->benchmarking = BENCH;
-		dxApp->processInput = !BENCH;
-		dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
-		dxApp->Run();
-		delete dxApp;
+	//if (TEST_TRIANGLE_STRIPS)
+	//{
+	//	TestTriangleStripsDX* dxApp = new TestTriangleStripsDX(hInstance);
+	//	dxApp->debug = DEBUG;
+	//	dxApp->benchmarking = BENCH;
+	//	dxApp->processInput = !BENCH;
+	//	dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	//	dxApp->Run();
+	//	delete dxApp;
 
-		TestTriangleStripsGL* glApp = new TestTriangleStripsGL(hInstance);
-		glApp->benchmarking = BENCH;
-		glApp->processInput = !BENCH;
-		glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
-		glApp->Run();
-		delete glApp;
-	}
+	//	TestTriangleStripsGL* glApp = new TestTriangleStripsGL(hInstance);
+	//	glApp->benchmarking = BENCH;
+	//	glApp->processInput = !BENCH;
+	//	glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	//	glApp->Run();
+	//	delete glApp;
+	//}
 
-	if (TEST_RASTERIZATION)
-	{
-		TestRasterizationDX* dxApp = new TestRasterizationDX(hInstance);
-		dxApp->debug = DEBUG;
-		dxApp->benchmarking = BENCH;
-		dxApp->processInput = !BENCH;
-		dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
-		dxApp->Run();
-		delete dxApp;
+	//if (TEST_RASTERIZATION)
+	//{
+	//	TestRasterizationDX* dxApp = new TestRasterizationDX(hInstance);
+	//	dxApp->debug = DEBUG;
+	//	dxApp->benchmarking = BENCH;
+	//	dxApp->processInput = !BENCH;
+	//	dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	//	dxApp->Run();
+	//	delete dxApp;
 
-		TestRasterizationGL* glApp = new TestRasterizationGL(hInstance);
-		glApp->benchmarking = BENCH;
-		glApp->processInput = !BENCH;
-		glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
-		glApp->Run();
-		delete glApp;
-	}
+	//	TestRasterizationGL* glApp = new TestRasterizationGL(hInstance);
+	//	glApp->benchmarking = BENCH;
+	//	glApp->processInput = !BENCH;
+	//	glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	//	glApp->Run();
+	//	delete glApp;
+	//}
 
-	if (TEST_DRAW)
-	{
-		TestDrawDX* dxApp = new TestDrawDX(hInstance);
-		dxApp->debug = DEBUG;
-		dxApp->benchmarking = BENCH;
-		dxApp->processInput = !BENCH;
-		dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
-		dxApp->Run();
-		delete dxApp;
+	//if (TEST_DRAW)
+	//{
+	//	TestDrawDX* dxApp = new TestDrawDX(hInstance);
+	//	dxApp->debug = DEBUG;
+	//	dxApp->benchmarking = BENCH;
+	//	dxApp->processInput = !BENCH;
+	//	dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	//	dxApp->Run();
+	//	delete dxApp;
 
-		TestDrawGL* glApp = new TestDrawGL(hInstance);
-		glApp->benchmarking = BENCH;
-		glApp->processInput = !BENCH;
-		glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
-		glApp->Run();
-		delete glApp;
-	}
+	//	TestDrawGL* glApp = new TestDrawGL(hInstance);
+	//	glApp->benchmarking = BENCH;
+	//	glApp->processInput = !BENCH;
+	//	glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	//	glApp->Run();
+	//	delete glApp;
+	//}
 
-	if (TEST_POINTS)
-	{
-		TestPointsDX* dxApp = new TestPointsDX(hInstance);
-		dxApp->debug = DEBUG;
-		dxApp->benchmarking = BENCH;
-		dxApp->processInput = !BENCH;
-		dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
-		dxApp->Run();
-		delete dxApp;
+	//if (TEST_POINTS)
+	//{
+	//	TestPointsDX* dxApp = new TestPointsDX(hInstance);
+	//	dxApp->debug = DEBUG;
+	//	dxApp->benchmarking = BENCH;
+	//	dxApp->processInput = !BENCH;
+	//	dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	//	dxApp->Run();
+	//	delete dxApp;
 
-		TestPointsGL* glApp = new TestPointsGL(hInstance);
-		glApp->benchmarking = BENCH;
-		glApp->processInput = !BENCH;
-		glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
-		glApp->Run();
-		delete glApp;
-	}
+	//	TestPointsGL* glApp = new TestPointsGL(hInstance);
+	//	glApp->benchmarking = BENCH;
+	//	glApp->processInput = !BENCH;
+	//	glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	//	glApp->Run();
+	//	delete glApp;
+	//}
 
-	if (TEST_UNIFORM_UPDATE)
-	{
-		TestUniformUpdateDX* dxApp = new TestUniformUpdateDX(hInstance);
-		dxApp->debug = DEBUG;
-		dxApp->benchmarking = BENCH;
-		dxApp->processInput = !BENCH;
-		dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
-		dxApp->Run();
-		delete dxApp;
+	//if (TEST_UNIFORM_UPDATE)
+	//{
+	//	TestUniformUpdateDX* dxApp = new TestUniformUpdateDX(hInstance);
+	//	dxApp->debug = DEBUG;
+	//	dxApp->benchmarking = BENCH;
+	//	dxApp->processInput = !BENCH;
+	//	dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	//	dxApp->Run();
+	//	delete dxApp;
 
-		TestUniformUpdateGL* glApp = new TestUniformUpdateGL(hInstance);
-		glApp->benchmarking = BENCH;
-		glApp->processInput = !BENCH;
-		glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
-		glApp->Run();
-		delete glApp;
-	}
+	//	TestUniformUpdateGL* glApp = new TestUniformUpdateGL(hInstance);
+	//	glApp->benchmarking = BENCH;
+	//	glApp->processInput = !BENCH;
+	//	glApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+	//	glApp->Run();
+	//	delete glApp;
+	//}
 
 	MessageBox(NULL, "FINISHED TESTING1", "3DAPI Test", MB_OK);
 }

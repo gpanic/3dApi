@@ -31,19 +31,21 @@ void ModelGL::LoadModel(const std::string &objPath, const std::string &mtlPath, 
 GLuint ModelGL::CreateVertexArray(const std::vector<Vertex> &vertices)
 {
 	GLuint vertexArray;
-	glCreateVertexArrays(1, &vertexArray);
+	glGenVertexArrays(1, &vertexArray);
+	glBindVertexArray(vertexArray);
 
 	GLuint vertexBuffer;
-	glCreateBuffers(1, &vertexBuffer);
-	glNamedBufferData(vertexBuffer, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
-	glVertexArrayAttribBinding(vertexArray, 0, 0);
-	glVertexArrayAttribBinding(vertexArray, 1, 0);
-	glVertexArrayVertexBuffer(vertexArray, 0, vertexBuffer, 0, sizeof(Vertex));
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 
-	glEnableVertexArrayAttrib(vertexArray, 0);
-	glEnableVertexArrayAttrib(vertexArray, 1);
-	glVertexArrayAttribFormat(vertexArray, 0, 4, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(vertexArray, 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex().position));
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)sizeof(Vertex().position));
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 	return vertexArray;
 }

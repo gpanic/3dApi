@@ -78,8 +78,12 @@ bool TestSceneGL::InitScene()
 	lighting.lights[1] = light2;
 
 	GLuint lightBuffer;
-	glCreateBuffers(1, &lightBuffer);
-	glNamedBufferData(lightBuffer, sizeof(Lighting), &lighting, GL_STATIC_DRAW);
+	glGenBuffers(1, &lightBuffer);
+
+	glBindBuffer(GL_ARRAY_BUFFER, lightBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Lighting), &lighting, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glBindBufferBase(GL_UNIFORM_BUFFER, lightBindingPoint, lightBuffer);
 	GLuint lightBlockIndex = glGetUniformBlockIndex(shaderProgram, "Lighting");
 	glUniformBlockBinding(shaderProgram, lightBlockIndex, lightBindingPoint);
@@ -98,8 +102,11 @@ bool TestSceneGL::InitScene()
 	glViewport(0, 0, mWidth, mHeight);
 
 	// PREPARE MATERIAL BUFFER
-	glCreateBuffers(1, &materialBuffer);
-	glNamedBufferData(materialBuffer, sizeof(Material), NULL, GL_STATIC_DRAW);
+	glGenBuffers(1, &materialBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, materialBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Material), NULL, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glBindBufferBase(GL_UNIFORM_BUFFER, materialBindingPoint, materialBuffer);
 	GLuint materialBlockIndex = glGetUniformBlockIndex(shaderProgram, "Material");
 	glUniformBlockBinding(shaderProgram, materialBlockIndex, materialBindingPoint);
@@ -162,7 +169,11 @@ void TestSceneGL::Render()
 	for (ModelGL model : models)
 	{
 		glProgramUniformMatrix4fv(shaderProgram, modelMatrixIndex, 1, GL_FALSE, glm::value_ptr(model.modelMatrix));
-		glNamedBufferSubData(materialBuffer, 0, sizeof(Material), &model.material);
+
+		glBindBuffer(GL_ARRAY_BUFFER, materialBuffer);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Material), &model.material);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 		glBindVertexArray(model.vertexArray);
 		glUseProgram(shaderProgram);
 		glDrawArrays(GL_TRIANGLES, 0, model.vertexCount);
@@ -172,20 +183,21 @@ void TestSceneGL::Render()
 void TestSceneGL::RenderShadowMaps()
 {
 	GLuint FramebufferName = 0;
-	glCreateFramebuffers(1, &FramebufferName);
+	glGenFramebuffers(1, &FramebufferName);
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 
 	glm::mat4 depthViewProjectionMatrices[NUMBER_OF_LIGHTS];
 	for (int i = 0; i < NUMBER_OF_LIGHTS; ++i)
 	{
-		glCreateTextures(GL_TEXTURE_2D, 1, &shadowMaps[i]);
-		glTextureImage2DEXT(shadowMaps[i], GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, SHADOW_RESOLUTION, SHADOW_RESOLUTION, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-		glTextureParameteri(shadowMaps[i], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTextureParameteri(shadowMaps[i], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(shadowMaps[i], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(shadowMaps[i], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(shadowMaps[i], GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-		glTextureParameteri(shadowMaps[i], GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+		glGenTextures(1, &shadowMaps[i]);
+		glBindTexture(GL_TEXTURE_2D, shadowMaps[i]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, SHADOW_RESOLUTION, SHADOW_RESOLUTION, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowMaps[i], 0);
 
@@ -211,7 +223,11 @@ void TestSceneGL::RenderShadowMaps()
 		for (ModelGL model : models)
 		{
 			glProgramUniformMatrix4fv(shadowShaderProgram, shadowModelMatrixIndex, 1, GL_FALSE, glm::value_ptr(model.modelMatrix));
-			glNamedBufferSubData(materialBuffer, 0, sizeof(Material), &model.material);
+
+			glBindBuffer(GL_ARRAY_BUFFER, materialBuffer);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Material), &model.material);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 			glBindVertexArray(model.vertexArray);
 			glUseProgram(shadowShaderProgram);
 			glDrawArrays(GL_TRIANGLES, 0, model.vertexCount);
