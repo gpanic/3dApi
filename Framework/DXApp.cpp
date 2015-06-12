@@ -230,4 +230,35 @@ void DXApp::SaveSnapshot(std::string filePath)
 
 void DXApp::SaveDeviceInfo(std::string filePath)
 {
+	D3D_FEATURE_LEVEL featureLevel = mDevice->GetFeatureLevel();
+	std::string featureLevelString = "Direct3D ";
+
+	switch (featureLevel)
+	{
+	case D3D_FEATURE_LEVEL_9_1:
+		featureLevelString += "9.1";
+		break;
+	case D3D_FEATURE_LEVEL_9_2:
+		featureLevelString += "9.2";
+		break;
+	case D3D_FEATURE_LEVEL_9_3:
+		featureLevelString += "9.3";
+		break;
+	case D3D_FEATURE_LEVEL_10_0:
+		featureLevelString += "10.";
+		break;
+	case D3D_FEATURE_LEVEL_10_1:
+		featureLevelString += "10.1";
+		break;
+	case D3D_FEATURE_LEVEL_11_0:
+		featureLevelString += "11.0";
+		break;
+	case D3D_FEATURE_LEVEL_11_1:
+		featureLevelString += "11.1";
+		break;
+	}
+
+	std::ofstream file(filePath);
+	file << featureLevelString << std::endl;
+	file.close();
 }

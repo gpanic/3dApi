@@ -8,8 +8,8 @@ const bool TEST_POINTS = true;
 
 std::string assetPath = "../Assets/";
 std::string shaderPath;
-std::string binaryPath = "Binary/";
-std::string modelPath = "Models/";
+std::string binaryPath = assetPath + "Binary/";
+std::string modelPath = assetPath + "Models/";
 
 int main()
 {

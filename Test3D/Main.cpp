@@ -31,6 +31,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		dxApp->benchmarking = BENCH;
 		dxApp->processInput = !BENCH;
 		dxApp->benchmarkFrameCount = BENCH_FRAME_COUNT;
+		dxApp->saveDeviceInfo = true;
 		dxApp->Run();
 		delete dxApp;
 

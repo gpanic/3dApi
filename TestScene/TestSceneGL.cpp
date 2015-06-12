@@ -14,6 +14,10 @@ TestSceneGL::~TestSceneGL()
 
 bool TestSceneGL::InitScene()
 {
+	std::string s = (const char *)glGetString(GL_EXTENSIONS);
+	OutputDebugString(s.c_str());
+	OutputDebugString("\n");
+
 	up = glm::vec3(0.0f, 1.0f, 0.0f);
 	eye = glm::vec3(5.0f, 5.0f, 8.0f);
 	right = glm::vec3(1.0f, 0.0f, 0.0f);
