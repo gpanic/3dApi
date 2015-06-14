@@ -88,7 +88,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Framework;$(SolutionDir)\Include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\TestScene;$(SolutionDir)\TestTriangleStrips;$(SolutionDir)\TestRasterization;$(SolutionDir)\TestDraw;$(SolutionDir)\TestPoints;$(SolutionDir)\TestUniformUpdate;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Framework;$(SolutionDir)\Include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\TestScene;$(SolutionDir)\TestTriangleStrips;$(SolutionDir)\TestRasterization;$(SolutionDir)\TestDraw;$(SolutionDir)\TestPoints;$(SolutionDir)\TestUniformUpdate</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -116,7 +116,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Framework;$(SolutionDir)\Include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\TestScene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Framework;$(SolutionDir)\Include;$(SolutionDir)\DirectXTK\inc;$(SolutionDir)\TestScene;$(SolutionDir)\TestTriangleStrips;$(SolutionDir)\TestRasterization;$(SolutionDir)\TestDraw;$(SolutionDir)\TestPoints;$(SolutionDir)\TestUniformUpdate</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -131,8 +131,23 @@
     <ProjectReference Include="..\Framework\Framework.vcxproj">
       <Project>{3ba13844-1f65-49bd-bf81-856c68fb1904}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\TestDraw\TestDraw.vcxproj">
+      <Project>{eb8029ad-4ce9-41a2-aa26-e9f4b080f3f8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\TestPoints\TestPoints.vcxproj">
+      <Project>{7879b9c2-6434-460f-abf9-10ddbb5df319}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\TestRasterization\TestRasterization.vcxproj">
+      <Project>{dd51f923-398f-4cc0-9b19-e2b9dfdd19e0}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\TestScene\TestScene.vcxproj">
       <Project>{5e443ecf-c31b-4438-bd00-5ed06a7034dc}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\TestTriangleStrips\TestTriangleStrips.vcxproj">
+      <Project>{687754fc-83dc-4035-98a2-67f99997dc87}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\TestUniformUpdate\TestUniformUpdate.vcxproj">
+      <Project>{3a43fffd-1775-4caa-8fa4-2772c35dd25f}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

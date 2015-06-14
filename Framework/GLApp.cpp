@@ -93,8 +93,8 @@ void GLApp::SaveSnapshot(std::string filePath)
 
 	BITMAPINFOHEADER bitmapInfoHeader;
 	bitmapInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bitmapInfoHeader.biWidth = mWidth - 1;
-	bitmapInfoHeader.biHeight = mHeight - 1;
+	bitmapInfoHeader.biWidth = mWidth;
+	bitmapInfoHeader.biHeight = mHeight;
 	bitmapInfoHeader.biPlanes = 1;
 	bitmapInfoHeader.biBitCount = 24;
 	bitmapInfoHeader.biCompression = BI_RGB;

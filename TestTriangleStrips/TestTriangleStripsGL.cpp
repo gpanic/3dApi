@@ -37,16 +37,19 @@ bool TestTriangleStripsGL::InitScene()
 
 	BinaryIO::ReadVector4s(binaryPath + "triangle_strip_plane.bin", vertices);
 
-	glCreateVertexArrays(1, &vertexArray);
+	glGenVertexArrays(1, &vertexArray);
+	glBindVertexArray(vertexArray);
 
 	GLuint vertexBuffer;
-	glCreateBuffers(1, &vertexBuffer);
-	glNamedBufferData(vertexBuffer, vertices.size() * sizeof(Vector4), &vertices[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vector4), &vertices[0], GL_STATIC_DRAW);
 
-	glVertexArrayAttribBinding(vertexArray, 0, 0);
-	glVertexArrayVertexBuffer(vertexArray, 0, vertexBuffer, 0, sizeof(Vector4));
-	glEnableVertexArrayAttrib(vertexArray, 0);
-	glVertexArrayAttribFormat(vertexArray, 0, 4, GL_FLOAT, GL_FALSE, 0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vector4), 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
 	// UPLOAD MVP MATRICES
 	glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));

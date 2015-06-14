@@ -1,7 +1,9 @@
 #include "ImageCompare.h"
+#include <iostream>
 
 float ImageCompare::Compare(std::string img1, std::string img2, std::string diffOut)
 {
+	std::cout << img1 << " " << img2 << " " << diffOut << std::endl;
 	std::ifstream file1(img1, std::ios::in | std::ios::binary);
 	if (!file1.is_open()) return 0.0f;
 
@@ -39,6 +41,7 @@ float ImageCompare::Compare(std::string img1, std::string img2, std::string diff
 	byte *differenceBuffer = new byte[bitmapFileHeader1.bfSize];
 
 	int samePixels = 0;
+	int diffPixels = 0;
 	for (int i = 0; i < bitmapFileHeader1.bfSize; i += 3)
 	{
 		byte diff = 255;
@@ -49,9 +52,36 @@ float ImageCompare::Compare(std::string img1, std::string img2, std::string diff
 			++samePixels;
 			diff = 0;
 		}
+		else
+		{
+			++diffPixels;
+			float v = (std::abs(img1Buffer[i + 0] - img2Buffer[i + 0]) + std::abs(img1Buffer[i + 1] - img2Buffer[i + 1]) + std::abs(img1Buffer[i + 2] - img2Buffer[i + 2])) / 3.0f;
+			if (v != 1.0f)
+			{
+				//std::cout << v << std::endl;
+			}
+		}
 		differenceBuffer[i + 0] = diff;
 		differenceBuffer[i + 1] = diff;
 		differenceBuffer[i + 2] = diff;
+	}
+
+	int nonBlackPixels = 0;
+	for (int i = 0; i < bitmapFileHeader1.bfSize; i += 3)
+	{
+		if (
+			differenceBuffer[i + 0] != 0 &&
+			differenceBuffer[i + 1] != 0 &&
+			differenceBuffer[i + 2] != 0
+			)
+		{
+			std::cout << (float)differenceBuffer[i + 0] << " " << (float)differenceBuffer[i + 1] << " " << (float)differenceBuffer[i + 2] << std::endl;
+			differenceBuffer[i + 0] = 255;
+			differenceBuffer[i + 1] = 255;
+			differenceBuffer[i + 2] = 255;
+			++nonBlackPixels;
+			std::cout << i / 3 << std::endl;
+		}
 	}
 
 	delete[] img1Buffer;
@@ -64,6 +94,11 @@ float ImageCompare::Compare(std::string img1, std::string img2, std::string diff
 	file.close();
 
 	delete[] differenceBuffer;
+
+	std::cout << samePixels << std::endl;
+	std::cout << diffPixels << std::endl;
+	std::cout << samePixels + diffPixels << std::endl;
+	std::cout << nonBlackPixels << std::endl;
 
 	return static_cast<float>(samePixels) / static_cast<float>(bitmapFileHeader1.bfSize / 3);
 }

@@ -38,31 +38,39 @@ bool TestRasterizationGL::InitScene()
 	ObjReader::ReadMtl(modelPath + "sphere_smooth_low_poly.mtl", materialName, material);
 	BinaryIO::ReadVector3s(binaryPath + "instance_offsets.bin", offsets);
 
-	glCreateVertexArrays(1, &vertexArray);
+	glGenVertexArrays(1, &vertexArray);
+	glBindVertexArray(vertexArray);
 
 	GLuint vertexBuffer;
-	glCreateBuffers(1, &vertexBuffer);
-	glNamedBufferData(vertexBuffer, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)sizeof(Vertex().position));
+
+	glVertexAttribDivisor(0, 0);
+	glVertexAttribDivisor(1, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	GLuint instanceBuffer;
-	glCreateBuffers(1, &instanceBuffer);
-	glNamedBufferData(instanceBuffer, offsets.size() * sizeof(Vector3), &offsets[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &instanceBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceBuffer);
+	glBufferData(GL_ARRAY_BUFFER, offsets.size() * sizeof(Vector3), &offsets[0], GL_STATIC_DRAW);
 
-	glVertexArrayAttribBinding(vertexArray, 0, 0);
-	glVertexArrayAttribBinding(vertexArray, 1, 0);
-	glVertexArrayAttribBinding(vertexArray, 2, 2);
-	glVertexArrayVertexBuffer(vertexArray, 0, vertexBuffer, 0, sizeof(Vertex));
-	glVertexArrayVertexBuffer(vertexArray, 2, instanceBuffer, 0, 3 * sizeof(float));
+	glEnableVertexAttribArray(2);
 
-	glEnableVertexArrayAttrib(vertexArray, 0);
-	glEnableVertexArrayAttrib(vertexArray, 1);
-	glEnableVertexArrayAttrib(vertexArray, 2);
-	glVertexArrayBindingDivisor(vertexArray, 0, 0);
-	glVertexArrayBindingDivisor(vertexArray, 1, 0);
-	glVertexArrayBindingDivisor(vertexArray, 2, 1);
-	glVertexArrayAttribFormat(vertexArray, 0, 4, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(vertexArray, 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex().position));
-	glVertexArrayAttribFormat(vertexArray, 2, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+
+	glVertexAttribDivisor(2, 1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindVertexArray(0);
 
 	// UPLOAD LIGHT
 	Light light;
@@ -72,8 +80,12 @@ bool TestRasterizationGL::InitScene()
 	Vector4 ambient(0.1f, 0.1f, 0.1f, 1.0f);
 
 	GLuint lightBuffer;
-	glCreateBuffers(1, &lightBuffer);
-	glNamedBufferData(lightBuffer, sizeof(Light), &light, GL_STATIC_DRAW);
+	glGenBuffers(1, &lightBuffer);
+
+	glBindBuffer(GL_ARRAY_BUFFER, lightBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Light), &light, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glBindBufferBase(GL_UNIFORM_BUFFER, lightBindingPoint, lightBuffer);
 	GLuint lightBlockIndex = glGetUniformBlockIndex(shaderProgram, "Light");
 	glUniformBlockBinding(shaderProgram, lightBlockIndex, lightBindingPoint);
@@ -82,8 +94,12 @@ bool TestRasterizationGL::InitScene()
 	glProgramUniform4fv(shaderProgram, ambientIndex, 1, (GLfloat *)&ambient);
 
 	// PREPARE MATERIAL
-	glCreateBuffers(1, &materialBuffer);
-	glNamedBufferData(materialBuffer, sizeof(Material), NULL, GL_STATIC_DRAW);
+	glGenBuffers(1, &materialBuffer);
+
+	glBindBuffer(GL_ARRAY_BUFFER, materialBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Material), NULL, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glBindBufferBase(GL_UNIFORM_BUFFER, materialBindingPoint, materialBuffer);
 	GLuint materialBlockIndex = glGetUniformBlockIndex(shaderProgram, "Material");
 	glUniformBlockBinding(shaderProgram, materialBlockIndex, materialBindingPoint);
@@ -140,7 +156,10 @@ void TestRasterizationGL::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glNamedBufferSubData(materialBuffer, 0, sizeof(Material), &material);
+	glBindBuffer(GL_ARRAY_BUFFER, materialBuffer);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Material), &material);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glBindVertexArray(vertexArray);
 	glUseProgram(shaderProgram);
 	glDrawArraysInstanced(GL_TRIANGLES, 0, vertices.size(), offsets.size());

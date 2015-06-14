@@ -49,27 +49,31 @@ bool TestUniformUpdateGL::InitScene()
 	//glBindBuffer(GL_ARRAY_BUFFER, colorBlockBuffer);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_DYNAMIC_DRAW);
 
-	glCreateBuffers(1, &colorBlockBuffer);
-	glNamedBufferData(colorBlockBuffer, sizeof(color), color, GL_DYNAMIC_DRAW);
+	glGenBuffers(1, &colorBlockBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, colorBlockBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(color), color, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, colorBlockBindingPoint, colorBlockBuffer);
 
 	GLuint blockIndex = glGetUniformBlockIndex(shaderProgram, "ColorBlock");
 	glUniformBlockBinding(shaderProgram, blockIndex, colorBlockBindingPoint);
 
-	glCreateVertexArrays(1, &vao);
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 
-	glCreateBuffers(1, &vbo);
-	glNamedBufferData(vbo, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glVertexArrayAttribBinding(vao, 0, 0);
-	glVertexArrayAttribBinding(vao, 1, 0);
-	glVertexArrayVertexBuffer(vao, 0, vbo, 0, 8 * sizeof(float));
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 
-	glEnableVertexArrayAttrib(vao, 0);
-	glEnableVertexArrayAttrib(vao, 1);
-	glVertexArrayAttribFormat(vao, 0, 4, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(vao, 1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float));
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(4 * sizeof(float)));
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(vao);
 
 	return true;
 }
@@ -81,7 +85,9 @@ void TestUniformUpdateGL::Update()
 
 	for (int i = 0; i < 50000; ++i)
 	{
-		glNamedBufferSubData(colorBlockBuffer, 0, sizeof(color2), color2);
+		glBindBuffer(GL_ARRAY_BUFFER, colorBlockBuffer);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(color2), color2);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 

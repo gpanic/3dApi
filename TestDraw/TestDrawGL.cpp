@@ -51,16 +51,20 @@ bool TestDrawGL::InitScene()
 	glProgramUniformMatrix4fv(shaderProgram, viewMatrixIndex, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 	glProgramUniformMatrix4fv(shaderProgram, projectionMatrixIndex, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
-	glCreateVertexArrays(1, &vao);
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 
-	glCreateBuffers(1, &vbo);
-	glNamedBufferData(vbo, sizeof(Vector4) * verts.size(), &verts[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &vbo);
 
-	glVertexArrayAttribBinding(vao, 0, 0);
-	glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(float) * 4);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vector4) * verts.size(), &verts[0], GL_STATIC_DRAW);
 
-	glEnableVertexArrayAttrib(vao, 0);
-	glVertexArrayAttribFormat(vao, 0, 4, GL_FLOAT, GL_FALSE, 0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
 	return true;
 }
