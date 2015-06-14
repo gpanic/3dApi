@@ -3,8 +3,15 @@
 #include <Windows.h>
 #include <fstream>
 
-class ImageCompare
+namespace ImageCompare
 {
-public:
-	static float Compare(std::string img1, std::string img2, std::string diffOut);
+	struct Result
+	{
+		int samePixels;
+		int differentPixels;
+		int allPixels;
+		float ratio;
+	};
+
+	Result Compare(std::string img1, std::string img2, std::string diffOut);
 };

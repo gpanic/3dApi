@@ -131,6 +131,15 @@
     <ProjectReference Include="..\Framework\Framework.vcxproj">
       <Project>{3ba13844-1f65-49bd-bf81-856c68fb1904}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\TestDraw\TestDraw.vcxproj">
+      <Project>{eb8029ad-4ce9-41a2-aa26-e9f4b080f3f8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\TestPoints\TestPoints.vcxproj">
+      <Project>{7879b9c2-6434-460f-abf9-10ddbb5df319}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\TestRasterization\TestRasterization.vcxproj">
+      <Project>{dd51f923-398f-4cc0-9b19-e2b9dfdd19e0}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\TestScene\TestScene.vcxproj">
       <Project>{5e443ecf-c31b-4438-bd00-5ed06a7034dc}</Project>
     </ProjectReference>

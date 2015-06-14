@@ -79,7 +79,7 @@ void GLApp::SaveSnapshot(std::string filePath)
 	if (!bmpBuffer) return;
 
 	glReadBuffer(GL_FRONT);
-	glReadPixels(0, 0, mWidth - 1, mHeight - 1, GL_BGR, GL_UNSIGNED_BYTE, bmpBuffer);
+	glReadPixels(0, 0, mWidth, mHeight, GL_BGR, GL_UNSIGNED_BYTE, bmpBuffer);
 
 	std::ofstream file(filePath, std::ios::out | std::ios::binary);
 	if (!file.is_open()) return;
@@ -93,8 +93,8 @@ void GLApp::SaveSnapshot(std::string filePath)
 
 	BITMAPINFOHEADER bitmapInfoHeader;
 	bitmapInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bitmapInfoHeader.biWidth = mWidth - 1;
-	bitmapInfoHeader.biHeight = mHeight - 1;
+	bitmapInfoHeader.biWidth = mWidth;
+	bitmapInfoHeader.biHeight = mHeight;
 	bitmapInfoHeader.biPlanes = 1;
 	bitmapInfoHeader.biBitCount = 24;
 	bitmapInfoHeader.biCompression = BI_RGB;

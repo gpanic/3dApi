@@ -1,9 +1,9 @@
 #include "ImageCompare.h"
 
-float ImageCompare::Compare(std::string img1, std::string img2, std::string diffOut)
+ImageCompare::Result ImageCompare::Compare(std::string img1, std::string img2, std::string diffOut)
 {
 	std::ifstream file1(img1, std::ios::in | std::ios::binary);
-	if (!file1.is_open()) return 0.0f;
+	if (!file1.is_open()) return Result();
 
 	BITMAPFILEHEADER bitmapFileHeader1;
 	ZeroMemory(&bitmapFileHeader1, sizeof(BITMAPFILEHEADER));
@@ -19,7 +19,7 @@ float ImageCompare::Compare(std::string img1, std::string img2, std::string diff
 	file1.close();
 
 	std::ifstream file2(img2, std::ios::in | std::ios::binary);
-	if (!file2.is_open()) return 0.0f;
+	if (!file2.is_open()) return Result();
 
 	BITMAPFILEHEADER bitmapFileHeader2;
 	ZeroMemory(&bitmapFileHeader2, sizeof(BITMAPFILEHEADER));
@@ -34,7 +34,7 @@ float ImageCompare::Compare(std::string img1, std::string img2, std::string diff
 
 	file2.close();
 
-	if (bitmapFileHeader1.bfSize != bitmapFileHeader2.bfSize) return 0.0f;
+	if (bitmapFileHeader1.bfSize != bitmapFileHeader2.bfSize) return Result();
 
 	byte *differenceBuffer = new byte[bitmapFileHeader1.bfSize];
 
@@ -54,6 +54,12 @@ float ImageCompare::Compare(std::string img1, std::string img2, std::string diff
 		differenceBuffer[i + 2] = diff;
 	}
 
+	Result result;
+	result.samePixels = samePixels;
+	result.allPixels = bitmapFileHeader1.bfSize / 3;
+	result.differentPixels = result.allPixels - result.samePixels;
+	result.ratio = static_cast<float>(samePixels) / static_cast<float>(bitmapFileHeader1.bfSize / 3);
+
 	delete[] img1Buffer;
 	delete[] img2Buffer;
 
@@ -65,5 +71,5 @@ float ImageCompare::Compare(std::string img1, std::string img2, std::string diff
 
 	delete[] differenceBuffer;
 
-	return static_cast<float>(samePixels) / static_cast<float>(bitmapFileHeader1.bfSize / 3);
+	return result;
 }
