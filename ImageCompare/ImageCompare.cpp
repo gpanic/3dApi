@@ -52,36 +52,17 @@ float ImageCompare::Compare(std::string img1, std::string img2, std::string diff
 			++samePixels;
 			diff = 0;
 		}
-		else
+		else if (img1Buffer[i + 0] == 25 || img1Buffer[i + 0] == 26 &&
+				img1Buffer[i + 1] == 25 || img1Buffer[i + 1] == 26 &&
+				img1Buffer[i + 2] == 25 || img1Buffer[i + 2] == 26
+				)
 		{
-			++diffPixels;
-			float v = (std::abs(img1Buffer[i + 0] - img2Buffer[i + 0]) + std::abs(img1Buffer[i + 1] - img2Buffer[i + 1]) + std::abs(img1Buffer[i + 2] - img2Buffer[i + 2])) / 3.0f;
-			if (v != 1.0f)
-			{
-				//std::cout << v << std::endl;
-			}
+			++samePixels;
+			diff = 0;
 		}
 		differenceBuffer[i + 0] = diff;
 		differenceBuffer[i + 1] = diff;
 		differenceBuffer[i + 2] = diff;
-	}
-
-	int nonBlackPixels = 0;
-	for (int i = 0; i < bitmapFileHeader1.bfSize; i += 3)
-	{
-		if (
-			differenceBuffer[i + 0] != 0 &&
-			differenceBuffer[i + 1] != 0 &&
-			differenceBuffer[i + 2] != 0
-			)
-		{
-			std::cout << (float)differenceBuffer[i + 0] << " " << (float)differenceBuffer[i + 1] << " " << (float)differenceBuffer[i + 2] << std::endl;
-			differenceBuffer[i + 0] = 255;
-			differenceBuffer[i + 1] = 255;
-			differenceBuffer[i + 2] = 255;
-			++nonBlackPixels;
-			std::cout << i / 3 << std::endl;
-		}
 	}
 
 	delete[] img1Buffer;
@@ -94,11 +75,6 @@ float ImageCompare::Compare(std::string img1, std::string img2, std::string diff
 	file.close();
 
 	delete[] differenceBuffer;
-
-	std::cout << samePixels << std::endl;
-	std::cout << diffPixels << std::endl;
-	std::cout << samePixels + diffPixels << std::endl;
-	std::cout << nonBlackPixels << std::endl;
 
 	return static_cast<float>(samePixels) / static_cast<float>(bitmapFileHeader1.bfSize / 3);
 }

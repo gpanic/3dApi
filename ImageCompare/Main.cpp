@@ -5,11 +5,11 @@
 std::string outPath = "Image Comparision/";
 
 std::vector<std::string> testNames = {
-	//"test_draw",
-	//"test_points",
-	//"test_rasterization",
-	//"test_scene",
-	//"test_triangle_strips",
+	"test_draw",
+	"test_points",
+	"test_rasterization",
+	"test_scene",
+	"test_triangle_strips",
 	"test_uniform_update"
 };
 
