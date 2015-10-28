@@ -196,6 +196,7 @@ void TestSceneDX::Update()
 
 		XMMATRIX viewMatrix = XMMatrixLookAtRH(XMLoadFloat4(&eye), XMLoadFloat4(&center), XMLoadFloat4(&up));
 		mDeviceContext->UpdateSubresource(viewMatrixBuffer, 0, NULL, &viewMatrix, 0, 0);
+		input.Reset();
 	}
 }
 

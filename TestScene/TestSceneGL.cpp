@@ -152,6 +152,7 @@ void TestSceneGL::Update()
 
 		glm::mat4 viewMatrix = glm::lookAt(eye, center, up);
 		glProgramUniformMatrix4fv(shaderProgram, viewMatrixIndex, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		input.Reset();
 	}
 }
 

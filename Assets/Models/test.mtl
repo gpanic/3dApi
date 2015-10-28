@@ -1,0 +1,11 @@
+# Blender MTL File: 'plane.blend'
+# Material Count: 1
+
+newmtl PlaneMaterial
+Ns 207.843137
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ni 1.000000
+d 1.000000
+illum 2
