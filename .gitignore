@@ -200,3 +200,4 @@ FakesAssemblies/
 !glew32.dll
 Binary
 Results
+*.lib
